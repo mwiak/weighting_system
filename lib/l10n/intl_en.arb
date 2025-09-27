@@ -1,0 +1,986 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "Weighing System",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "weighingOperations": "Weighing Operations",
+  "@weighingOperations": {
+    "description": "Title for weighing operations page"
+  },
+  
+  "clients": "Clients",
+  "@clients": {
+    "description": "Title for clients page"
+  },
+  
+  "suppliers": "Suppliers", 
+  "@suppliers": {
+    "description": "Title for suppliers page"
+  },
+  
+  "drivers": "Drivers",
+  "@drivers": {
+    "description": "Title for drivers page"
+  },
+  
+  "trucks": "Trucks",
+  "@trucks": {
+    "description": "Title for trucks page"
+  },
+  
+  "materials": "Materials",
+  "@materials": {
+    "description": "Title for materials page"
+  },
+  
+  "reports": "Reports",
+  "@reports": {
+    "description": "Title for reports page"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Title for settings page"
+  },
+  
+  "operationsHistory": "Operations History",
+  "@operationsHistory": {
+    "description": "Title for operations history page"
+  },
+  
+  "currentWeight": "Current Weight",
+  "@currentWeight": {
+    "description": "Label for current weight display"
+  },
+  
+  "grossWeight": "Gross Weight",
+  "@grossWeight": {
+    "description": "Label for gross weight"
+  },
+  
+  "tareWeight": "Tare Weight", 
+  "@tareWeight": {
+    "description": "Label for tare weight"
+  },
+  
+  "netWeight": "Net Weight",
+  "@netWeight": {
+    "description": "Label for net weight"
+  },
+  
+  "orderNumber": "Order Number",
+  "@orderNumber": {
+    "description": "Label for order number"
+  },
+  
+  "truckPlate": "Truck Plate",
+  "@truckPlate": {
+    "description": "Label for truck plate number"
+  },
+  
+  "driverName": "Driver Name",
+  "@driverName": {
+    "description": "Label for driver name"
+  },
+  
+  "operationType": "Operation Type",
+  "@operationType": {
+    "description": "Label for operation type"
+  },
+  
+  "loading": "Loading",
+  "@loading": {
+    "description": "Loading operation type"
+  },
+  
+  "unloading": "Unloading",
+  "@unloading": {
+    "description": "Unloading operation type"
+  },
+  
+  "client": "Client",
+  "@client": {
+    "description": "Label for client"
+  },
+  
+  "supplier": "Supplier",
+  "@supplier": {
+    "description": "Label for supplier"
+  },
+  
+  "material": "Material",
+  "@material": {
+    "description": "Label for material"
+  },
+  
+  "price": "Price",
+  "@price": {
+    "description": "Label for price"
+  },
+  
+  "totalAmount": "Total Amount",
+  "@totalAmount": {
+    "description": "Label for total amount"
+  },
+  
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  
+  "add": "Add",
+  "@add": {
+    "description": "Add button text"
+  },
+  
+  "name": "Name",
+  "@name": {
+    "description": "Label for name field"
+  },
+  
+  "email": "Email",
+  "@email": {
+    "description": "Label for email field"
+  },
+  
+  "phone": "Phone",
+  "@phone": {
+    "description": "Label for phone field"
+  },
+  
+  "mobile": "Mobile",
+  "@mobile": {
+    "description": "Label for mobile field"
+  },
+  
+  "city": "City",
+  "@city": {
+    "description": "Label for city field"
+  },
+  
+  "licenseNumber": "License Number",
+  "@licenseNumber": {
+    "description": "Label for license number"
+  },
+  
+  "plateNumber": "Plate Number",
+  "@plateNumber": {
+    "description": "Label for plate number"
+  },
+  
+  "model": "Model",
+  "@model": {
+    "description": "Label for truck model"
+  },
+  
+  "capacity": "Capacity",
+  "@capacity": {
+    "description": "Label for truck capacity"
+  },
+  
+  "active": "Active",
+  "@active": {
+    "description": "Label for active status"
+  },
+  
+  "status": "Status",
+  "@status": {
+    "description": "Label for status"
+  },
+  
+  "notes": "Notes",
+  "@notes": {
+    "description": "Label for notes field"
+  },
+  
+  "weighInTime": "Weigh In Time",
+  "@weighInTime": {
+    "description": "Label for weigh in time"
+  },
+  
+  "weighOutTime": "Weigh Out Time", 
+  "@weighOutTime": {
+    "description": "Label for weigh out time"
+  },
+  
+  "createDate": "Create Date",
+  "@createDate": {
+    "description": "Label for creation date"
+  },
+  
+  "odooSettings": "Odoo Settings",
+  "@odooSettings": {
+    "description": "Title for Odoo settings section"
+  },
+  
+  "odooUrl": "Odoo URL",
+  "@odooUrl": {
+    "description": "Label for Odoo server URL"
+  },
+  
+  "odooDatabase": "Database Name",
+  "@odooDatabase": {
+    "description": "Label for Odoo database name"
+  },
+  
+  "odooUsername": "Username",
+  "@odooUsername": {
+    "description": "Label for Odoo username"
+  },
+  
+  "odooPassword": "Password",
+  "@odooPassword": {
+    "description": "Label for Odoo password"
+  },
+  
+  "testConnection": "Test Connection",
+  "@testConnection": {
+    "description": "Test connection button text"
+  },
+  
+  "connectionSuccessful": "Connection successful!",
+  "@connectionSuccessful": {
+    "description": "Success message for connection test"
+  },
+  
+  "connectionFailed": "Connection failed!",
+  "@connectionFailed": {
+    "description": "Error message for failed connection"
+  },
+  
+  "kg": "kg",
+  "@kg": {
+    "description": "Kilogram unit abbreviation"
+  },
+  
+  "tons": "tons",
+  "@tons": {
+    "description": "Tons unit abbreviation"
+  },
+  
+  "driversAndTrucks": "Drivers & Trucks",
+  "@driversAndTrucks": {
+    "description": "Title for drivers and trucks screen"
+  },
+  
+  "addDriver": "Add Driver",
+  "@addDriver": {
+    "description": "Add driver button text"
+  },
+  
+  "addTruck": "Add Truck",
+  "@addTruck": {
+    "description": "Add truck button text"
+  },
+
+  "showPriceOnPrint": "Show Price on Print",
+  "@showPriceOnPrint": {
+    "description": "Checkbox to show price on print"
+  },
+
+  "newTab": "New Tab",
+  "@newTab": {
+    "description": "New tab button text"
+  },
+
+  "closeTab": "Close Tab",
+  "@closeTab": {
+    "description": "Close tab button text"
+  },
+
+  "unitPrice": "Unit Price",
+  "@unitPrice": {
+    "description": "Label for unit price"
+  },
+
+  "pricePerKg": "Price per kg",
+  "@pricePerKg": {
+    "description": "Label for price per kilogram"
+  },
+
+  "noItemsFound": "No items found",
+  "@noItemsFound": {
+    "description": "Message when no items are found"
+  },
+
+  "loading_data": "Loading data...",
+  "@loading_data": {
+    "description": "Loading message"
+  },
+
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+
+  "search": "Search",
+  "@search": {
+    "description": "Search placeholder text"
+  },
+
+  "selectClient": "Select Client",
+  "@selectClient": {
+    "description": "Select client dropdown placeholder"
+  },
+
+  "selectSupplier": "Select Supplier",
+  "@selectSupplier": {
+    "description": "Select supplier dropdown placeholder"
+  },
+
+  "selectMaterial": "Select Material",
+  "@selectMaterial": {
+    "description": "Select material dropdown placeholder"
+  },
+
+  "addClient": "Add Client",
+  "@addClient": {
+    "description": "Add client button text"
+  },
+
+  "addSupplier": "Add Supplier",
+  "@addSupplier": {
+    "description": "Add supplier button text"
+  },
+
+  "addMaterial": "Add Material",
+  "@addMaterial": {
+    "description": "Add material button text"
+  },
+
+  "editClient": "Edit Client",
+  "@editClient": {
+    "description": "Edit client button text"
+  },
+
+  "editSupplier": "Edit Supplier",
+  "@editSupplier": {
+    "description": "Edit supplier button text"
+  },
+
+  "editMaterial": "Edit Material",
+  "@editMaterial": {
+    "description": "Edit material button text"
+  },
+
+  "required": "Required",
+  "@required": {
+    "description": "Required field indicator"
+  },
+
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button text"
+  },
+
+  "searchDrivers": "Search drivers...",
+  "@searchDrivers": {
+    "description": "Search drivers placeholder"
+  },
+
+  "searchTrucks": "Search trucks...",
+  "@searchTrucks": {
+    "description": "Search trucks placeholder"
+  },
+
+  "error": "Error",
+  "@error": {
+    "description": "Error label"
+  },
+
+  "noDriversFound": "No drivers found matching",
+  "@noDriversFound": {
+    "description": "No drivers found message"
+  },
+
+  "noDriversFoundAdd": "No drivers found. Add your first driver to get started.",
+  "@noDriversFoundAdd": {
+    "description": "No drivers found with add suggestion"
+  },
+
+  "noTrucksFound": "No trucks found matching",
+  "@noTrucksFound": {
+    "description": "No trucks found message"
+  },
+
+  "noTrucksFoundAdd": "No trucks found. Add your first truck to get started.",
+  "@noTrucksFoundAdd": {
+    "description": "No trucks found with add suggestion"
+  },
+
+  "license": "License",
+  "@license": {
+    "description": "License label"
+  },
+
+  "inactive": "Inactive",
+  "@inactive": {
+    "description": "Inactive status label"
+  },
+
+  "enterDriverName": "Enter driver name",
+  "@enterDriverName": {
+    "description": "Driver name placeholder"
+  },
+
+  "enterLicenseNumber": "Enter license number",
+  "@enterLicenseNumber": {
+    "description": "License number placeholder"
+  },
+
+  "phoneNumber": "Phone number",
+  "@phoneNumber": {
+    "description": "Phone number placeholder"
+  },
+
+  "mobileNumber": "Mobile number",
+  "@mobileNumber": {
+    "description": "Mobile number placeholder"
+  },
+
+  "enterCity": "Enter city",
+  "@enterCity": {
+    "description": "City placeholder"
+  },
+
+  "enterPlateNumber": "Enter plate number",
+  "@enterPlateNumber": {
+    "description": "Plate number placeholder"
+  },
+
+  "enterTruckModel": "Enter truck model",
+  "@enterTruckModel": {
+    "description": "Truck model placeholder"
+  },
+
+  "capacityKg": "Capacity (kg)",
+  "@capacityKg": {
+    "description": "Capacity in kg label"
+  },
+
+  "enterCapacityKg": "Enter capacity in kg",
+  "@enterCapacityKg": {
+    "description": "Capacity placeholder"
+  },
+
+  "assignedDriver": "Assigned Driver",
+  "@assignedDriver": {
+    "description": "Assigned driver label"
+  },
+
+  "noDriverAssigned": "No driver assigned",
+  "@noDriverAssigned": {
+    "description": "No driver assigned text"
+  },
+
+  "driverNotAssigned": "Driver: Not assigned",
+  "@driverNotAssigned": {
+    "description": "Driver not assigned text"
+  },
+
+  "deleteDriver": "Delete Driver",
+  "@deleteDriver": {
+    "description": "Delete driver dialog title"
+  },
+
+  "deleteDriverConfirm": "Are you sure you want to delete",
+  "@deleteDriverConfirm": {
+    "description": "Delete driver confirmation message"
+  },
+
+  "deleteTruck": "Delete Truck",
+  "@deleteTruck": {
+    "description": "Delete truck dialog title"
+  },
+
+  "deleteTruckConfirm": "Are you sure you want to delete truck",
+  "@deleteTruckConfirm": {
+    "description": "Delete truck confirmation message"
+  },
+
+  "resetScale": "Reset Scale",
+  "@resetScale": {
+    "description": "Reset scale button text"
+  },
+
+  "maximumTabsReached": "Maximum Tabs Reached",
+  "@maximumTabsReached": {
+    "description": "Maximum tabs dialog title"
+  },
+
+  "maximumTabsMessage": "You can have a maximum of {maxTabs} operations open at once. Please close some tabs before creating new ones.",
+  "@maximumTabsMessage": {
+    "description": "Maximum tabs dialog message",
+    "placeholders": {
+      "maxTabs": {
+        "type": "int"
+      }
+    }
+  },
+
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+
+  "tabUnsavedChanges": "This tab has unsaved changes. Closing it will create a new empty tab. Continue?",
+  "@tabUnsavedChanges": {
+    "description": "Tab unsaved changes message"
+  },
+
+  "unsavedChanges": "Unsaved Changes",
+  "@unsavedChanges": {
+    "description": "Unsaved changes dialog title"
+  },
+
+  "unsavedChangesMessage": "This operation has unsaved changes. Are you sure you want to close it?",
+  "@unsavedChangesMessage": {
+    "description": "Unsaved changes dialog message"
+  },
+
+  "closeAnyway": "Close Anyway",
+  "@closeAnyway": {
+    "description": "Close anyway button text"
+  },
+
+  "print": "Print",
+  "@print": {
+    "description": "Print button text"
+  },
+
+  "printing": "Printing operation",
+  "@printing": {
+    "description": "Printing message"
+  },
+
+  "cancelOperation": "Cancel Operation",
+  "@cancelOperation": {
+    "description": "Cancel operation dialog title"
+  },
+
+  "cancelOperationConfirm": "Are you sure you want to cancel this operation? All data will be lost.",
+  "@cancelOperationConfirm": {
+    "description": "Cancel operation confirmation message"
+  },
+
+  "no": "No",
+  "@no": {
+    "description": "No button text"
+  },
+
+  "yesCancel": "Yes, Cancel",
+  "@yesCancel": {
+    "description": "Yes cancel button text"
+  },
+
+  "reportsAndAnalytics": "Reports & Analytics",
+  "@reportsAndAnalytics": {
+    "description": "Reports and analytics title"
+  },
+
+  "exportPdf": "Export PDF",
+  "@exportPdf": {
+    "description": "Export PDF button text"
+  },
+
+  "exportCsv": "Export CSV",
+  "@exportCsv": {
+    "description": "Export CSV button text"
+  },
+
+  "reportTypes": "Report Types",
+  "@reportTypes": {
+    "description": "Report types section title"
+  },
+
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard report type"
+  },
+
+  "ordersReport": "Orders Report",
+  "@ordersReport": {
+    "description": "Orders report type"
+  },
+
+  "revenueReport": "Revenue Report",
+  "@revenueReport": {
+    "description": "Revenue report type"
+  },
+
+  "clientReport": "Client Report",
+  "@clientReport": {
+    "description": "Client report type"
+  },
+
+  "materialReport": "Material Report",
+  "@materialReport": {
+    "description": "Material report type"
+  },
+
+  "filters": "Filters",
+  "@filters": {
+    "description": "Filters section title"
+  },
+
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Start date label"
+  },
+
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "End date label"
+  },
+
+  "quickRange": "Quick Range",
+  "@quickRange": {
+    "description": "Quick range dropdown title"
+  },
+
+  "last7Days": "Last 7 Days",
+  "@last7Days": {
+    "description": "Last 7 days option"
+  },
+
+  "last30Days": "Last 30 Days",
+  "@last30Days": {
+    "description": "Last 30 days option"
+  },
+
+  "last90Days": "Last 90 Days",
+  "@last90Days": {
+    "description": "Last 90 days option"
+  },
+
+  "thisYear": "This Year",
+  "@thisYear": {
+    "description": "This year option"
+  },
+
+  "loadingDots": "Loading...",
+  "@loadingDots": {
+    "description": "Loading with dots message"
+  },
+
+  "applyFilters": "Apply Filters",
+  "@applyFilters": {
+    "description": "Apply filters button text"
+  },
+
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+
+  "clientFilter": "Client Filter",
+  "@clientFilter": {
+    "description": "Client filter label"
+  },
+
+  "allClients": "All Clients",
+  "@allClients": {
+    "description": "All clients option"
+  },
+
+  "statusFilter": "Status Filter",
+  "@statusFilter": {
+    "description": "Status filter label"
+  },
+
+  "allStatuses": "All Statuses",
+  "@allStatuses": {
+    "description": "All statuses option"
+  },
+
+  "completed": "Completed",
+  "@completed": {
+    "description": "Completed status"
+  },
+
+  "cancelled": "Cancelled",
+  "@cancelled": {
+    "description": "Cancelled status"
+  },
+
+  "groupBy": "Group By",
+  "@groupBy": {
+    "description": "Group by label"
+  },
+
+  "daily": "Daily",
+  "@daily": {
+    "description": "Daily grouping option"
+  },
+
+  "weekly": "Weekly",
+  "@weekly": {
+    "description": "Weekly grouping option"
+  },
+
+  "monthly": "Monthly",
+  "@monthly": {
+    "description": "Monthly grouping option"
+  },
+
+  "generatingReport": "Generating report...",
+  "@generatingReport": {
+    "description": "Generating report message"
+  },
+
+  "unknownError": "Unknown error",
+  "@unknownError": {
+    "description": "Unknown error message"
+  },
+
+  "selectReportType": "Select a report type to view data",
+  "@selectReportType": {
+    "description": "Select report type message"
+  },
+
+  "noDashboardData": "No dashboard data available",
+  "@noDashboardData": {
+    "description": "No dashboard data message"
+  },
+
+  "totalOrders": "Total Orders",
+  "@totalOrders": {
+    "description": "Total orders label"
+  },
+
+  "totalWeight": "Total Weight",
+  "@totalWeight": {
+    "description": "Total weight label"
+  },
+
+  "totalRevenue": "Total Revenue",
+  "@totalRevenue": {
+    "description": "Total revenue label"
+  },
+
+  "activeOrders": "Active Orders",
+  "@activeOrders": {
+    "description": "Active orders label"
+  },
+
+  "ordersByStatus": "Orders by Status",
+  "@ordersByStatus": {
+    "description": "Orders by status chart title"
+  },
+
+  "topClientsByRevenue": "Top Clients by Revenue",
+  "@topClientsByRevenue": {
+    "description": "Top clients chart title"
+  },
+
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Unknown text"
+  },
+
+  "noReportData": "No report data available",
+  "@noReportData": {
+    "description": "No report data message"
+  },
+
+  "generated": "Generated",
+  "@generated": {
+    "description": "Generated label"
+  },
+
+  "records": "records",
+  "@records": {
+    "description": "Records text"
+  },
+
+  "showingFirst": "Showing first {count} of {total} records. Export to view all data.",
+  "@showingFirst": {
+    "description": "Showing first records message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "exportSuccessful": "Export Successful",
+  "@exportSuccessful": {
+    "description": "Export successful message"
+  },
+
+  "pdfSavedTo": "PDF saved to: {path}",
+  "@pdfSavedTo": {
+    "description": "PDF saved message",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+
+  "csvSavedTo": "CSV saved to: {path}",
+  "@csvSavedTo": {
+    "description": "CSV saved message",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+
+  "printTemplates": "Print Templates",
+  "@printTemplates": {
+    "description": "Print templates section title"
+  },
+
+  "noActiveTabs": "No Active Tabs",
+  "@noActiveTabs": {
+    "description": "No active tabs message"
+  },
+
+  "clickNewTabToStart": "Click \"New Tab\" to start a new weighing operation",
+  "@clickNewTabToStart": {
+    "description": "Instructions to create new tab"
+  },
+
+  "reconnectToScale": "Reconnect to Scale",
+  "@reconnectToScale": {
+    "description": "Reconnect to scale button text"
+  },
+
+  "selectPrinter": "Select Printer",
+  "@selectPrinter": {
+    "description": "Select printer dropdown placeholder"
+  },
+
+  "saveAsPdf": "Save as PDF",
+  "@saveAsPdf": {
+    "description": "Save as PDF button text"
+  },
+
+  "silentPrint": "Silent Print",
+  "@silentPrint": {
+    "description": "Silent print checkbox label"
+  },
+
+  "exportWithTemplate": "Export with Template",
+  "@exportWithTemplate": {
+    "description": "Export with template button text"
+  },
+
+  "selectTemplate": "Select Template",
+  "@selectTemplate": {
+    "description": "Select template dialog title"
+  },
+
+  "noTemplatesAvailable": "No Templates Available",
+  "@noTemplatesAvailable": {
+    "description": "No templates available dialog title"
+  },
+
+  "noTemplatesMessage": "No templates are available. Would you like to create a default template?",
+  "@noTemplatesMessage": {
+    "description": "No templates available dialog message"
+  },
+
+  "createDefault": "Create Default",
+  "@createDefault": {
+    "description": "Create default template button text"
+  },
+
+  "exportOptions": "Export Options",
+  "@exportOptions": {
+    "description": "Export options dialog title"
+  },
+
+  "printWithTemplate": "Print with Template",
+  "@printWithTemplate": {
+    "description": "Print with template option title"
+  },
+
+  "printDirectlyUsingTemplate": "Print directly using the template",
+  "@printDirectlyUsingTemplate": {
+    "description": "Print with template option subtitle"
+  },
+
+  "saveTemplateExportAsPdf": "Save template export as PDF file",
+  "@saveTemplateExportAsPdf": {
+    "description": "Save as PDF option subtitle"
+  },
+
+  "printWeighingTicket": "Print Weighing Ticket",
+  "@printWeighingTicket": {
+    "description": "Print weighing ticket button text"
+  },
+
+  "printReceipt": "Print Receipt",
+  "@printReceipt": {
+    "description": "Print receipt button text"
+  },
+
+  "connected": "Connected",
+  "@connected": {
+    "description": "Device connected status"
+  },
+
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Device disconnected status"
+  },
+
+  "replugDevice": "Replug Device",
+  "@replugDevice": {
+    "description": "Replug device message"
+  },
+
+  "unknownError": "Unknown Error",
+  "@unknownError": {
+    "description": "Unknown error message"
+  },
+
+  "reconnecting": "Reconnecting",
+  "@reconnecting": {
+    "description": "Device reconnecting status"
+  },
+
+  "noDevicesAvailable": "No Devices Available",
+  "@noDevicesAvailable": {
+    "description": "No devices available message"
+  },
+
+  "scanning": "Scanning",
+  "@scanning": {
+    "description": "Device scanning status"
+  },
+
+  "connecting": "Connecting",
+  "@connecting": {
+    "description": "Device connecting status"
+  }
+}

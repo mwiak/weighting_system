@@ -1,0 +1,14 @@
+import 'package:intl/intl.dart';
+import 'package:weighing_system/utils/text_format.dart';
+
+String dateToArabicDatetime(DateTime input) {
+  final formatter = DateFormat('EEEE  yyyy/MM/dd --  hh:mm a ', 'ar');
+
+  return formatter.format(input);
+}
+
+String dateToArabicDatetimeShort(DateTime input) {
+  final formatter = DateFormat('yyyy/MM/dd-hh:mm a', 'ar');
+
+  return formatter.format(input);
+}

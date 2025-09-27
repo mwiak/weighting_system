@@ -1,0 +1,369 @@
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import '../models/page_dimensions.dart';
+import '../models/windows_printer.dart';
+import '../models/print_template.dart';
+import 'windows_printer_manager.dart';
+import 'pdf_dimension_analyzer.dart';
+import 'print_dimension_calculator.dart';
+import 'windows_gdi_renderer.dart';
+
+/// Main Windows-native printing service
+/// Replaces the Flutter printing package with exact-size printing capabilities
+class WindowsNativePrintService {
+  static final WindowsNativePrintService _instance = WindowsNativePrintService._internal();
+  factory WindowsNativePrintService() => _instance;
+  WindowsNativePrintService._internal();
+
+  final _printerManager = WindowsPrinterManager();
+  final _gdiRenderer = WindowsGdiRenderer();
+
+  String? _selectedPrinterName;
+  WindowsPrinter? _cachedSelectedPrinter;
+
+  /// Get all available printers
+  Future<List<WindowsPrinter>> getAvailablePrinters({bool forceRefresh = false}) async {
+    return await _printerManager.getAvailablePrinters(forceRefresh: forceRefresh);
+  }
+
+  /// Get the currently selected printer (or default)
+  Future<WindowsPrinter?> getSelectedPrinter() async {
+    if (_selectedPrinterName != null && _cachedSelectedPrinter != null) {
+      // Refresh status of cached printer
+      final status = await _printerManager.getPrinterStatus(_selectedPrinterName!);
+      _cachedSelectedPrinter = WindowsPrinter(
+        name: _cachedSelectedPrinter!.name,
+        serverName: _cachedSelectedPrinter!.serverName,
+        portName: _cachedSelectedPrinter!.portName,
+        driverName: _cachedSelectedPrinter!.driverName,
+        location: _cachedSelectedPrinter!.location,
+        comment: _cachedSelectedPrinter!.comment,
+        status: status,
+        capabilities: _cachedSelectedPrinter!.capabilities,
+        supportedPaperSizes: _cachedSelectedPrinter!.supportedPaperSizes,
+        isDefault: _cachedSelectedPrinter!.isDefault,
+        isShared: _cachedSelectedPrinter!.isShared,
+        isNetworkPrinter: _cachedSelectedPrinter!.isNetworkPrinter,
+      );
+      return _cachedSelectedPrinter;
+    }
+
+    // Get default printer
+    return await _printerManager.getDefaultPrinter();
+  }
+
+  /// Select a printer for printing
+  Future<bool> selectPrinter(String printerName) async {
+    try {
+      final printers = await getAvailablePrinters();
+      final filteredPrinters = printers.where((p) => p.name == printerName);
+      final printer = filteredPrinters.isNotEmpty ? filteredPrinters.first : null;
+
+      if (printer != null) {
+        _selectedPrinterName = printerName;
+        _cachedSelectedPrinter = printer;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error selecting printer: $e');
+      return false;
+    }
+  }
+
+  /// Set printer as system default
+  Future<bool> setAsDefaultPrinter(String printerName) async {
+    return await _printerManager.setDefaultPrinter(printerName);
+  }
+
+  /// Print PDF with exact dimensions
+  Future<bool> printPdfExactSize({
+    required Uint8List pdfBytes,
+    String? printerName,
+    String? documentName,
+    bool allowScaling = false,
+  }) async {
+    try {
+      // Get printer
+      final printer = printerName != null
+          ? (await getAvailablePrinters()).where((p) => p.name == printerName).firstOrNull
+          : await getSelectedPrinter();
+
+      if (printer == null) {
+        throw Exception('No printer available');
+      }
+
+      if (!printer.isReady) {
+        throw Exception('Printer not ready: ${printer.status.displayName}');
+      }
+
+      // Analyze PDF dimensions
+      final pdfInfo = await PdfDimensionAnalyzer.analyzePdf(pdfBytes);
+      if (pdfInfo == null || pdfInfo.pages.isEmpty) {
+        throw Exception('Invalid PDF or no pages found');
+      }
+
+      final firstPage = pdfInfo.pages.first;
+
+      // Validate if PDF can be printed at actual size
+      final validation = PrintDimensionCalculator.validatePdfSize(
+        firstPage.size,
+        printer,
+      );
+
+      if (!validation.canPrintActualSize && !allowScaling) {
+        throw Exception(
+          'PDF size ${firstPage.size.toString()} cannot be printed at actual size. ${validation.message}'
+        );
+      }
+
+      // Calculate optimal print settings
+      final settings = PrintDimensionCalculator.calculateExactSizeSettings(
+        firstPage.size,
+        printer,
+        allowScaling: allowScaling,
+      );
+
+      // Print using GDI renderer
+      return await _gdiRenderer.printPdfExactSize(
+        pdfBytes: pdfBytes,
+        printer: printer,
+        settings: settings,
+        documentName: documentName,
+      );
+    } catch (e) {
+      debugPrint('Error in printPdfExactSize: $e');
+      rethrow;
+    }
+  }
+
+  /// Print template with exact field positioning
+  Future<bool> printTemplate({
+    required PrintTemplate template,
+    required Map<String, dynamic> data,
+    String? printerName,
+    String? documentName,
+    bool allowScaling = false,
+  }) async {
+    try {
+      // Get printer
+      final printer = printerName != null
+          ? (await getAvailablePrinters()).where((p) => p.name == printerName).firstOrNull
+          : await getSelectedPrinter();
+
+      if (printer == null) {
+        throw Exception('No printer available');
+      }
+
+      if (!printer.isReady) {
+        throw Exception('Printer not ready: ${printer.status.displayName}');
+      }
+
+      // Get template page size
+      PageSize templateSize;
+      if (template.paperSize == 'Custom' &&
+          template.customWidth != null &&
+          template.customHeight != null) {
+        templateSize = PageSize(
+          widthMm: template.customWidth!,
+          heightMm: template.customHeight!,
+          name: 'Custom Template',
+        );
+      } else {
+        switch (template.paperSize) {
+          case 'A3':
+            templateSize = PageSize.a3;
+            break;
+          case 'A4':
+            templateSize = PageSize.a4;
+            break;
+          case 'A5':
+            templateSize = PageSize.a5;
+            break;
+          case 'Letter':
+            templateSize = PageSize.letter;
+            break;
+          case 'Legal':
+            templateSize = PageSize.legal;
+            break;
+          default:
+            templateSize = PageSize.a4;
+        }
+      }
+
+      // Apply orientation
+      if (template.orientation == 'landscape') {
+        templateSize = templateSize.rotated;
+      }
+
+      // Validate template size
+      final validation = PrintDimensionCalculator.validatePdfSize(
+        templateSize,
+        printer,
+      );
+
+      if (!validation.canPrintActualSize && !allowScaling) {
+        throw Exception(
+          'Template size ${templateSize.toString()} cannot be printed at actual size. ${validation.message}'
+        );
+      }
+
+      // Calculate print settings
+      final settings = PrintDimensionCalculator.calculateExactSizeSettings(
+        templateSize,
+        printer,
+        allowScaling: allowScaling,
+      );
+
+      // Convert template fields to render format
+      final renderFields = template.fields.map((field) {
+        return TemplateField(
+          fieldName: field.fieldName,
+          x: field.x,
+          y: field.y,
+          fontSize: field.fontSize,
+          bold: field.bold,
+          alignment: field.alignment,
+          maxWidth: field.maxWidth,
+          prefix: field.prefix,
+          suffix: field.suffix,
+          format: field.format,
+        );
+      }).toList();
+
+      // Print using GDI renderer
+      return await _gdiRenderer.printTemplateExactSize(
+        templateData: data,
+        fields: renderFields,
+        printer: printer,
+        settings: settings,
+        documentName: documentName ?? 'Template Print',
+      );
+    } catch (e) {
+      debugPrint('Error in printTemplate: $e');
+      rethrow;
+    }
+  }
+
+  /// Test printer functionality
+  Future<bool> testPrinter(String printerName) async {
+    try {
+      final printer = (await getAvailablePrinters())
+          .where((p) => p.name == printerName)
+          .firstOrNull;
+
+      if (printer == null) return false;
+
+      // Test GDI rendering capability
+      return await _gdiRenderer.testPrinter(printerName);
+    } catch (e) {
+      debugPrint('Error testing printer: $e');
+      return false;
+    }
+  }
+
+  /// Get printer status
+  Future<PrinterStatus> getPrinterStatus(String printerName) async {
+    return await _printerManager.getPrinterStatus(printerName);
+  }
+
+  /// Get print jobs for a printer
+  Future<List<PrintJob>> getPrintJobs(String printerName) async {
+    return await _printerManager.getPrintJobs(printerName);
+  }
+
+  /// Validate PDF for printing
+  Future<PrintValidationResult> validatePdfForPrinting({
+    required Uint8List pdfBytes,
+    String? printerName,
+  }) async {
+    try {
+      // Get printer
+      final printer = printerName != null
+          ? (await getAvailablePrinters()).where((p) => p.name == printerName).firstOrNull
+          : await getSelectedPrinter();
+
+      if (printer == null) {
+        return PrintValidationResult(
+          isValid: false,
+          message: 'No printer available',
+        );
+      }
+
+      // Analyze PDF
+      final pdfInfo = await PdfDimensionAnalyzer.analyzePdf(pdfBytes);
+      if (pdfInfo == null || pdfInfo.pages.isEmpty) {
+        return PrintValidationResult(
+          isValid: false,
+          message: 'Invalid PDF or no pages found',
+        );
+      }
+
+      final firstPage = pdfInfo.pages.first;
+
+      // Validate size compatibility
+      final validation = PrintDimensionCalculator.validatePdfSize(
+        firstPage.size,
+        printer,
+      );
+
+      return PrintValidationResult(
+        isValid: validation.canPrintActualSize,
+        message: validation.message,
+        pdfSize: firstPage.size,
+        recommendedPaper: validation.recommendedPaper,
+        scaleNeeded: validation.scaleNeeded,
+        printerStatus: printer.status,
+      );
+    } catch (e) {
+      return PrintValidationResult(
+        isValid: false,
+        message: 'Validation error: $e',
+      );
+    }
+  }
+
+  /// Get printer paper sizes
+  Future<List<PageSize>> getPrinterPaperSizes(String printerName) async {
+    return await _printerManager.getSupportedPaperSizes(printerName);
+  }
+
+  /// Clear printer cache
+  void clearCache() {
+    _printerManager.clearCache();
+    _selectedPrinterName = null;
+    _cachedSelectedPrinter = null;
+  }
+}
+
+/// Result of print validation
+class PrintValidationResult {
+  final bool isValid;
+  final String message;
+  final PageSize? pdfSize;
+  final PageSize? recommendedPaper;
+  final double? scaleNeeded;
+  final PrinterStatus? printerStatus;
+
+  const PrintValidationResult({
+    required this.isValid,
+    required this.message,
+    this.pdfSize,
+    this.recommendedPaper,
+    this.scaleNeeded,
+    this.printerStatus,
+  });
+
+  bool get requiresScaling => scaleNeeded != null && (scaleNeeded! < 0.99 || scaleNeeded! > 1.01);
+
+  @override
+  String toString() => message;
+}
+
+/// Extension for first or null
+extension FirstOrNull<T> on Iterable<T> {
+  T? get firstOrNull {
+    final iterator = this.iterator;
+    return iterator.moveNext() ? iterator.current : null;
+  }
+}

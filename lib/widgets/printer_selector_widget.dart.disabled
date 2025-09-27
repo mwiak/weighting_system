@@ -1,0 +1,405 @@
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
+import '../models/windows_printer.dart';
+import '../models/page_dimensions.dart';
+import '../services/windows_native_print_service.dart';
+
+/// Advanced printer selector with dimension awareness and status monitoring
+class PrinterSelectorWidget extends StatefulWidget {
+  final PageSize? targetPageSize;
+  final Function(WindowsPrinter?)? onPrinterSelected;
+  final Function(PrintValidationResult?)? onValidationChanged;
+
+  const PrinterSelectorWidget({
+    super.key,
+    this.targetPageSize,
+    this.onPrinterSelected,
+    this.onValidationChanged,
+  });
+
+  @override
+  State<PrinterSelectorWidget> createState() => _PrinterSelectorWidgetState();
+}
+
+class _PrinterSelectorWidgetState extends State<PrinterSelectorWidget> {
+  final _printService = WindowsNativePrintService();
+
+  List<WindowsPrinter> _printers = [];
+  WindowsPrinter? _selectedPrinter;
+  PrintValidationResult? _validationResult;
+  bool _isLoading = true;
+  bool _isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPrinters();
+  }
+
+  @override
+  void didUpdateWidget(PrinterSelectorWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.targetPageSize != oldWidget.targetPageSize) {
+      _validateCurrentSelection();
+    }
+  }
+
+  Future<void> _loadPrinters() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final printers = await _printService.getAvailablePrinters();
+      final selectedPrinter = await _printService.getSelectedPrinter();
+
+      setState(() {
+        _printers = printers;
+        _selectedPrinter = selectedPrinter;
+        _isLoading = false;
+      });
+
+      await _validateCurrentSelection();
+    } catch (e) {
+      debugPrint('Error loading printers: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _refreshPrinters() async {
+    setState(() => _isRefreshing = true);
+
+    try {
+      final printers = await _printService.getAvailablePrinters(forceRefresh: true);
+      setState(() {
+        _printers = printers;
+        _isRefreshing = false;
+      });
+
+      await _validateCurrentSelection();
+    } catch (e) {
+      debugPrint('Error refreshing printers: $e');
+      setState(() => _isRefreshing = false);
+    }
+  }
+
+  Future<void> _validateCurrentSelection() async {
+    if (_selectedPrinter != null && widget.targetPageSize != null) {
+      // Create a mock PDF for validation
+      final mockPdfBytes = Uint8List(0);
+
+      try {
+        final validation = await _printService.validatePdfForPrinting(
+          pdfBytes: mockPdfBytes,
+          printerName: _selectedPrinter!.name,
+        );
+
+        setState(() => _validationResult = validation);
+
+        if (widget.onValidationChanged != null) {
+          widget.onValidationChanged!(validation);
+        }
+      } catch (e) {
+        debugPrint('Error validating printer selection: $e');
+      }
+    }
+  }
+
+  Future<void> _selectPrinter(WindowsPrinter printer) async {
+    try {
+      await _printService.selectPrinter(printer.name);
+      setState(() => _selectedPrinter = printer);
+
+      if (widget.onPrinterSelected != null) {
+        widget.onPrinterSelected!(printer);
+      }
+
+      await _validateCurrentSelection();
+    } catch (e) {
+      debugPrint('Error selecting printer: $e');
+    }
+  }
+
+  Future<void> _setAsDefault(WindowsPrinter printer) async {
+    try {
+      final success = await _printService.setAsDefaultPrinter(printer.name);
+      if (success) {
+        await _refreshPrinters();
+        if (mounted) {
+          displayInfoBar(
+            context,
+            builder: (context, close) => InfoBar(
+              title: const Text('Default Printer Set'),
+              content: Text('${printer.name} is now the default printer'),
+              action: IconButton(
+                icon: const Icon(FluentIcons.clear),
+                onPressed: close,
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error setting default printer: $e');
+    }
+  }
+
+  Widget _buildPrinterStatusIcon(PrinterStatus status) {
+    switch (status) {
+      case PrinterStatus.ready:
+      case PrinterStatus.idle:
+        return const Icon(FluentIcons.completed, color: Color(0xFF4CAF50), size: 16);
+      case PrinterStatus.printing:
+        return const Icon(FluentIcons.refresh, color: Color(0xFF2196F3), size: 16);
+      case PrinterStatus.offline:
+        return const Icon(FluentIcons.blocked, color: Color(0xFFD32F2F), size: 16);
+      case PrinterStatus.error:
+      case PrinterStatus.paperJam:
+      case PrinterStatus.outOfPaper:
+      case PrinterStatus.outOfToner:
+        return const Icon(FluentIcons.cancel, color: Color(0xFFD32F2F), size: 16);
+      case PrinterStatus.warmingUp:
+        return const Icon(FluentIcons.clock, color: Color(0xFFFF9800), size: 16);
+      default:
+        return const Icon(FluentIcons.help, color: Color(0xFF9E9E9E), size: 16);
+    }
+  }
+
+  Widget _buildCompatibilityIndicator(WindowsPrinter printer) {
+    if (widget.targetPageSize == null) {
+      return const SizedBox.shrink();
+    }
+
+    final canPrint = printer.canPrint(widget.targetPageSize!);
+    final bestPaper = printer.getBestPaperSize(widget.targetPageSize!);
+
+    if (canPrint) {
+      return Tooltip(
+        message: bestPaper != null
+            ? 'Compatible: ${bestPaper.name}'
+            : 'Compatible with custom size',
+        child: const Icon(FluentIcons.completed, color: Color(0xFF4CAF50), size: 14),
+      );
+    } else {
+      return Tooltip(
+        message: 'Incompatible with ${widget.targetPageSize!.name}',
+        child: const Icon(FluentIcons.cancel, color: Color(0xFFD32F2F), size: 14),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ProgressRing(),
+            SizedBox(height: 8),
+            Text('Loading printers...'),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with refresh button
+        Row(
+          children: [
+            const Text(
+              'Printer Selection',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const Spacer(),
+            Button(
+              onPressed: _isRefreshing ? null : _refreshPrinters,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_isRefreshing)
+                    const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: ProgressRing(strokeWidth: 2),
+                    )
+                  else
+                    const Icon(FluentIcons.refresh, size: 12),
+                  const SizedBox(width: 4),
+                  Text(_isRefreshing ? 'Refreshing...' : 'Refresh'),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Target page size info
+        if (widget.targetPageSize != null) ...[
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  const Icon(FluentIcons.page, size: 16),
+                  const SizedBox(width: 8),
+                  Text('Target Size: ${widget.targetPageSize!.toString()}'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
+        // Printer list
+        Expanded(
+          child: _printers.isEmpty
+              ? const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(FluentIcons.print, size: 48, color: Colors.grey),
+                      SizedBox(height: 8),
+                      Text('No printers found'),
+                      Text(
+                        'Please install and configure a printer',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: _printers.length,
+                  itemBuilder: (context, index) {
+                    final printer = _printers[index];
+                    final isSelected = _selectedPrinter?.name == printer.name;
+
+                    return Card(
+                      backgroundColor: isSelected
+                          ? FluentTheme.of(context).accentColor.withOpacity(0.1)
+                          : null,
+                      child: ListTile(
+                        leading: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildPrinterStatusIcon(printer.status),
+                            if (widget.targetPageSize != null) ...[
+                              const SizedBox(height: 2),
+                              _buildCompatibilityIndicator(printer),
+                            ],
+                          ],
+                        ),
+                        title: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                printer.name,
+                                style: TextStyle(
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                            if (printer.isDefault) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'DEFAULT',
+                                  style: TextStyle(fontSize: 10, color: Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(printer.status.displayName),
+                            if (printer.location.isNotEmpty)
+                              Text(
+                                printer.location,
+                                style: const TextStyle(fontSize: 11),
+                              ),
+                            if (widget.targetPageSize != null) ...[
+                              const SizedBox(height: 4),
+                              _buildPaperSizeInfo(printer),
+                            ],
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (!printer.isDefault)
+                              Button(
+                                onPressed: printer.isReady ? () => _setAsDefault(printer) : null,
+                                child: const Text('Set Default'),
+                              ),
+                            const SizedBox(width: 8),
+                            if (isSelected)
+                              const Icon(FluentIcons.completed, color: Color(0xFF4CAF50))
+                            else
+                              Button(
+                                onPressed: printer.isReady ? () => _selectPrinter(printer) : null,
+                                child: const Text('Select'),
+                              ),
+                          ],
+                        ),
+                        onPressed: printer.isReady ? () => _selectPrinter(printer) : null,
+                      ),
+                    );
+                  },
+                ),
+        ),
+
+        // Validation result
+        if (_validationResult != null) ...[
+          const SizedBox(height: 12),
+          Card(
+            backgroundColor: _validationResult!.isValid
+                ? Colors.green.withOpacity(0.1)
+                : Colors.orange.withOpacity(0.1),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Icon(
+                    _validationResult!.isValid ? FluentIcons.completed : FluentIcons.warning,
+                    color: _validationResult!.isValid ? Colors.green : Colors.orange,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(_validationResult!.message)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPaperSizeInfo(WindowsPrinter printer) {
+    if (widget.targetPageSize == null) return const SizedBox.shrink();
+
+    final bestPaper = printer.getBestPaperSize(widget.targetPageSize!);
+    if (bestPaper == null) {
+      return const Text(
+        'No compatible paper size',
+        style: TextStyle(fontSize: 11, color: Color(0xFFD32F2F)),
+      );
+    }
+
+    final isExactMatch = bestPaper.matches(widget.targetPageSize!, toleranceMm: 0.5);
+    return Text(
+      isExactMatch ? 'Perfect match: ${bestPaper.name}' : 'Best fit: ${bestPaper.name}',
+      style: TextStyle(
+        fontSize: 11,
+        color: isExactMatch ? Colors.green : Colors.orange,
+      ),
+    );
+  }
+}

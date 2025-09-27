@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze:*)",
+      "Bash(sed:*)",
+      "Bash(flutter build:*)",
+      "Bash(timeout 60 flutter build:*)",
+      "Bash(flutter packages pub run:*)",
+      "Bash(flutter gen-l10n:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter clean:*)",
+      "Bash(rm:*)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

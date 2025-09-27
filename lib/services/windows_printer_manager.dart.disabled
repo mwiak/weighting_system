@@ -1,0 +1,411 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+import 'package:ffi/ffi.dart';
+import 'package:win32/win32.dart';
+import 'package:flutter/foundation.dart';
+import '../models/windows_printer.dart';
+import '../models/page_dimensions.dart';
+
+/// Windows printer enumeration and management service
+/// Provides real printer detection, status monitoring, and capabilities
+class WindowsPrinterManager {
+  static final WindowsPrinterManager _instance = WindowsPrinterManager._internal();
+  factory WindowsPrinterManager() => _instance;
+  WindowsPrinterManager._internal();
+
+  List<WindowsPrinter> _cachedPrinters = [];
+  DateTime? _lastUpdate;
+  static const Duration _cacheTimeout = Duration(seconds: 30);
+
+  /// Get all available printers on the system
+  Future<List<WindowsPrinter>> getAvailablePrinters({bool forceRefresh = false}) async {
+    if (!forceRefresh &&
+        _lastUpdate != null &&
+        DateTime.now().difference(_lastUpdate!) < _cacheTimeout) {
+      return _cachedPrinters;
+    }
+
+    try {
+      _cachedPrinters = await _enumeratePrinters();
+      _lastUpdate = DateTime.now();
+      return _cachedPrinters;
+    } catch (e) {
+      debugPrint('Error enumerating printers: $e');
+      return [];
+    }
+  }
+
+  /// Get the default printer
+  Future<WindowsPrinter?> getDefaultPrinter() async {
+    try {
+      final printers = await getAvailablePrinters();
+      return printers.where((p) => p.isDefault).firstOrNull;
+    } catch (e) {
+      debugPrint('Error getting default printer: $e');
+      return null;
+    }
+  }
+
+  /// Set a printer as default
+  Future<bool> setDefaultPrinter(String printerName) async {
+    try {
+      final pPrinterName = printerName.toNativeUtf16();
+      final result = SetDefaultPrinter(pPrinterName);
+      calloc.free(pPrinterName);
+
+      if (result != 0) {
+        // Clear cache to refresh default status
+        _lastUpdate = null;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error setting default printer: $e');
+      return false;
+    }
+  }
+
+  /// Get real-time status of a specific printer
+  Future<PrinterStatus> getPrinterStatus(String printerName) async {
+    try {
+      final pPrinterName = printerName.toNativeUtf16();
+      final hPrinter = calloc<HANDLE>();
+
+      if (OpenPrinter(pPrinterName, hPrinter, nullptr) == 0) {
+        calloc.free(pPrinterName);
+        calloc.free(hPrinter);
+        return PrinterStatus.offline;
+      }
+
+      // Get printer info
+      final pPrinterInfo = calloc<PRINTER_INFO_2>();
+      final pcbNeeded = calloc<DWORD>();
+      final pcReturned = calloc<DWORD>();
+
+      GetPrinter(hPrinter.value, 2, pPrinterInfo.cast(),
+                 sizeOf<PRINTER_INFO_2>(), pcbNeeded);
+
+      if (pcbNeeded.value > 0) {
+        final pBuffer = calloc<BYTE>(pcbNeeded.value);
+
+        if (GetPrinter(hPrinter.value, 2, pBuffer.cast(),
+                      pcbNeeded.value, pcbNeeded) != 0) {
+          final printerInfo = pBuffer.cast<PRINTER_INFO_2>().ref;
+          final status = PrinterStatus.fromWin32Flags(printerInfo.Status);
+
+          calloc.free(pBuffer);
+          calloc.free(pPrinterInfo);
+          calloc.free(pcbNeeded);
+          calloc.free(pcReturned);
+          ClosePrinter(hPrinter.value);
+          calloc.free(pPrinterName);
+          calloc.free(hPrinter);
+
+          return status;
+        }
+
+        calloc.free(pBuffer);
+      }
+
+      calloc.free(pPrinterInfo);
+      calloc.free(pcbNeeded);
+      calloc.free(pcReturned);
+      ClosePrinter(hPrinter.value);
+      calloc.free(pPrinterName);
+      calloc.free(hPrinter);
+
+      return PrinterStatus.unknown;
+    } catch (e) {
+      debugPrint('Error getting printer status for $printerName: $e');
+      return PrinterStatus.error;
+    }
+  }
+
+  /// Get printer capabilities including supported paper sizes
+  Future<PrinterCapabilities> getPrinterCapabilities(String printerName) async {
+    try {
+      final pPrinterName = printerName.toNativeUtf16();
+      final hPrinter = calloc<HANDLE>();
+
+      if (OpenPrinter(pPrinterName, hPrinter, nullptr) == 0) {
+        calloc.free(pPrinterName);
+        calloc.free(hPrinter);
+        return PrinterCapabilities.basic();
+      }
+
+      // Get device capabilities
+      final dpi = DeviceCapabilities(pPrinterName, nullptr, DC_ENUMRESOLUTIONS, nullptr, nullptr);
+      final paperSizes = DeviceCapabilities(pPrinterName, nullptr, DC_PAPERS, nullptr, nullptr);
+      final paperNames = DeviceCapabilities(pPrinterName, nullptr, DC_PAPERNAMES, nullptr, nullptr);
+
+      ClosePrinter(hPrinter.value);
+      calloc.free(pPrinterName);
+      calloc.free(hPrinter);
+
+      // Build capabilities
+      final supportedDpi = <int>[];
+      if (dpi > 0) {
+        // Default DPI values for most printers
+        supportedDpi.addAll([300, 600, 1200]);
+      } else {
+        supportedDpi.addAll([300, 600]);
+      }
+
+      return PrinterCapabilities(
+        supportsColor: true, // Assume color support
+        supportsDuplex: true, // Assume duplex support
+        supportsBorderless: false, // Conservative assumption
+        supportsCustomSizes: paperSizes > 20, // Many sizes = custom support
+        supportedDpi: supportedDpi,
+        maxDpi: supportedDpi.isNotEmpty ? supportedDpi.last : 600,
+        minDpi: supportedDpi.isNotEmpty ? supportedDpi.first : 300,
+        minimumMargins: const PrintMargins.uniform(6.35), // 0.25 inch
+        supportedMediaTypes: ['Plain Paper', 'Photo Paper', 'Transparency'],
+      );
+    } catch (e) {
+      debugPrint('Error getting printer capabilities for $printerName: $e');
+      return PrinterCapabilities.basic();
+    }
+  }
+
+  /// Get supported paper sizes for a printer
+  Future<List<PageSize>> getSupportedPaperSizes(String printerName) async {
+    try {
+      final pPrinterName = printerName.toNativeUtf16();
+
+      // Get paper sizes
+      final paperCount = DeviceCapabilities(pPrinterName, nullptr, DC_PAPERS, nullptr, nullptr);
+      if (paperCount <= 0) {
+        calloc.free(pPrinterName);
+        return _getStandardPaperSizes();
+      }
+
+      final pPapers = calloc<WORD>(paperCount);
+      DeviceCapabilities(pPrinterName, nullptr, DC_PAPERS, pPapers.cast(), nullptr);
+
+      final paperSizes = <PageSize>[];
+
+      for (int i = 0; i < paperCount; i++) {
+        final paperType = pPapers[i];
+        final paperSize = _paperTypeToPageSize(paperType);
+        if (paperSize != null) {
+          paperSizes.add(paperSize);
+        }
+      }
+
+      calloc.free(pPapers);
+      calloc.free(pPrinterName);
+
+      return paperSizes.isNotEmpty ? paperSizes : _getStandardPaperSizes();
+    } catch (e) {
+      debugPrint('Error getting paper sizes for $printerName: $e');
+      return _getStandardPaperSizes();
+    }
+  }
+
+  /// Get active print jobs for a printer
+  Future<List<PrintJob>> getPrintJobs(String printerName) async {
+    try {
+      final pPrinterName = printerName.toNativeUtf16();
+      final hPrinter = calloc<HANDLE>();
+
+      if (OpenPrinter(pPrinterName, hPrinter, nullptr) == 0) {
+        calloc.free(pPrinterName);
+        calloc.free(hPrinter);
+        return [];
+      }
+
+      final jobs = <PrintJob>[];
+      final pcbNeeded = calloc<DWORD>();
+      final pcReturned = calloc<DWORD>();
+
+      // First call to get buffer size needed
+      EnumJobs(hPrinter.value, 0, 1000, 1, nullptr, 0, pcbNeeded, pcReturned);
+
+      if (pcbNeeded.value > 0) {
+        final pJobInfo = calloc<BYTE>(pcbNeeded.value);
+
+        if (EnumJobs(hPrinter.value, 0, 1000, 1, pJobInfo.cast(),
+                     pcbNeeded.value, pcbNeeded, pcReturned) != 0) {
+
+          // Parse job information
+          for (int i = 0; i < pcReturned.value; i++) {
+            final jobInfo = Pointer<JOB_INFO_1>.fromAddress(
+              pJobInfo.address + (i * sizeOf<JOB_INFO_1>())
+            ).ref;
+
+            final job = PrintJob(
+              id: jobInfo.JobId,
+              documentName: jobInfo.pDocument.toDartString(),
+              userName: jobInfo.pUserName.toDartString(),
+              submitTime: DateTime.now(), // Would need to parse SYSTEMTIME
+              totalPages: jobInfo.TotalPages,
+              pagesPrinted: jobInfo.PagesPrinted,
+              status: PrintJobStatus.fromWin32Flags(jobInfo.Status),
+              sizeBytes: jobInfo.Size,
+            );
+
+            jobs.add(job);
+          }
+        }
+
+        calloc.free(pJobInfo);
+      }
+
+      calloc.free(pcbNeeded);
+      calloc.free(pcReturned);
+      ClosePrinter(hPrinter.value);
+      calloc.free(pPrinterName);
+      calloc.free(hPrinter);
+
+      return jobs;
+    } catch (e) {
+      debugPrint('Error getting print jobs for $printerName: $e');
+      return [];
+    }
+  }
+
+  /// Internal method to enumerate all printers
+  Future<List<WindowsPrinter>> _enumeratePrinters() async {
+    final printers = <WindowsPrinter>[];
+
+    try {
+      final pcbNeeded = calloc<DWORD>();
+      final pcReturned = calloc<DWORD>();
+
+      // First call to get buffer size
+      EnumPrinters(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS,
+                  nullptr, 2, nullptr, 0, pcbNeeded, pcReturned);
+
+      if (pcbNeeded.value == 0) {
+        calloc.free(pcbNeeded);
+        calloc.free(pcReturned);
+        return printers;
+      }
+
+      final pPrinterInfo = calloc<BYTE>(pcbNeeded.value);
+
+      if (EnumPrinters(PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS,
+                      nullptr, 2, pPrinterInfo.cast(),
+                      pcbNeeded.value, pcbNeeded, pcReturned) != 0) {
+
+        final defaultPrinterName = await _getDefaultPrinterName();
+
+        for (int i = 0; i < pcReturned.value; i++) {
+          final printerInfo = Pointer<PRINTER_INFO_2>.fromAddress(
+            pPrinterInfo.address + (i * sizeOf<PRINTER_INFO_2>())
+          ).ref;
+
+          final name = printerInfo.pPrinterName.toDartString();
+          final isDefault = name == defaultPrinterName;
+
+          final status = await getPrinterStatus(name);
+          final capabilities = await getPrinterCapabilities(name);
+          final paperSizes = await getSupportedPaperSizes(name);
+
+          final printer = WindowsPrinter(
+            name: name,
+            serverName: printerInfo.pServerName.toDartString(),
+            portName: printerInfo.pPortName.toDartString(),
+            driverName: printerInfo.pDriverName.toDartString(),
+            location: printerInfo.pLocation.toDartString(),
+            comment: printerInfo.pComment.toDartString(),
+            status: status,
+            capabilities: capabilities,
+            supportedPaperSizes: paperSizes,
+            isDefault: isDefault,
+            isShared: (printerInfo.Attributes & PRINTER_ATTRIBUTE_SHARED) != 0,
+            isNetworkPrinter: (printerInfo.Attributes & PRINTER_ATTRIBUTE_NETWORK) != 0,
+          );
+
+          printers.add(printer);
+        }
+      }
+
+      calloc.free(pPrinterInfo);
+      calloc.free(pcbNeeded);
+      calloc.free(pcReturned);
+    } catch (e) {
+      debugPrint('Error in _enumeratePrinters: $e');
+    }
+
+    return printers;
+  }
+
+  /// Get default printer name
+  Future<String?> _getDefaultPrinterName() async {
+    try {
+      final pcchBuffer = calloc<DWORD>();
+
+      // First call to get buffer size
+      GetDefaultPrinter(nullptr, pcchBuffer);
+
+      if (pcchBuffer.value == 0) {
+        calloc.free(pcchBuffer);
+        return null;
+      }
+
+      final pszBuffer = calloc<Utf16>(pcchBuffer.value);
+
+      if (GetDefaultPrinter(pszBuffer, pcchBuffer) != 0) {
+        final defaultName = pszBuffer.toDartString();
+        calloc.free(pszBuffer);
+        calloc.free(pcchBuffer);
+        return defaultName;
+      }
+
+      calloc.free(pszBuffer);
+      calloc.free(pcchBuffer);
+    } catch (e) {
+      debugPrint('Error getting default printer name: $e');
+    }
+
+    return null;
+  }
+
+  /// Convert Windows paper type to PageSize
+  PageSize? _paperTypeToPageSize(int paperType) {
+    switch (paperType) {
+      case DMPAPER_A3:
+        return PageSize.a3;
+      case DMPAPER_A4:
+        return PageSize.a4;
+      case DMPAPER_A5:
+        return PageSize.a5;
+      case DMPAPER_LETTER:
+        return PageSize.letter;
+      case DMPAPER_LEGAL:
+        return PageSize.legal;
+      case DMPAPER_TABLOID:
+        return PageSize.tabloid;
+      default:
+        return null;
+    }
+  }
+
+  /// Get standard paper sizes as fallback
+  List<PageSize> _getStandardPaperSizes() {
+    return [
+      PageSize.a3,
+      PageSize.a4,
+      PageSize.a5,
+      PageSize.letter,
+      PageSize.legal,
+      PageSize.tabloid,
+    ];
+  }
+
+  /// Clear the printer cache
+  void clearCache() {
+    _lastUpdate = null;
+    _cachedPrinters.clear();
+  }
+}
+
+/// Extension to safely get the first element or null
+extension FirstOrNull<T> on Iterable<T> {
+  T? get firstOrNull {
+    final iterator = this.iterator;
+    return iterator.moveNext() ? iterator.current : null;
+  }
+}

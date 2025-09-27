@@ -1,0 +1,221 @@
+import 'package:fluent_ui/fluent_ui.dart';
+import 'package:provider/provider.dart';
+// import 'package:weighing_system/gen_l10n/app_localizations.dart'; // Commented out - localization not available
+import '../providers/material_provider.dart';
+import '../models/material.dart';
+
+class MaterialFormDialog extends StatefulWidget {
+  final Material? material;
+
+  const MaterialFormDialog({super.key, this.material});
+
+  bool get isEditing => material != null;
+
+  @override
+  State<MaterialFormDialog> createState() => _MaterialFormDialogState();
+}
+
+class _MaterialFormDialogState extends State<MaterialFormDialog> {
+  final _formKey = GlobalKey<FormState>();
+  
+  late TextEditingController _nameController;
+  late TextEditingController _priceController;
+  late TextEditingController _descriptionController;
+  
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    final material = widget.material;
+    _nameController = TextEditingController(text: material?.name ?? '');
+    _priceController = TextEditingController(
+      text: material?.price?.toString() ?? ''
+    );
+    _descriptionController = TextEditingController(text: material?.description ?? '');
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final l10n = AppLocalizations.of(context)!; // Commented out - localization not available
+    return ContentDialog(
+      title: Text(widget.isEditing ? 'Edit Material' : 'Add Material'),
+      content: SizedBox(
+        width: 400,
+        height: 350,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                InfoLabel(
+                  label: 'Name *',
+                  child: TextFormBox(
+                    controller: _nameController,
+                    placeholder: 'Material name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Required';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                
+                // Price per kg (optional)
+                InfoLabel(
+                  label: 'Price per kg',
+                  child: TextFormBox(
+                    controller: _priceController,
+                    placeholder: '0.00',
+                    prefix: const Text('\$ '),
+                    suffix: const Text('/kg'),
+                    validator: (value) {
+                      if (value != null && value.isNotEmpty) {
+                        final price = double.tryParse(value);
+                        if (price == null || price < 0) {
+                          return 'Please enter a valid price';
+                        }
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Description
+                InfoLabel(
+                  label: 'Notes',
+                  child: TextFormBox(
+                    controller: _descriptionController,
+                    placeholder: 'Material description...',
+                    minLines: 3,
+                    maxLines: 5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        Button(
+          onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _isSubmitting ? null : _submitForm,
+          child: _isSubmitting
+              ? const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: ProgressRing(strokeWidth: 2),
+                    ),
+                    SizedBox(width: 8),
+                    Text('Saving...'),
+                  ],
+                )
+              : Text(widget.isEditing ? 'Save' : 'Add'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState?.validate() != true) return;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final materialProvider = context.read<MaterialProvider>();
+      
+      final price = _priceController.text.trim().isEmpty 
+          ? null 
+          : double.tryParse(_priceController.text.trim());
+      
+      if (widget.isEditing) {
+        // Update existing material
+        final material = widget.material;
+        if (material == null) return;
+        final updatedMaterial = material.copyWith(
+          name: _nameController.text.trim(),
+          price: price,
+          description: _descriptionController.text.trim().isEmpty 
+              ? null : _descriptionController.text.trim(),
+        );
+        
+        final success = await materialProvider.updateMaterial(updatedMaterial);
+        if (success) {
+          Navigator.of(context).pop();
+          _showSuccessMessage(context, 'Material updated successfully');
+        } else {
+          _showErrorMessage(context, materialProvider.lastError ?? 'Failed to update material');
+        }
+      } else {
+        // Create new material
+        final material = Material(
+          name: _nameController.text.trim(),
+          price: price,
+          description: _descriptionController.text.trim().isEmpty 
+              ? null : _descriptionController.text.trim(),
+        );
+        
+        final success = await materialProvider.addMaterial(material);
+        if (success) {
+          Navigator.of(context).pop();
+          _showSuccessMessage(context, 'Material created successfully');
+        } else {
+          _showErrorMessage(context, materialProvider.lastError ?? 'Failed to create material');
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _showSuccessMessage(BuildContext context, String message) {
+    displayInfoBar(
+      context,
+      builder: (context, close) => InfoBar(
+        title: Text(message),
+        severity: InfoBarSeverity.success,
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
+        ),
+      ),
+    );
+  }
+
+  void _showErrorMessage(BuildContext context, String message) {
+    displayInfoBar(
+      context,
+      builder: (context, close) => InfoBar(
+        title: const Text('Error'),
+        content: Text(message),
+        severity: InfoBarSeverity.error,
+        action: IconButton(
+          icon: const Icon(FluentIcons.clear),
+          onPressed: close,
+        ),
+      ),
+    );
+  }
+}

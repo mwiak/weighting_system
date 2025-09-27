@@ -1,0 +1,387 @@
+{
+  "@@locale": "ar",
+  
+  "appTitle": "نظام الوزن",
+  
+  "weighingOperations": "عمليات الوزن",
+  
+  "clients": "العملاء",
+  
+  "suppliers": "الموردين",
+  
+  "drivers": "السائقين",
+  
+  "trucks": "الشاحنات",
+  
+  "materials": "المواد",
+  
+  "reports": "التقارير",
+  
+  "settings": "الإعدادات",
+  
+  "operationsHistory": "سجل العمليات",
+  
+  "currentWeight": "الوزن الحالي",
+  
+  "grossWeight": "الوزن الإجمالي",
+  
+  "tareWeight": "وزن الفارغ",
+  
+  "netWeight": "الوزن الصافي",
+  
+  "orderNumber": "رقم الطلب",
+  
+  "truckPlate": "لوحة الشاحنة",
+  
+  "driverName": "اسم السائق",
+  
+  "operationType": "نوع العملية",
+  
+  "loading": "تحميل",
+  
+  "unloading": "تفريغ",
+  
+  "client": "العميل",
+  
+  "supplier": "المورد",
+  
+  "material": "المادة",
+  
+  "price": "السعر",
+  
+  "totalAmount": "المبلغ الإجمالي",
+  
+  "save": "حفظ",
+  
+  "cancel": "إلغاء",
+  
+  "edit": "تعديل",
+  
+  "delete": "حذف",
+  
+  "add": "إضافة",
+  
+  "name": "الاسم",
+  
+  "email": "البريد الإلكتروني",
+  
+  "phone": "الهاتف",
+  
+  "mobile": "الجوال",
+  
+  "city": "المدينة",
+  
+  "licenseNumber": "رقم الرخصة",
+  
+  "plateNumber": "رقم اللوحة",
+  
+  "model": "الطراز",
+  
+  "capacity": "السعة",
+  
+  "active": "نشط",
+  
+  "status": "الحالة",
+  
+  "notes": "الملاحظات",
+  
+  "weighInTime": "وقت الوزن الداخل",
+  
+  "weighOutTime": "وقت الوزن الخارج",
+  
+  "createDate": "تاريخ الإنشاء",
+  
+  "odooSettings": "إعدادات Odoo",
+  
+  "odooUrl": "رابط Odoo",
+  
+  "odooDatabase": "اسم قاعدة البيانات",
+  
+  "odooUsername": "اسم المستخدم",
+  
+  "odooPassword": "كلمة المرور",
+  
+  "testConnection": "اختبار الاتصال",
+  
+  "connectionSuccessful": "تم الاتصال بنجاح!",
+  
+  "connectionFailed": "فشل في الاتصال!",
+  
+  "kg": "كجم",
+  
+  "tons": "طن",
+  
+  "driversAndTrucks": "السائقين والشاحنات",
+  
+  "addDriver": "إضافة سائق",
+  
+  "addTruck": "إضافة شاحنة",
+
+  "showPriceOnPrint": "إظهار السعر في الطباعة",
+
+  "newTab": "تبويب جديد",
+
+  "closeTab": "إغلاق التبويب",
+
+  "unitPrice": "سعر الوحدة",
+
+  "pricePerKg": "السعر لكل كيلو",
+
+  "noItemsFound": "لا توجد عناصر",
+
+  "loading_data": "جاري التحميل...",
+
+  "confirm": "تأكيد",
+
+  "close": "إغلاق",
+
+  "search": "بحث",
+
+  "selectClient": "اختر العميل",
+
+  "selectSupplier": "اختر المورد",
+
+  "selectMaterial": "اختر المادة",
+
+  "addClient": "إضافة عميل",
+
+  "addSupplier": "إضافة مورد",
+
+  "addMaterial": "إضافة مادة",
+
+  "editClient": "تعديل العميل",
+
+  "editSupplier": "تعديل المورد",
+
+  "editMaterial": "تعديل المادة",
+
+  "required": "مطلوب",
+
+  "refresh": "تحديث",
+
+  "searchDrivers": "البحث في السائقين",
+
+  "searchTrucks": "البحث في الشاحنات",
+
+  "error": "خطأ",
+
+  "noDriversFound": "لم يتم العثور على سائقين",
+
+  "noDriversFoundAdd": "لا يوجد سائقين. أضف أول سائق للبدء.",
+
+  "noTrucksFound": "لم يتم العثور على شاحنات",
+
+  "noTrucksFoundAdd": "لا يوجد شاحنات. أضف أول شاحنة للبدء.",
+
+  "license": "الرخصة",
+
+  "inactive": "غير نشط",
+
+  "enterDriverName": "أدخل اسم السائق",
+
+  "enterLicenseNumber": "أدخل رقم الرخصة",
+
+  "phoneNumber": "رقم الهاتف",
+
+  "mobileNumber": "رقم الجوال",
+
+  "enterCity": "أدخل المدينة",
+
+  "enterPlateNumber": "أدخل رقم اللوحة",
+
+  "enterTruckModel": "أدخل طراز الشاحنة",
+
+  "capacityKg": "السعة (كجم)",
+
+  "enterCapacityKg": "أدخل السعة بالكيلوجرام",
+
+  "assignedDriver": "السائق المعين",
+
+  "noDriverAssigned": "لم يتم تعيين سائق",
+
+  "driverNotAssigned": "السائق: غير معين",
+
+  "deleteDriver": "حذف السائق",
+
+  "deleteDriverConfirm": "هل أنت متأكد من حذف هذا السائق؟",
+
+  "deleteTruck": "حذف الشاحنة",
+
+  "deleteTruckConfirm": "هل أنت متأكد من حذف هذه الشاحنة؟",
+
+  "resetScale": "إعادة تعيين الميزان",
+
+  "maximumTabsReached": "تم الوصول إلى العدد الأقصى من التبويبات",
+
+  "maximumTabsMessage": "لا يمكن إنشاء أكثر من {count} تبويبات",
+
+  "ok": "موافق",
+
+  "tabUnsavedChanges": "هناك تغييرات غير محفوظة في هذا التبويب",
+
+  "unsavedChanges": "تغييرات غير محفوظة",
+
+  "unsavedChangesMessage": "سيتم فقدان التغييرات غير المحفوظة",
+
+  "closeAnyway": "إغلاق على أي حال",
+
+  "print": "طباعة",
+
+  "printing": "جاري الطباعة",
+
+  "cancelOperation": "إلغاء العملية",
+
+  "cancelOperationConfirm": "هل أنت متأكد من إلغاء هذه العملية؟",
+
+  "no": "لا",
+
+  "yesCancel": "نعم، إلغاء",
+
+  "reportsAndAnalytics": "التقارير والتحليلات",
+
+  "exportPdf": "تصدير PDF",
+
+  "exportCsv": "تصدير CSV",
+
+  "reportTypes": "أنواع التقارير",
+
+  "dashboard": "لوحة التحكم",
+
+  "ordersReport": "تقرير الطلبات",
+
+  "revenueReport": "تقرير الإيرادات",
+
+  "clientReport": "تقرير العملاء",
+
+  "materialReport": "تقرير المواد",
+
+  "filters": "المرشحات",
+
+  "startDate": "تاريخ البداية",
+
+  "endDate": "تاريخ النهاية",
+
+  "quickRange": "نطاق سريع",
+
+  "last7Days": "آخر 7 أيام",
+
+  "last30Days": "آخر 30 يوم",
+
+  "last90Days": "آخر 90 يوم",
+
+  "thisYear": "هذا العام",
+
+  "loadingDots": "جاري التحميل...",
+
+  "applyFilters": "تطبيق المرشحات",
+
+  "clear": "مسح",
+
+  "clientFilter": "مرشح العملاء",
+
+  "allClients": "جميع العملاء",
+
+  "statusFilter": "مرشح الحالة",
+
+  "allStatuses": "جميع الحالات",
+
+  "completed": "مكتمل",
+
+  "cancelled": "ملغي",
+
+  "groupBy": "تجميع حسب",
+
+  "daily": "يومي",
+
+  "weekly": "أسبوعي",
+
+  "monthly": "شهري",
+
+  "generatingReport": "جاري إنشاء التقرير",
+
+  "unknownError": "خطأ غير معروف",
+
+  "selectReportType": "اختر نوع التقرير",
+
+  "noDashboardData": "لا توجد بيانات للوحة التحكم",
+
+  "totalOrders": "إجمالي الطلبات",
+
+  "totalWeight": "إجمالي الوزن",
+
+  "totalRevenue": "إجمالي الإيرادات",
+
+  "activeOrders": "الطلبات النشطة",
+
+  "ordersByStatus": "الطلبات حسب الحالة",
+
+  "topClientsByRevenue": "أفضل العملاء حسب الإيرادات",
+
+  "unknown": "غير معروف",
+
+  "noReportData": "لا توجد بيانات للتقرير",
+
+  "generated": "تم إنشاؤه",
+
+  "records": "سجل",
+
+  "showingFirst": "عرض أول",
+
+  "exportSuccessful": "تم التصدير بنجاح",
+
+  "pdfSavedTo": "تم حفظ PDF في",
+
+  "csvSavedTo": "تم حفظ CSV في",
+
+  "printTemplates": "قوالب الطباعة",
+
+  "noActiveTabs": "لا توجد تبويبات نشطة",
+
+  "clickNewTabToStart": "اضغط \"تبويب جديد\" لبدء عملية وزن جديدة",
+
+  "reconnectToScale": "إعادة الاتصال بالميزان",
+
+  "selectPrinter": "اختر الطابعة",
+
+  "saveAsPdf": "حفظ كـ PDF",
+
+  "silentPrint": "طباعة صامتة",
+
+  "exportWithTemplate": "تصدير بالقالب",
+
+  "selectTemplate": "اختر القالب",
+
+  "noTemplatesAvailable": "لا توجد قوالب متاحة",
+
+  "noTemplatesMessage": "لا توجد قوالب متاحة. هل تريد إنشاء قالب افتراضي؟",
+
+  "createDefault": "إنشاء افتراضي",
+
+  "exportOptions": "خيارات التصدير",
+
+  "printWithTemplate": "طباعة بالقالب",
+
+  "printDirectlyUsingTemplate": "طباعة مباشرة باستخدام القالب",
+
+  "saveTemplateExportAsPdf": "حفظ تصدير القالب كملف PDF",
+
+  "printWeighingTicket": "طباعة تذكرة الوزن",
+
+  "printReceipt": "طباعة الإيصال",
+
+  "connected": "متصل",
+
+  "disconnected": "غير متصل",
+
+  "replugDevice": "أعد توصيل الجهاز",
+
+  "unknownError": "خطأ غير معروف",
+
+  "reconnecting": "إعادة الاتصال",
+
+  "noDevicesAvailable": "لا يوجد أجهزة متوفرة",
+
+  "scanning": "جاري البحث",
+
+  "connecting": "يجري التوصيل"
+}
