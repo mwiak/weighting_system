@@ -50,89 +50,68 @@ class WeightDisplayCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Consumer<WeightProvider>(
       builder: (context, weightProvider, child) {
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(2),
-            child: SizedBox(
-              height: 80,
-              width: 600,
-              child: Column(
-                children: [
-                  // Header
-                  Row(
-                    children: [
-                      if (weightProvider.status ==
-                              ConnectionStatus.reconnecting ||
-                          weightProvider.status == ConnectionStatus.scanning ||
-                          weightProvider.status ==
-                              ConnectionStatus.disconnected ||
-                          weightProvider.status == ConnectionStatus.notFound ||
-                          weightProvider.status ==
-                              ConnectionStatus.hasError) ...[
-                        FilledButton(
-                          onPressed: () => weightProvider.reconnect(),
-                          child: Text(l10n.reconnectToScale),
-                        ),
-                      ],
-                      const SizedBox(width: 8),
-                      Text(
-                        handleStatus(weightProvider.status, l10n),
+        return Padding(
+          padding: const EdgeInsets.all(2),
+          child: SizedBox(
+            height: 80,
+            width: 600,
+            child: Stack(
+              children: [
+                // Header
+                if (weightProvider.status == ConnectionStatus.reconnecting ||
+                    weightProvider.status == ConnectionStatus.scanning ||
+                    weightProvider.status == ConnectionStatus.disconnected ||
+                    weightProvider.status == ConnectionStatus.notFound ||
+                    weightProvider.status == ConnectionStatus.hasError) ...[
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: FilledButton(
+                      onPressed: () => weightProvider.reconnect(),
+                      child: Text(l10n.reconnectToScale),
+                    ),
+                  ),
+                ],
+                const SizedBox(width: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    handleStatus(weightProvider.status, l10n),
+                    style: TextStyle(
+                      color: weightProvider.isConnected
+                          ? Colors.green
+                          : Colors.yellow.dark,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+
+                // Weight Display
+                Align(
+                  alignment: Alignment.center,
+                  child: Text.rich(
+                    TextSpan(
+                        text: weightProvider.displayWeight.toString(),
                         style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.bold,
                           color: weightProvider.isConnected
                               ? Colors.green
                               : Colors.yellow.dark,
-                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(weightProvider),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _getStatusText(weightProvider, l10n),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
+                        children: [
+                          TextSpan(
+                              text: ' ${l10n.kg}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: AppTheme.secondaryTextColor,
+                              ))
+                        ]),
                   ),
+                ),
 
-                  // Weight Display
-                  Column(
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                            text: weightProvider.displayWeight.toString(),
-                            style: TextStyle(
-                              fontSize: 38,
-                              fontWeight: FontWeight.bold,
-                              color: weightProvider.isConnected
-                                  ? Colors.green
-                                  : Colors.yellow.dark,
-                            ),
-                            children: [
-                              TextSpan(
-                                  text: ' ${l10n.kg}',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppTheme.secondaryTextColor,
-                                  ))
-                            ]),
-                      ),
-                    ],
-                  ),
-
-                  // Weight Details
-                ],
-              ),
+                // Weight Details
+              ],
             ),
           ),
         );

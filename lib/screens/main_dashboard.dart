@@ -111,6 +111,8 @@ class _MainDashboardState extends State<MainDashboard> {
     return NavigationView(
       appBar: const NavigationAppBar(
         backgroundColor: Colors.transparent,
+        height: 80,
+        title: Center(child: WeightDisplayCard()),
         actions: Padding(
           padding: EdgeInsets.all(8.0),
           child: ConnectionStatusBar(),

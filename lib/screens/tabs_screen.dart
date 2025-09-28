@@ -50,38 +50,25 @@ class _TabsScreenState extends State<TabsScreen> {
     return Consumer<TabsProvider>(
       builder: (context, provider, child) {
         return ScaffoldPage(
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
           content: Column(
             children: [
-              // Compact Header: Weight Scale and Actions in same row
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Scale reader display - More compact
-                    SizedBox(
-                      width: 600,
-                      child: WeightDisplayCard(),
+              // Command Bar
+              SizedBox(
+                height: 35,
+                child: CommandBar(
+                  primaryItems: [
+                    CommandBarButton(
+                      icon: const Icon(FluentIcons.add),
+                      label: Text(l10n.newTab),
+                      onPressed:
+                          provider.canCreateNewTab() ? _createNewTab : null,
                     ),
-                    const SizedBox(width: 16),
+                    if (provider.hasActiveTabs) ...[
+                      CommandBarSeparator(),
+                    ],
                   ],
                 ),
-              ),
-
-              // Command Bar
-              CommandBar(
-                primaryItems: [
-                  CommandBarButton(
-                    icon: const Icon(FluentIcons.add),
-                    label: Text(l10n.newTab),
-                    onPressed:
-                        provider.canCreateNewTab() ? _createNewTab : null,
-                  ),
-                  if (provider.hasActiveTabs) ...[
-                    CommandBarSeparator(),
-                  ],
-                ],
               ),
 
               // Loading indicator
@@ -162,7 +149,8 @@ class _TabsScreenState extends State<TabsScreen> {
                               tabIndex: provider.currentTabIndex,
                             ),
                           )
-                        : Center(child: Text('No tab selected')), // Keep as fallback
+                        : Center(
+                            child: Text('No tab selected')), // Keep as fallback
               ),
             ],
           ),
@@ -177,7 +165,7 @@ class _TabsScreenState extends State<TabsScreen> {
       context: context,
       builder: (context) => ContentDialog(
         title: Text(l10n.maximumTabsReached),
-        content: Text(l10n.maximumTabsMessage(15,Object())),
+        content: Text(l10n.maximumTabsMessage(15, Object())),
         actions: [
           FilledButton(
             child: Text(l10n.ok),
