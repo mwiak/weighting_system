@@ -1,482 +1,916 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
+import '../providers/supplier_provider.dart';
 import '../models/client.dart';
+import '../models/supplier.dart';
 import '../widgets/client_form_dialog.dart';
+import '../widgets/supplier_form_dialog.dart';
 
-class ClientManagementScreen extends StatelessWidget {
+class ClientManagementScreen extends StatefulWidget {
   const ClientManagementScreen({super.key});
 
   @override
+  State<ClientManagementScreen> createState() => _ClientManagementScreenState();
+}
+
+class _ClientManagementScreenState extends State<ClientManagementScreen> {
+  int _selectedIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<ClientProvider>(
-      builder: (context, clientProvider, child) {
+    final l10n = AppLocalizations.of(context)!;
+    return Consumer2<ClientProvider, SupplierProvider>(
+      builder: (context, clientProvider, supplierProvider, child) {
         return ScaffoldPage.scrollable(
           header: PageHeader(
-            title: const Text('Client Management'),
+            title: Text(_selectedIndex == 0
+                ? l10n.clientManagement
+                : l10n.supplierManagement),
             commandBar: CommandBar(
               primaryItems: [
                 CommandBarButton(
                   icon: const Icon(FluentIcons.add),
-                  label: const Text('New Client'),
-                  onPressed: () => _showCreateClientDialog(context),
+                  label: Text(
+                      _selectedIndex == 0 ? l10n.newClient : l10n.newSupplier),
+                  onPressed: () => _selectedIndex == 0
+                      ? _showCreateClientDialog(context, l10n)
+                      : _showCreateSupplierDialog(context, l10n),
                 ),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.refresh),
-                  label: const Text('Refresh'),
-                  onPressed: () => clientProvider.loadClients(),
+                  label: Text(l10n.refresh),
+                  onPressed: () => _selectedIndex == 0
+                      ? clientProvider.loadClients()
+                      : supplierProvider.loadSuppliers(),
                 ),
-                CommandBarSeparator(),
+                const CommandBarSeparator(),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.download),
-                  label: const Text('Import'),
-                  onPressed: () => _showImportDialog(context),
+                  label: Text(l10n.import),
+                  onPressed: () => _showImportDialog(context, l10n),
                 ),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.upload),
-                  label: const Text('Export'),
-                  onPressed: () => _exportClients(context, clientProvider),
+                  label: Text(l10n.export),
+                  onPressed: () => _selectedIndex == 0
+                      ? _exportClients(context, clientProvider, l10n)
+                      : _exportSuppliers(context, supplierProvider, l10n),
                 ),
               ],
             ),
           ),
           children: [
-            // Statistics Cards
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    'Total Clients',
-                    '${clientProvider.totalClients}',
-                    FluentIcons.contact,
-                    Colors.blue,
+            // Tab Navigation
+            SizedBox(
+              height: 60,
+              child: TabView(
+                currentIndex: _selectedIndex,
+                onChanged: (index) => setState(() => _selectedIndex = index),
+                tabs: [
+                  Tab(
+                    text: Text(l10n.clients),
+                    icon: const Icon(FluentIcons.contact),
+                    body: const SizedBox.shrink(),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    'Active Clients',
-                    '${clientProvider.activeClients.length}',
-                    FluentIcons.check_mark,
-                    Colors.green,
+                  Tab(
+                    text: Text(l10n.suppliers),
+                    icon: const Icon(FluentIcons.people),
+                    body: const SizedBox.shrink(),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    'Companies',
-                    '${clientProvider.clients.where((c) => c.isCompany).length}',
-                    FluentIcons.city_next,
-                    Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatCard(
-                    context,
-                    'Individuals',
-                    '${clientProvider.clients.where((c) => !c.isCompany).length}',
-                    FluentIcons.people,
-                    Colors.purple,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // Filters and Search
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    // Search Box
-                    SizedBox(
-                      width: 300,
-                      child: TextBox(
-                        placeholder: 'Search clients...',
-                        prefix: const Icon(FluentIcons.search),
-                        onChanged: clientProvider.setSearchQuery,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Active Only Filter
-                    Checkbox(
-                      checked: clientProvider.showActiveOnly,
-                      onChanged: (value) =>
-                          clientProvider.setShowActiveOnly(value ?? true),
-                      content: const Text('Active only'),
-                    ),
-                    const Spacer(),
-
-                    // Clear Filters
-                    Button(
-                      onPressed: clientProvider.clearFilters,
-                      child: const Text('Clear Filters'),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
 
-            // Client List
-            if (clientProvider.isLoading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: ProgressRing(),
-                ),
-              )
-            else if (clientProvider.filteredClients.isEmpty)
-              _buildEmptyState(context)
+            // Content based on selected tab
+            if (_selectedIndex == 0)
+              ..._buildClientContent(context, clientProvider, l10n)
             else
-              _buildClientList(context, clientProvider),
-
-            // Error Display
-            if (clientProvider.lastError != null)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: InfoBar(
-                  title: const Text('Error'),
-                  content: Text(clientProvider.lastError!),
-                  severity: InfoBarSeverity.error,
-                ),
-              ),
+              ..._buildSupplierContent(context, supplierProvider, l10n),
           ],
         );
       },
     );
   }
 
-  Widget _buildStatCard(
-    BuildContext context,
-    String title,
-    String value,
-    IconData icon,
-    AccentColor color,
-  ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              FluentIcons.contact,
-              size: 64,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'No clients found',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Create your first client to get started',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () => _showCreateClientDialog(context),
-              child: const Text('Create Client'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildClientList(BuildContext context, ClientProvider clientProvider) {
-    return Card(
-      child: Column(
+  List<Widget> _buildClientContent(
+      BuildContext context, ClientProvider clientProvider, AppLocalizations l10n) {
+    return [
+      // Statistics Cards
+      Row(
         children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.1),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-            ),
-            child: const Row(
-              children: [
-                Expanded(
-                    flex: 3,
-                    child: Text('Name',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(
-                    flex: 2,
-                    child: Text('Contact',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(
-                    flex: 2,
-                    child: Text('Address',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(
-                    flex: 1,
-                    child: Text('Type',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(
-                    flex: 1,
-                    child: Text('Status',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-                SizedBox(
-                    width: 120,
-                    child: Text('Actions',
-                        style: TextStyle(fontWeight: FontWeight.w600))),
-              ],
+          Expanded(
+            child: _buildStatCard(
+              context,
+              l10n.totalClients,
+              '${clientProvider.totalClients}',
+              FluentIcons.contact,
+              Colors.blue,
             ),
           ),
-
-          // Client Items
-          ...clientProvider.filteredClients.map(
-              (client) => _buildClientItem(context, clientProvider, client)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              context,
+              l10n.activeClients,
+              '${clientProvider.activeClients.length}',
+              FluentIcons.check_mark,
+              Colors.green,
+            ),
+          ),
+          const SizedBox(width: 16),
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              context,
+              l10n.individuals,
+              '${clientProvider.clients.where((c) => !c.isCompany).length}',
+              FluentIcons.people,
+              Colors.purple,
+            ),
+          ),
         ],
       ),
-    );
+      const SizedBox(height: 24),
+
+      // Filters and Search
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Search Box
+              SizedBox(
+                width: 300,
+                child: TextBox(
+                  placeholder: l10n.searchClients,
+                  prefix: const Icon(FluentIcons.search),
+                  onChanged: clientProvider.setSearchQuery,
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Active Only Filter
+              Checkbox(
+                checked: clientProvider.showActiveOnly,
+                onChanged: (value) =>
+                    clientProvider.setShowActiveOnly(value ?? true),
+                content: Text(l10n.activeOnly),
+              ),
+              const Spacer(),
+
+              // Clear Filters
+              Button(
+                onPressed: clientProvider.clearFilters,
+                child: Text(l10n.clearFilters),
+              ),
+            ],
+          ),
+        ),
+      ),
+      const SizedBox(height: 16),
+
+      // Client List
+      if (clientProvider.isLoading)
+        const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: ProgressRing(),
+          ),
+        )
+      else if (clientProvider.filteredClients.isEmpty)
+        _buildEmptyState(context, l10n)
+      else
+        _buildClientList(context, clientProvider, l10n),
+
+      // Error Display
+      if (clientProvider.lastError != null)
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: InfoBar(
+            title: Text(l10n.error),
+            content: Text(clientProvider.lastError!),
+            severity: InfoBarSeverity.error,
+          ),
+        ),
+    ];
+  }
+
+  List<Widget> _buildSupplierContent(
+    BuildContext context, SupplierProvider supplierProvider, AppLocalizations l10n) {
+  return [
+    // Statistics Cards
+    Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            context,
+            l10n.totalSuppliers,
+            '${supplierProvider.totalSuppliers}',
+            FluentIcons.people,
+            Colors.blue,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            l10n.activeSuppliers,
+            '${supplierProvider.activeSuppliers.length}',
+            FluentIcons.check_mark,
+            Colors.green,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            l10n.companies,
+            '${supplierProvider.suppliers.where((s) => s.isCompany).length}',
+            FluentIcons.city_next,
+            Colors.orange,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _buildStatCard(
+            context,
+            l10n.individuals,
+            '${supplierProvider.suppliers.where((s) => !s.isCompany).length}',
+            FluentIcons.people,
+            Colors.purple,
+          ),
+        ),
+      ],
+    ),
+    const SizedBox(height: 24),
+
+    // Filters and Search
+    Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // Search Box
+            SizedBox(
+              width: 300,
+              child: TextBox(
+                placeholder: l10n.searchSuppliers,
+                prefix: const Icon(FluentIcons.search),
+                onChanged: supplierProvider.setSearchQuery,
+              ),
+            ),
+            const SizedBox(width: 16),
+
+            // Active Only Filter
+            Checkbox(
+              checked: supplierProvider.showActiveOnly,
+              onChanged: (value) =>
+                  supplierProvider.setShowActiveOnly(value ?? true),
+              content: Text(l10n.activeOnly),
+            ),
+            const Spacer(),
+
+            // Clear Filters
+            Button(
+              onPressed: supplierProvider.clearFilters,
+              child: Text(l10n.clearFilters),
+            ),
+          ],
+        ),
+      ),
+    ),
+    const SizedBox(height: 16),
+
+    // Supplier List
+    if (supplierProvider.isLoading)
+      const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: ProgressRing(),
+        ),
+      )
+    else if (supplierProvider.filteredSuppliers.isEmpty)
+      _buildEmptySupplierState(context, l10n)
+    else
+      _buildSupplierList(context, supplierProvider, l10n),
+
+    // Error Display
+    if (supplierProvider.lastError != null)
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: InfoBar(
+          title: Text(l10n.error),
+          content: Text(supplierProvider.lastError!),
+          severity: InfoBarSeverity.error,
+        ),
+      ),
+  ];
+  }
+
+  Widget _buildStatCard(
+  BuildContext context,
+  String title,
+  String value,
+  IconData icon,
+  AccentColor color,
+) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+  }
+
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            FluentIcons.contact,
+            size: 64,
+            color: Colors.grey,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.noClientsFound,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.createFirstClient,
+            style: TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: () => _showCreateClientDialog(context, l10n),
+            child: Text(l10n.createClient),
+          ),
+        ],
+      ),
+    ),
+  );
+  }
+
+  Widget _buildClientList(BuildContext context, ClientProvider clientProvider, AppLocalizations l10n) {
+  return Card(
+    child: Column(
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 3,
+                  child: Text(l10n.name,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 2,
+                  child: Text(l10n.contact,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 2,
+                  child: Text(l10n.address,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 1,
+                  child: Text(l10n.type,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 1,
+                  child: Text(l10n.status,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              SizedBox(
+                  width: 120,
+                  child: Text(l10n.actions,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+            ],
+          ),
+        ),
+
+        // Client Items
+        ...clientProvider.filteredClients
+            .map((client) => _buildClientItem(context, clientProvider, client, l10n)),
+      ],
+    ),
+  );
   }
 
   Widget _buildClientItem(
-      BuildContext context, ClientProvider clientProvider, Client client) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.withOpacity(0.2)),
-        ),
+    BuildContext context, ClientProvider clientProvider, Client client, AppLocalizations l10n) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(color: Colors.grey.withOpacity(0.2)),
       ),
-      child: Row(
-        children: [
-          // Name
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    ),
+    child: Row(
+      children: [
+        // Name
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                client.name,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              if (client.vat != null && client.vat!.isNotEmpty)
                 Text(
-                  client.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                if (client.vat != null && client.vat!.isNotEmpty)
-                  Text(
-                    'VAT: ${client.vat}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[100],
-                    ),
+                  '${l10n.vat}: ${client.vat}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[100],
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
+        ),
 
-          // Contact
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (client.email != null && client.email!.isNotEmpty)
-                  Text(client.email!, style: const TextStyle(fontSize: 13)),
-                if (client.phone != null && client.phone!.isNotEmpty)
-                  Text(client.phone!, style: const TextStyle(fontSize: 13)),
-                if (client.mobile != null && client.mobile!.isNotEmpty)
-                  Text(client.mobile!, style: const TextStyle(fontSize: 13)),
-              ],
-            ),
+        // Contact
+        Expanded(
+          flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (client.email != null && client.email!.isNotEmpty)
+                Text(client.email!, style: const TextStyle(fontSize: 13)),
+              if (client.phone != null && client.phone!.isNotEmpty)
+                Text(client.phone!, style: const TextStyle(fontSize: 13)),
+              if (client.mobile != null && client.mobile!.isNotEmpty)
+                Text(client.mobile!, style: const TextStyle(fontSize: 13)),
+            ],
           ),
+        ),
 
-          // Address
-          Expanded(
-            flex: 2,
+        // Address
+        Expanded(
+          flex: 2,
+          child: Text(
+            client.contactInfo.isNotEmpty
+                ? client.contactInfo
+                : l10n.noContactInfo,
+            style: const TextStyle(fontSize: 13),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+
+        // Type
+        Expanded(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: client.isCompany
+                  ? Colors.blue.withOpacity(0.1)
+                  : Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Text(
-              client.contactInfo.isNotEmpty
-                  ? client.contactInfo
-                  : 'No contact info',
-              style: const TextStyle(fontSize: 13),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              client.isCompany ? l10n.company : l10n.individual,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: client.isCompany ? Colors.blue : Colors.green,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
+        ),
 
-          // Type
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: client.isCompany
-                    ? Colors.blue.withOpacity(0.1)
-                    : Colors.green.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+        // Status
+        Expanded(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: client.active
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              client.active ? l10n.active : l10n.inactive,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: client.active ? Colors.green : Colors.red,
               ),
-              child: Text(
-                client.isCompany ? 'Company' : 'Individual',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: client.isCompany ? Colors.blue : Colors.green,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              textAlign: TextAlign.center,
             ),
           ),
+        ),
 
-          // Status
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: client.active
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.red.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+        // Actions
+        SizedBox(
+          width: 120,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(FluentIcons.edit, size: 16),
+                onPressed: () => _showEditClientDialog(context, client, l10n),
               ),
-              child: Text(
-                client.active ? 'Active' : 'Inactive',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: client.active ? Colors.green : Colors.red,
+              IconButton(
+                icon: Icon(
+                  client.active ? FluentIcons.blocked : FluentIcons.check_mark,
+                  size: 16,
                 ),
-                textAlign: TextAlign.center,
+                onPressed: () => clientProvider.toggleClientStatus(client),
               ),
-            ),
+              IconButton(
+                icon: const Icon(FluentIcons.delete, size: 16),
+                onPressed: () =>
+                    _showDeleteConfirmation(context, clientProvider, client, l10n),
+              ),
+            ],
           ),
-
-          // Actions
-          SizedBox(
-            width: 120,
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(FluentIcons.edit, size: 16),
-                  onPressed: () => _showEditClientDialog(context, client),
-                ),
-                IconButton(
-                  icon: Icon(
-                    client.active
-                        ? FluentIcons.blocked
-                        : FluentIcons.check_mark,
-                    size: 16,
-                  ),
-                  onPressed: () => clientProvider.toggleClientStatus(client),
-                ),
-                IconButton(
-                  icon: const Icon(FluentIcons.delete, size: 16),
-                  onPressed: () =>
-                      _showDeleteConfirmation(context, clientProvider, client),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
   }
 
-  void _showCreateClientDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const ClientFormDialog(),
-    );
+  void _showCreateClientDialog(BuildContext context, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => const ClientFormDialog(),
+  );
   }
 
-  void _showEditClientDialog(BuildContext context, Client client) {
-    showDialog(
-      context: context,
-      builder: (context) => ClientFormDialog(client: client),
-    );
+  void _showCreateSupplierDialog(BuildContext context, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => const SupplierFormDialog(),
+  );
+  }
+
+  void _showEditClientDialog(BuildContext context, Client client, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => ClientFormDialog(client: client),
+  );
+  }
+
+  void _showEditSupplierDialog(BuildContext context, Supplier supplier, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => SupplierFormDialog(supplier: supplier),
+  );
   }
 
   void _showDeleteConfirmation(
-      BuildContext context, ClientProvider provider, Client client) {
-    showDialog(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: const Text('Delete Client'),
-        content: Text('Are you sure you want to delete "${client.name}"?'),
-        actions: [
-          Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
+      BuildContext context, ClientProvider provider, Client client, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => ContentDialog(
+      title: Text(l10n.deleteClient),
+      content: Text(l10n.deleteClientConfirm(client.name)),
+      actions: [
+        Button(
+          child: Text(l10n.cancel),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        FilledButton(
+          child: Text(l10n.delete),
+          onPressed: () {
+            provider.deleteClient(client);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
+  }
+
+  void _showImportDialog(BuildContext context, AppLocalizations l10n) {
+  displayInfoBar(
+    context,
+    builder: (context, close) => InfoBar(
+      title: Text(l10n.importFunctionalityComingSoon),
+      severity: InfoBarSeverity.info,
+    ),
+  );
+  }
+
+  void _exportClients(BuildContext context, ClientProvider provider, AppLocalizations l10n) {
+  final data = provider.exportClientsToJson();
+  displayInfoBar(
+    context,
+    builder: (context, close) => InfoBar(
+      title: Text(l10n.exportedClients(data['total_count'])),
+      severity: InfoBarSeverity.success,
+    ),
+  );
+  }
+
+  void _exportSuppliers(BuildContext context, SupplierProvider provider, AppLocalizations l10n) {
+  final data = provider.exportSuppliersToJson();
+  displayInfoBar(
+    context,
+    builder: (context, close) => InfoBar(
+      title: Text(l10n.exportedSuppliers(data['total_count'])),
+      severity: InfoBarSeverity.success,
+    ),
+  );
+  }
+
+  Widget _buildEmptySupplierState(BuildContext context, AppLocalizations l10n) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            FluentIcons.people,
+            size: 64,
+            color: Colors.grey,
           ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.noSuppliersFound,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.createFirstSupplier,
+            style: TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 16),
           FilledButton(
-            child: const Text('Delete'),
-            onPressed: () {
-              provider.deleteClient(client);
-              Navigator.of(context).pop();
-            },
+            onPressed: () => _showCreateSupplierDialog(context, l10n),
+            child: Text(l10n.createSupplier),
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 
-  void _showImportDialog(BuildContext context) {
-    displayInfoBar(
-      context,
-      builder: (context, close) => const InfoBar(
-        title: Text('Import functionality coming soon'),
-        severity: InfoBarSeverity.info,
-      ),
-    );
+  Widget _buildSupplierList(
+      BuildContext context, SupplierProvider supplierProvider, AppLocalizations l10n) {
+  return Card(
+    child: Column(
+      children: [
+        // Header
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                  flex: 3,
+                  child: Text(l10n.name,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 2,
+                  child: Text(l10n.contact,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 2,
+                  child: Text(l10n.address,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 1,
+                  child: Text(l10n.type,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              Expanded(
+                  flex: 1,
+                  child: Text(l10n.status,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+              SizedBox(
+                  width: 120,
+                  child: Text(l10n.actions,
+                      style: TextStyle(fontWeight: FontWeight.w600))),
+            ],
+          ),
+        ),
+
+        // Supplier Items
+        ...supplierProvider.filteredSuppliers.map((supplier) =>
+            _buildSupplierItem(context, supplierProvider, supplier, l10n)),
+      ],
+    ),
+  );
   }
 
-  void _exportClients(BuildContext context, ClientProvider provider) {
-    final data = provider.exportClientsToJson();
-    displayInfoBar(
-      context,
-      builder: (context, close) => InfoBar(
-        title: Text('Exported ${data['total_count']} clients'),
-        severity: InfoBarSeverity.success,
+  Widget _buildSupplierItem(BuildContext context,
+      SupplierProvider supplierProvider, Supplier supplier, AppLocalizations l10n) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      border: Border(
+        bottom: BorderSide(color: Colors.grey.withOpacity(0.2)),
       ),
-    );
+    ),
+    child: Row(
+      children: [
+        // Name
+        Expanded(
+          flex: 3,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                supplier.name,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              if (supplier.vat != null && supplier.vat!.isNotEmpty)
+                Text(
+                  '${l10n.vat}: ${supplier.vat}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[100],
+                  ),
+                ),
+            ],
+          ),
+        ),
+
+        // Contact
+        Expanded(
+          flex: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (supplier.email != null && supplier.email!.isNotEmpty)
+                Text(supplier.email!, style: const TextStyle(fontSize: 13)),
+              if (supplier.phone != null && supplier.phone!.isNotEmpty)
+                Text(supplier.phone!, style: const TextStyle(fontSize: 13)),
+              if (supplier.mobile != null && supplier.mobile!.isNotEmpty)
+                Text(supplier.mobile!, style: const TextStyle(fontSize: 13)),
+            ],
+          ),
+        ),
+
+        // Address
+        Expanded(
+          flex: 2,
+          child: Text(
+            supplier.contactInfo.isNotEmpty
+                ? supplier.contactInfo
+                : l10n.noContactInfo,
+            style: const TextStyle(fontSize: 13),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+
+        // Type
+        Expanded(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: supplier.isCompany
+                  ? Colors.blue.withOpacity(0.1)
+                  : Colors.green.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              supplier.isCompany ? l10n.company : l10n.individual,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: supplier.isCompany ? Colors.blue : Colors.green,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+
+        // Status
+        Expanded(
+          flex: 1,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: supplier.active
+                  ? Colors.green.withOpacity(0.1)
+                  : Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              supplier.active ? l10n.active : l10n.inactive,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: supplier.active ? Colors.green : Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+
+        // Actions
+        SizedBox(
+          width: 120,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(FluentIcons.edit, size: 16),
+                onPressed: () => _showEditSupplierDialog(context, supplier, l10n),
+              ),
+              IconButton(
+                icon: Icon(
+                  supplier.active
+                      ? FluentIcons.blocked
+                      : FluentIcons.check_mark,
+                  size: 16,
+                ),
+                onPressed: () =>
+                    supplierProvider.toggleSupplierStatus(supplier),
+              ),
+              IconButton(
+                icon: const Icon(FluentIcons.delete, size: 16),
+                onPressed: () => _showDeleteSupplierConfirmation(
+                    context, supplierProvider, supplier, l10n),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+  }
+
+  void _showDeleteSupplierConfirmation(
+      BuildContext context, SupplierProvider provider, Supplier supplier, AppLocalizations l10n) {
+  showDialog(
+    context: context,
+    builder: (context) => ContentDialog(
+      title: Text(l10n.deleteSupplier),
+      content: Text(l10n.deleteSupplierConfirm(supplier.name)),
+      actions: [
+        Button(
+          child: Text(l10n.cancel),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        FilledButton(
+          child: Text(l10n.delete),
+          onPressed: () {
+            provider.deleteSupplier(supplier.id!);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
   }
 }

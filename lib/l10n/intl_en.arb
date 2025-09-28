@@ -982,5 +982,320 @@
   "connecting": "Connecting",
   "@connecting": {
     "description": "Device connecting status"
+  },
+
+  "loadingOperationsHistory": "Loading Operations History",
+  "@loadingOperationsHistory": {
+    "description": "Title for loading operations history page"
+  },
+
+  "exportPdf": "Export PDF",
+  "@exportPdf": {
+    "description": "Export PDF button text"
+  },
+
+  "exportCsv": "Export CSV",
+  "@exportCsv": {
+    "description": "Export CSV button text"
+  },
+
+  "filterByMaterial": "Filter by material...",
+  "@filterByMaterial": {
+    "description": "Material filter placeholder"
+  },
+
+  "filterByDriver": "Filter by driver...",
+  "@filterByDriver": {
+    "description": "Driver filter placeholder"
+  },
+
+  "filterByPlate": "Filter by plate...",
+  "@filterByPlate": {
+    "description": "Truck plate filter placeholder"
+  },
+
+  "filterBySupplier": "Filter by supplier...",
+  "@filterBySupplier": {
+    "description": "Supplier filter placeholder"
+  },
+
+  "filterByClient": "Filter by client...",
+  "@filterByClient": {
+    "description": "Client filter placeholder"
+  },
+
+  "dateTime": "Date/Time",
+  "@dateTime": {
+    "description": "Date and time column header"
+  },
+
+  "netWeightKg": "Net Weight (kg)",
+  "@netWeightKg": {
+    "description": "Net weight in kg column header"
+  },
+
+  "operationsFound": "Operations History ({count} found)",
+  "@operationsFound": {
+    "description": "Operations found count message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "loadingOperations": "Loading operations...",
+  "@loadingOperations": {
+    "description": "Loading operations message"
+  },
+
+  "noOperationsFound": "No operations found for the selected criteria.",
+  "@noOperationsFound": {
+    "description": "No operations found message"
+  },
+
+  "statusCompleted": "Completed",
+  "@statusCompleted": {
+    "description": "Completed status option"
+  },
+
+  "statusIncomplete": "Incomplete",
+  "@statusIncomplete": {
+    "description": "Incomplete status option"
+  },
+
+  "statusInProgress": "In Progress",
+  "@statusInProgress": {
+    "description": "In progress status option"
+  },
+
+  "statusCancelled": "Cancelled",
+  "@statusCancelled": {
+    "description": "Cancelled status option"
+  },
+
+  "statusEmpty": "Empty",
+  "@statusEmpty": {
+    "description": "Empty status option"
+  },
+
+  "allStatuses": "All Statuses",
+  "@allStatuses": {
+    "description": "All statuses filter option"
+  },
+
+  "last7Days": "Last 7 Days",
+  "@last7Days": {
+    "description": "Last 7 days quick filter"
+  },
+
+  "last30Days": "Last 30 Days",
+  "@last30Days": {
+    "description": "Last 30 days quick filter"
+  },
+
+  "clearFilters": "Clear",
+  "@clearFilters": {
+    "description": "Clear filters button"
+  },
+
+  "clientManagement": "Client Management",
+  "@clientManagement": {
+    "description": "Client management page title"
+  },
+
+  "supplierManagement": "Supplier Management",
+  "@supplierManagement": {
+    "description": "Supplier management page title"
+  },
+
+  "newClient": "New Client",
+  "@newClient": {
+    "description": "New client button text"
+  },
+
+  "newSupplier": "New Supplier",
+  "@newSupplier": {
+    "description": "New supplier button text"
+  },
+
+  "import": "Import",
+  "@import": {
+    "description": "Import button text"
+  },
+
+  "export": "Export",
+  "@export": {
+    "description": "Export button text"
+  },
+
+  "totalClients": "Total Clients",
+  "@totalClients": {
+    "description": "Total clients statistics label"
+  },
+
+  "activeClients": "Active Clients",
+  "@activeClients": {
+    "description": "Active clients statistics label"
+  },
+
+  "totalSuppliers": "Total Suppliers",
+  "@totalSuppliers": {
+    "description": "Total suppliers statistics label"
+  },
+
+  "activeSuppliers": "Active Suppliers",
+  "@activeSuppliers": {
+    "description": "Active suppliers statistics label"
+  },
+
+  "companies": "Companies",
+  "@companies": {
+    "description": "Companies statistics label"
+  },
+
+  "individuals": "Individuals",
+  "@individuals": {
+    "description": "Individuals statistics label"
+  },
+
+  "searchClients": "Search clients...",
+  "@searchClients": {
+    "description": "Search clients placeholder"
+  },
+
+  "searchSuppliers": "Search suppliers...",
+  "@searchSuppliers": {
+    "description": "Search suppliers placeholder"
+  },
+
+  "activeOnly": "Active only",
+  "@activeOnly": {
+    "description": "Active only filter checkbox"
+  },
+
+  "contact": "Contact",
+  "@contact": {
+    "description": "Contact column header"
+  },
+
+  "address": "Address",
+  "@address": {
+    "description": "Address column header"
+  },
+
+  "type": "Type",
+  "@type": {
+    "description": "Type column header"
+  },
+
+  "actions": "Actions",
+  "@actions": {
+    "description": "Actions column header"
+  },
+
+  "company": "Company",
+  "@company": {
+    "description": "Company type label"
+  },
+
+  "individual": "Individual",
+  "@individual": {
+    "description": "Individual type label"
+  },
+
+  "noContactInfo": "No contact info",
+  "@noContactInfo": {
+    "description": "No contact info message"
+  },
+
+  "noClientsFound": "No clients found",
+  "@noClientsFound": {
+    "description": "No clients found message"
+  },
+
+  "createFirstClient": "Create your first client to get started",
+  "@createFirstClient": {
+    "description": "Create first client instruction"
+  },
+
+  "createClient": "Create Client",
+  "@createClient": {
+    "description": "Create client button text"
+  },
+
+  "noSuppliersFound": "No suppliers found",
+  "@noSuppliersFound": {
+    "description": "No suppliers found message"
+  },
+
+  "createFirstSupplier": "Create your first supplier to get started",
+  "@createFirstSupplier": {
+    "description": "Create first supplier instruction"
+  },
+
+  "createSupplier": "Create Supplier",
+  "@createSupplier": {
+    "description": "Create supplier button text"
+  },
+
+  "deleteClient": "Delete Client",
+  "@deleteClient": {
+    "description": "Delete client dialog title"
+  },
+
+  "deleteClientConfirm": "Are you sure you want to delete \"{name}\"?",
+  "@deleteClientConfirm": {
+    "description": "Delete client confirmation message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "deleteSupplier": "Delete Supplier",
+  "@deleteSupplier": {
+    "description": "Delete supplier dialog title"
+  },
+
+  "deleteSupplierConfirm": "Are you sure you want to delete \"{name}\"?",
+  "@deleteSupplierConfirm": {
+    "description": "Delete supplier confirmation message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "importFunctionalityComingSoon": "Import functionality coming soon",
+  "@importFunctionalityComingSoon": {
+    "description": "Import coming soon message"
+  },
+
+  "exportedClients": "Exported {count} clients",
+  "@exportedClients": {
+    "description": "Exported clients success message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "exportedSuppliers": "Exported {count} suppliers",
+  "@exportedSuppliers": {
+    "description": "Exported suppliers success message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "vat": "VAT",
+  "@vat": {
+    "description": "VAT label"
   }
 }

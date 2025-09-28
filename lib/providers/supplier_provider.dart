@@ -8,20 +8,35 @@ class SupplierProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _lastError;
   String _searchQuery = '';
+  bool _showActiveOnly = true;
 
   List<Supplier> get suppliers => List.unmodifiable(_suppliers);
   bool get isLoading => _isLoading;
   String? get lastError => _lastError;
   String get searchQuery => _searchQuery;
+  bool get showActiveOnly => _showActiveOnly;
+
+  int get totalSuppliers => _suppliers.length;
+  List<Supplier> get activeSuppliers => _suppliers.where((s) => s.active).toList();
 
   List<Supplier> get filteredSuppliers {
-    if (_searchQuery.isEmpty) return _suppliers;
+    var suppliers = _suppliers;
 
-    return _suppliers.where((supplier) {
-      return supplier.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-             (supplier.phone?.contains(_searchQuery) ?? false) ||
-             (supplier.city?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
-    }).toList();
+    // Filter by active status if enabled
+    if (_showActiveOnly) {
+      suppliers = suppliers.where((supplier) => supplier.active).toList();
+    }
+
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      suppliers = suppliers.where((supplier) {
+        return supplier.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               (supplier.phone?.contains(_searchQuery) ?? false) ||
+               (supplier.city?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+      }).toList();
+    }
+
+    return suppliers;
   }
 
   Future<void> loadSuppliers() async {
@@ -120,6 +135,31 @@ class SupplierProvider extends ChangeNotifier {
   void setSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();
+  }
+
+  void setShowActiveOnly(bool showActiveOnly) {
+    _showActiveOnly = showActiveOnly;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _searchQuery = '';
+    _showActiveOnly = true;
+    notifyListeners();
+  }
+
+  Future<bool> toggleSupplierStatus(Supplier supplier) async {
+    final updatedSupplier = supplier.copyWith(active: !supplier.active);
+    return await updateSupplier(updatedSupplier);
+  }
+
+  Map<String, dynamic> exportSuppliersToJson() {
+    final data = {
+      'export_date': DateTime.now().toIso8601String(),
+      'total_count': _suppliers.length,
+      'suppliers': _suppliers.map((s) => s.toJson()).toList(),
+    };
+    return data;
   }
 
   void _sortSuppliers() {

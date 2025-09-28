@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:weighing_system/services/weight_service_isolate.dart';
+
 import 'package:weighing_system/utils/debugging_methods.dart';
-import '../services/weight_service_t.dart';
 
 class WeightProvider extends ChangeNotifier {
-  final WeightServiceT _weightService = WeightServiceT();
+  final WeightServiceIsolate _weightService = WeightServiceIsolate();
 
   // Current weight data
   String? _connectedPort;

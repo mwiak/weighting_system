@@ -383,5 +383,121 @@
 
   "scanning": "جاري البحث",
 
-  "connecting": "يجري التوصيل"
+  "connecting": "يجري التوصيل",
+
+  "loadingOperationsHistory": "سجل عمليات التحميل",
+
+  "exportPdf": "تصدير PDF",
+
+  "exportCsv": "تصدير CSV",
+
+  "filterByMaterial": "فلترة حسب المادة...",
+
+  "filterByDriver": "فلترة حسب السائق...",
+
+  "filterByPlate": "فلترة حسب رقم اللوحة...",
+
+  "filterBySupplier": "فلترة حسب المورد...",
+
+  "filterByClient": "فلترة حسب العميل...",
+
+  "dateTime": "التاريخ/الوقت",
+
+  "netWeightKg": "الوزن الصافي (كجم)",
+
+  "operationsFound": "سجل العمليات ({count} نتيجة)",
+
+  "loadingOperations": "جاري تحميل العمليات...",
+
+  "noOperationsFound": "لم يتم العثور على عمليات للمعايير المحددة.",
+
+  "statusCompleted": "مكتملة",
+
+  "statusIncomplete": "غير مكتملة",
+
+  "statusInProgress": "قيد التحميل",
+
+  "statusCancelled": "ملغية",
+
+  "statusEmpty": "فارغة",
+
+  "allStatuses": "جميع الحالات",
+
+  "last7Days": "آخر 7 أيام",
+
+  "last30Days": "آخر 30 يوم",
+
+  "clearFilters": "مسح",
+
+  "clientManagement": "إدارة العملاء",
+
+  "supplierManagement": "إدارة الموردين",
+
+  "newClient": "عميل جديد",
+
+  "newSupplier": "مورد جديد",
+
+  "import": "استيراد",
+
+  "export": "تصدير",
+
+  "totalClients": "إجمالي العملاء",
+
+  "activeClients": "العملاء النشطين",
+
+  "totalSuppliers": "إجمالي الموردين",
+
+  "activeSuppliers": "الموردين النشطين",
+
+  "companies": "الشركات",
+
+  "individuals": "الأفراد",
+
+  "searchClients": "البحث في العملاء...",
+
+  "searchSuppliers": "البحث في الموردين...",
+
+  "activeOnly": "النشطين فقط",
+
+  "contact": "جهة الاتصال",
+
+  "address": "العنوان",
+
+  "type": "النوع",
+
+  "actions": "الإجراءات",
+
+  "company": "شركة",
+
+  "individual": "فرد",
+
+  "noContactInfo": "لا توجد معلومات اتصال",
+
+  "noClientsFound": "لم يتم العثور على عملاء",
+
+  "createFirstClient": "أنشئ عميلك الأول للبدء",
+
+  "createClient": "إنشاء عميل",
+
+  "noSuppliersFound": "لم يتم العثور على موردين",
+
+  "createFirstSupplier": "أنشئ موردك الأول للبدء",
+
+  "createSupplier": "إنشاء مورد",
+
+  "deleteClient": "حذف العميل",
+
+  "deleteClientConfirm": "هل أنت متأكد من حذف \"{name}\"؟",
+
+  "deleteSupplier": "حذف المورد",
+
+  "deleteSupplierConfirm": "هل أنت متأكد من حذف \"{name}\"؟",
+
+  "importFunctionalityComingSoon": "وظيفة الاستيراد قريباً",
+
+  "exportedClients": "تم تصدير {count} عميل",
+
+  "exportedSuppliers": "تم تصدير {count} مورد",
+
+  "vat": "ضريبة القيمة المضافة"
 }

@@ -27,7 +27,7 @@ enum ConnectionStatus {
   error
 }
 
-class WeightServiceT extends ChangeNotifier {
+class WeightServiceNew extends ChangeNotifier {
   // Connection state
   ConnectionStatus status = ConnectionStatus.initial;
   void updateStatus(ConnectionStatus newState) {
@@ -75,7 +75,7 @@ class WeightServiceT extends ChangeNotifier {
   int get dataBits => _dataBits;
   int get parity => _parity;
 
-  WeightServiceT() {
+  WeightServiceNew() {
     // debugStatus();
     _startConnectionService();
   }
@@ -87,7 +87,7 @@ class WeightServiceT extends ChangeNotifier {
   }
 
   void _startConnectionService() {
-    debugPrint('WeightService: Starting connection service');
+    printd('attempting to connect to port');
     if (status == ConnectionStatus.initial) {
       _connectionTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
         if (status == ConnectionStatus.initial ||
@@ -121,7 +121,7 @@ class WeightServiceT extends ChangeNotifier {
       for (String port in _availablePorts) {
         if (status != ConnectionStatus.connected) {
           printd('trying port $port');
-          await _connectToPort(port);
+          await _connectToPort1(port);
         }
       }
     } else {
@@ -132,19 +132,18 @@ class WeightServiceT extends ChangeNotifier {
 
   Future<void> _connectToPort(String portName) async {
     try {
+      disconnect();
       updateStatus(ConnectionStatus.connecting);
       final port = SerialPort(portName);
-      final config = port.config;
-      config.baudRate = _baudRate;
-      config.bits = _dataBits;
-      config.parity = _parity == 0
-          ? SerialPortParity.none
-          : _parity == 1
-              ? SerialPortParity.odd
-              : SerialPortParity.even;
-      config.stopBits = _stopBits == 1 ? 1 : 2;
 
-      if (!port.openRead()) {
+      final config = SerialPortConfig()
+        ..baudRate = _baudRate
+        ..bits = _dataBits
+        ..stopBits = _stopBits
+        ..parity = SerialPortParity.none;
+      port.config = config;
+      final isOpen = port.openReadWrite();
+      if (!isOpen) {
         // Use openRead() since no writing is needed
         lastError = SerialPort.lastError.toString();
         updateStatus(ConnectionStatus.hasError);
@@ -175,6 +174,86 @@ class WeightServiceT extends ChangeNotifier {
       lastError = e.toString();
       updateStatus(ConnectionStatus.hasError);
       debugPrint('WeightService: Failed to connect to $portName: $e');
+    }
+  }
+
+  Future<void> _connectToPort1(String portName) async {
+    try {
+      // ensure previous connection is fully closed
+      disconnect(); // <--- IMPORTANT: await the cleanup
+      updateStatus(ConnectionStatus.connecting);
+
+      // quick diagnostics
+      debugPrint('Available ports: ${SerialPort.availablePorts}');
+      final port = SerialPort(portName);
+
+      // open read+write (some devices/Windows drivers require write access even if you only read)
+      final opened =
+          port.openReadWrite(); // try readWrite instead of openRead()
+      if (!opened) {
+        lastError = SerialPort.lastError?.toString() ??
+            'openReadWrite() returned false';
+        updateStatus(ConnectionStatus.hasError);
+        debugPrint('Failed to open port $portName: lastError=$lastError');
+        try {
+          port.dispose();
+        } catch (_) {}
+        return;
+      }
+
+      // double-check isOpen
+      debugPrint('port.isOpen after openReadWrite(): ${port.isOpen}');
+      if (port.isOpen != true) {
+        lastError = 'Port not open after openReadWrite()';
+        updateStatus(ConnectionStatus.hasError);
+        debugPrint('Failed: $lastError');
+        try {
+          port.close();
+          port.dispose();
+        } catch (_) {}
+        return;
+      }
+
+      // Get the current config, modify it, and re-apply (docs: port must be opened before changing settings).
+      final cfg = port.config; // getter from opened port
+      cfg.baudRate = _baudRate;
+      cfg.bits = _dataBits;
+      cfg.stopBits = _stopBits;
+      cfg.parity = SerialPortParity.none;
+      // optionally set flow control preset:
+      cfg.setFlowControl(SerialPortFlowControl.none);
+      port.config = cfg; // apply
+
+      // set up reader stream
+      _port = port;
+      _reader = SerialPortReader(_port!);
+      _subscription = _reader!.stream.listen(
+        _processData,
+        onError: (error) {
+          debugPrint('Stream error: $error');
+          _handleConnectionLost();
+        },
+        onDone: () {
+          debugPrint('Stream done');
+          _handleConnectionLost();
+        },
+      );
+
+      _connectedPort = portName;
+      _isConnected = true;
+      updateStatus(ConnectionStatus.connected);
+      debugPrint(
+          'WeightService: Connected to $portName (readWrite + SerialPortReader)');
+      notifyListeners();
+    } on SerialPortError catch (e) {
+      // libserialport surface error
+      lastError = SerialPort.lastError?.toString() ?? e.toString();
+      updateStatus(ConnectionStatus.hasError);
+      debugPrint('SerialPortError while connecting to $portName: $lastError');
+    } catch (e, st) {
+      lastError = e.toString();
+      updateStatus(ConnectionStatus.hasError);
+      debugPrint('WeightService: Failed to connect to $portName: $e\n$st');
     }
   }
 

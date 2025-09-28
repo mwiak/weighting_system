@@ -14,7 +14,7 @@ class WeightingOperationsView extends StatefulWidget {
 }
 
 class _WeightingOperationsViewState extends State<WeightingOperationsView> {
-  String _statusFilter = 'all'; // Show completed operations by default
+  String _statusFilter = 'all'; // Show all operations by default
   String _driverFilter = '';
   String _truckFilter = '';
   String _clientFilter = '';
@@ -58,6 +58,11 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       debugPrint('Found ${operations.length} operations');
       if (operations.isNotEmpty) {
         debugPrint('Sample operation data: ${operations.first}');
+        // Show all available statuses for debugging
+        final statuses = operations.map((op) => op['status']).toSet();
+        debugPrint('Available statuses in results: $statuses');
+      } else {
+        debugPrint('No operations found - this might indicate the issue');
       }
 
       setState(() => _operations = operations);
@@ -70,27 +75,27 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
 
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context)!; // Commented out - localization not available
+    final l10n = AppLocalizations.of(context)!;
 
     return ScaffoldPage.scrollable(
       header: PageHeader(
-        title: const Text('Loading Operations History'),
+        title: Text(l10n.loadingOperationsHistory),
         commandBar: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.refresh),
-              label: const Text('Refresh'),
+              label: Text(l10n.refresh),
               onPressed: _loadOperations,
             ),
             CommandBarSeparator(),
             CommandBarButton(
               icon: const Icon(FluentIcons.download),
-              label: const Text('Export PDF'),
+              label: Text(l10n.exportPdf),
               onPressed: _exportToPdf,
             ),
             CommandBarButton(
               icon: const Icon(FluentIcons.excel_document),
-              label: const Text('Export CSV'),
+              label: Text(l10n.exportCsv),
               onPressed: _exportToCsv,
             ),
           ],
@@ -114,28 +119,28 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Status:'),
+                          Text(l10n.status + ':'),
                           const SizedBox(height: 4),
                           ComboBox<String>(
                             value: _statusFilter,
                             items: [
-                              const ComboBoxItem<String>(
-                                  value: 'completed', child: Text('مكتملة')),
-                              const ComboBoxItem<String>(
+                              ComboBoxItem<String>(
+                                  value: 'completed', child: Text(l10n.statusCompleted)),
+                              ComboBoxItem<String>(
                                   value: 'incomplete',
-                                  child: Text('غير مكتملة')),
-                              const ComboBoxItem<String>(
+                                  child: Text(l10n.statusIncomplete)),
+                              ComboBoxItem<String>(
                                   value: 'in-progress',
-                                  child: Text('قيد التحميل')),
-                              const ComboBoxItem<String>(
-                                  value: 'cancelled', child: Text('ملغية')),
-                              const ComboBoxItem<String>(
-                                  value: 'empty', child: Text('فارغة')),
-                              const ComboBoxItem<String>(
-                                  value: 'all', child: Text('جميع الحالات')),
+                                  child: Text(l10n.statusInProgress)),
+                              ComboBoxItem<String>(
+                                  value: 'cancelled', child: Text(l10n.statusCancelled)),
+                              ComboBoxItem<String>(
+                                  value: 'empty', child: Text(l10n.statusEmpty)),
+                              ComboBoxItem<String>(
+                                  value: 'all', child: Text(l10n.allStatuses)),
                             ],
                             onChanged: (value) => setState(
-                                () => _statusFilter = value ?? 'completed'),
+                                () => _statusFilter = value ?? 'all'),
                           ),
                         ],
                       ),
@@ -145,10 +150,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Material:'),
+                          Text(l10n.material + ':'),
                           const SizedBox(height: 4),
                           AutoCompleteFilterComboBox(
-                            placeholder: 'Filter by material...',
+                            placeholder: l10n.filterByMaterial,
                             onChanged: (value) =>
                                 setState(() => _materialFilter = value),
                             value: _materialFilter,
@@ -163,10 +168,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Driver Name:'),
+                          Text(l10n.driverName + ':'),
                           const SizedBox(height: 4),
                           AutoCompleteFilterComboBox(
-                            placeholder: 'Filter by driver...',
+                            placeholder: l10n.filterByDriver,
                             onChanged: (value) =>
                                 setState(() => _driverFilter = value),
                             value: _driverFilter,
@@ -187,10 +192,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Truck Plate:'),
+                          Text(l10n.truckPlate + ':'),
                           const SizedBox(height: 4),
                           AutoCompleteFilterComboBox(
-                            placeholder: 'Filter by plate...',
+                            placeholder: l10n.filterByPlate,
                             onChanged: (value) =>
                                 setState(() => _truckFilter = value),
                             value: _truckFilter,
@@ -206,10 +211,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Supplier:'),
+                          Text(l10n.supplier + ':'),
                           const SizedBox(height: 4),
                           AutoCompleteFilterComboBox(
-                            placeholder: 'Filter by supplier...',
+                            placeholder: l10n.filterBySupplier,
                             onChanged: (value) =>
                                 setState(() => _supplierFilter = value),
                             value: _supplierFilter,
@@ -223,10 +228,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Client:'),
+                          Text(l10n.client + ':'),
                           const SizedBox(height: 4),
                           AutoCompleteFilterComboBox(
-                            placeholder: 'Filter by client...',
+                            placeholder: l10n.filterByClient,
                             onChanged: (value) =>
                                 setState(() => _clientFilter = value),
                             value: _clientFilter,
@@ -248,7 +253,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Start Date:'),
+                          Text(l10n.startDate + ':'),
                           const SizedBox(height: 4),
                           DatePicker(
                             selected: _startDate,
@@ -263,7 +268,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('End Date:'),
+                          Text(l10n.endDate + ':'),
                           const SizedBox(height: 4),
                           DatePicker(
                             selected: _endDate,
@@ -279,7 +284,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       children: [
                         const SizedBox(height: 20), // Align with date pickers
                         Button(
-                          child: const Text('Last 7 Days'),
+                          child: Text(l10n.last7Days),
                           onPressed: () => setState(() {
                             _endDate = DateTime.now();
                             _startDate =
@@ -293,7 +298,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       children: [
                         const SizedBox(height: 20),
                         Button(
-                          child: const Text('Last 30 Days'),
+                          child: Text(l10n.last30Days),
                           onPressed: () => setState(() {
                             _endDate = DateTime.now();
                             _startDate =
@@ -311,12 +316,12 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                   children: [
                     FilledButton(
                       onPressed: _loadOperations,
-                      child: const Text('Apply Filters'),
+                      child: Text(l10n.applyFilters),
                     ),
                     const SizedBox(width: 8),
                     Button(
                       onPressed: _clearFilters,
-                      child: const Text('Clear'),
+                      child: Text(l10n.clearFilters),
                     ),
                   ],
                 ),
@@ -334,7 +339,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Operations History (${_operations.length} found)',
+                  l10n.operationsFound(_operations.length),
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
                 const SizedBox(height: 12),
@@ -349,43 +354,43 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       topRight: Radius.circular(8),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
                       Expanded(
                           flex: 2,
-                          child: Text('Order #',
+                          child: Text(l10n.orderNumber,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Date/Time',
+                          child: Text(l10n.dateTime,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Truck Plate',
+                          child: Text(l10n.truckPlate,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Driver',
+                          child: Text(l10n.driverName,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Client',
+                          child: Text(l10n.client,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Supplier',
+                          child: Text(l10n.supplier,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 2,
-                          child: Text('Material',
+                          child: Text(l10n.material,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 1,
-                          child: Text('Net Weight (kg)',
+                          child: Text(l10n.netWeightKg,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 1,
-                          child: Text('Status',
+                          child: Text(l10n.status,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                     ],
                   ),
@@ -395,12 +400,12 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                 if (_isLoading)
                   Container(
                     padding: const EdgeInsets.all(48),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         children: [
-                          ProgressRing(),
-                          SizedBox(height: 16),
-                          Text('Loading operations...'),
+                          const ProgressRing(),
+                          const SizedBox(height: 16),
+                          Text(l10n.loadingOperations),
                         ],
                       ),
                     ),
@@ -408,9 +413,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                 else if (_operations.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(48),
-                    child: const Center(
-                      child: Text(
-                          'No operations found for the selected criteria.'),
+                    child: Center(
+                      child: Text(l10n.noOperationsFound),
                     ),
                   )
                 else
@@ -418,7 +422,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       .take(50)
                       .map((operation) => Container(
                             key: ValueKey(
-                                'operation_${operation['id'] ?? operation['operation_id'] ?? DateTime.now().millisecondsSinceEpoch}'),
+                                'operation_${operation['id'] ?? operation['tab_id'] ?? DateTime.now().millisecondsSinceEpoch}'),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               border: Border(
@@ -431,7 +435,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                                 Expanded(
                                     flex: 2,
                                     child: Text(
-                                        '${operation['tab_id'] ?? operation['id'] ?? ''}')),
+                                        '${operation['id'] ?? operation['tab_id'] ?? ''}')),
                                 Expanded(
                                     flex: 2,
                                     child: Text(_formatDateTime(
@@ -569,6 +573,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   }
 
   void _exportToPdf() async {
+    final l10n = AppLocalizations.of(context)!;
     final reportProvider = context.read<ReportProvider>();
     final filePath = await reportProvider.exportOrdersHistoryToPDF(
       operations: _operations,
@@ -588,8 +593,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       displayInfoBar(
         context,
         builder: (context, close) => InfoBar(
-          title: const Text('Export Successful'),
-          content: Text('PDF saved to: $filePath'),
+          title: Text(l10n.exportSuccessful),
+          content: Text(l10n.pdfSavedTo(filePath)),
           severity: InfoBarSeverity.success,
           action: IconButton(
             icon: const Icon(FluentIcons.clear),
@@ -601,6 +606,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   }
 
   void _exportToCsv() async {
+    final l10n = AppLocalizations.of(context)!;
     final reportProvider = context.read<ReportProvider>();
     final filePath = await reportProvider.exportOrdersHistoryToCSV(
       operations: _operations,
@@ -620,8 +626,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       displayInfoBar(
         context,
         builder: (context, close) => InfoBar(
-          title: const Text('Export Successful'),
-          content: Text('CSV saved to: $filePath'),
+          title: Text(l10n.exportSuccessful),
+          content: Text(l10n.csvSavedTo(filePath)),
           severity: InfoBarSeverity.success,
           action: IconButton(
             icon: const Icon(FluentIcons.clear),

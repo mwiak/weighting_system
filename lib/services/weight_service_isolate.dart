@@ -1,13 +1,77 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:nativewrappers/_internal/vm/lib/isolate_patch.dart';
+import 'dart:isolate'; // Required for Isolate communication
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
 import 'package:flutter_libserialport/flutter_libserialport.dart';
-import 'dart:isolate' as iso;
 
+// -----------------------------------------------------------------
+// TOP-LEVEL ISOLATE FUNCTION
+// -----------------------------------------------------------------
+
+/// This function runs in a separate Isolate.
+/// It's a top-level function, not a method of the class.
+/// It continuously reads from the serial port and sends parsed data back to the main app.
+void _readLoop(Map<String, dynamic> args) {
+  final SendPort sendPort = args['sendPort'];
+  final int comHandle = args['comHandle'];
+
+  final kernel32 = DynamicLibrary.open('kernel32.dll');
+  final readFile = kernel32.lookupFunction<
+      Int32 Function(IntPtr, Pointer<Uint8>, Int32, Pointer<Uint32>, IntPtr),
+      int Function(int, Pointer<Uint8>, int, Pointer<Uint32>, int)>('ReadFile');
+
+  final buffer = calloc<Uint8>(64);
+  final bytesRead = calloc<Uint32>(1);
+
+  while (true) {
+    // This is a BLOCKING call. The Isolate will sleep here until data arrives.
+    final result = readFile(comHandle, buffer, 64, bytesRead, 0);
+
+    if (result != 0 && bytesRead.value > 0) {
+      final data = String.fromCharCodes(buffer.asTypedList(bytesRead.value));
+
+      try {
+        final lines = data.trim().split('\n');
+        if (lines.isEmpty) continue;
+
+        for (final line in lines.reversed) {
+          if (line.length == 17) {
+            // Your specific check for a valid data line
+            // Your original parsing logic
+            final RegExp weightRegex =
+                RegExp(r'[+-]?\d{1,6}(?=\s*KG|$)', caseSensitive: false);
+            final match = weightRegex.firstMatch(line);
+            if (match != null) {
+              final weightStr = match.group(0)!;
+              final weight = int.tryParse(weightStr);
+              if (weight != null && weight >= -999999 && weight <= 999999) {
+                // Send the valid weight back to the main thread
+                sendPort.send(weight);
+                break; // Found the last valid weight in this batch
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // sendPort.send({'error': e.toString()});
+      }
+    } else {
+      // ReadFile failed, connection might be lost.
+      sendPort.send({'error': 'Connection lost during read'});
+      break;
+    }
+  }
+
+  calloc.free(buffer);
+  calloc.free(bytesRead);
+}
+
+// -----------------------------------------------------------------
+// ENUMS AND STRUCT DEFINITIONS (Unchanged)
+// -----------------------------------------------------------------
 enum WeightServiceError {
   portNotFound,
   configurationFailed,
@@ -35,53 +99,42 @@ enum ConnectionStatus {
 final class DCB extends Struct {
   @Uint32()
   external int DCBlength;
-
   @Uint32()
   external int BaudRate;
-
   @Uint32()
-  external int Flags; // bitfields, treat as uint32 for simplicity
-
+  external int Flags;
   @Uint16()
   external int wReserved;
-
   @Uint16()
   external int XonLim;
-
   @Uint16()
   external int XoffLim;
-
   @Uint8()
   external int ByteSize;
-
   @Uint8()
   external int Parity;
-
   @Uint8()
   external int StopBits;
-
   @Int8()
   external int XonChar;
-
   @Int8()
   external int XoffChar;
-
   @Int8()
   external int ErrorChar;
-
   @Int8()
   external int EofChar;
-
   @Int8()
   external int EvtChar;
-
   @Uint16()
   external int wReserved1;
 }
 
-class WeightServiceTry extends ChangeNotifier {
-  // Connection state
+// -----------------------------------------------------------------
+// WEIGHT SERVICE CLASS
+// -----------------------------------------------------------------
 
+class WeightServiceIsolate extends ChangeNotifier {
+  // Connection state
   ConnectionStatus status = ConnectionStatus.initial;
   void updateStatus(ConnectionStatus newState) {
     status = newState;
@@ -95,25 +148,25 @@ class WeightServiceTry extends ChangeNotifier {
 
   // Timers
   Timer? _connectionTimer;
-  Timer? _readTimer;
+  // Timer? _readTimer; // REMOVED
 
-  // Settings
+  // Isolate communication
+  Isolate? _readIsolate;
+  ReceivePort? _receivePort;
+
+  // Settings (These are the defaults you had)
   String _selectedPort = 'auto';
   int _baudRate = 9600;
   int _stopBits = 1;
   int _dataBits = 8;
-  int _parity = 0; // 0=none, 1=odd, 2=even
+  int _parity = 0; // 0=none
 
   // Platform-specific handles
   int? _comHandle;
 
-  // Available ports for auto-discovery
+  // Available ports
   static List<String> _availablePorts = [];
-
   int _currentPortIndex = 0;
-  late iso.ReceivePort _receivePort;
-  iso.Isolate? isolate;
-  //errors
   String? lastError;
 
   /// Getters
@@ -127,22 +180,8 @@ class WeightServiceTry extends ChangeNotifier {
   int get dataBits => _dataBits;
   int get parity => _parity;
 
-  WeightServiceT() {
-    // debugStatus();
+  WeightServiceIsolate() {
     _startConnectionService();
-  }
-
-  Future<void> startIsolate() async {
-    _receivePort = iso.ReceivePort();
-    isolate = await iso.Isolate.spawn((v) {}, _receivePort.sendPort);
-
-    _receivePort.listen((value) {});
-  }
-
-  void debugStatus() {
-    Timer.periodic(const Duration(milliseconds: 100), (_) {
-      printd(status.toString());
-    });
   }
 
   void _startConnectionService() {
@@ -151,24 +190,15 @@ class WeightServiceTry extends ChangeNotifier {
       _connectionTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
         if (status == ConnectionStatus.initial ||
             status == ConnectionStatus.reconnecting) {
-          printd('attempting to connect to port');
           _attemptConnection();
         }
       });
     }
-
-    _readTimer = Timer.periodic(const Duration(milliseconds: 10), (_) {
-      if (status == ConnectionStatus.connected) {
-        _readWeight();
-      }
-    });
   }
 
   Future<void> _attemptConnection() async {
     if (status == ConnectionStatus.connected) return;
-    printd('attempting now');
     updateStatus(ConnectionStatus.scanning);
-
     try {
       if (_selectedPort == 'auto') {
         await _autoDiscoverDevice();
@@ -185,19 +215,16 @@ class WeightServiceTry extends ChangeNotifier {
     if (_availablePorts.isNotEmpty) {
       for (String port in _availablePorts) {
         if (status != ConnectionStatus.connected) {
-          printd('trying port $port');
           await _connectToPort(port);
         }
       }
     } else {
-      printd('no port found');
       updateStatus(ConnectionStatus.notFound);
     }
   }
 
   Future<void> _connectToPort(String portName) async {
     if (Platform.isWindows) {
-      printd('selection connect');
       await _connectWindows(portName);
     }
   }
@@ -217,34 +244,30 @@ class WeightServiceTry extends ChangeNotifier {
       final handle = createFile(
         portPath,
         0xC0000000, // GENERIC_READ | GENERIC_WRITE
-        0,
-        0,
-        3, // OPEN_EXISTING
-        0,
-        0,
+        0, 0, 3, // OPEN_EXISTING
+        0, 0,
       );
-      printd('handle: $handle');
 
       if (handle != -1) {
-        printd('configuring...');
+        // ** HERE ** We call your original, correct _configurePort method
         if (await _configurePort(kernel32, handle)) {
           _comHandle = handle;
           _connectedPort = portName;
           _isConnected = true;
           updateStatus(ConnectionStatus.connected);
           printd('WeightService: Connected to $portName');
+
+          _startReadIsolate(); // Start the isolate
+
           notifyListeners();
         } else {
           lastError = 'config_error';
           updateStatus(ConnectionStatus.notFound);
-
-          printd('failed configuring');
           final closeHandle = kernel32.lookupFunction<Int32 Function(IntPtr),
               int Function(int)>('CloseHandle');
           closeHandle(handle);
         }
       }
-
       calloc.free(portPath);
     } catch (e) {
       lastError = 'unknown_error';
@@ -253,6 +276,7 @@ class WeightServiceTry extends ChangeNotifier {
     }
   }
 
+  // ** THIS IS YOUR ORIGINAL, CORRECT METHOD, FULLY RESTORED **
   Future<bool> _configurePort(DynamicLibrary kernel32, int handle) async {
     try {
       final getDcb = kernel32.lookupFunction<
@@ -268,8 +292,7 @@ class WeightServiceTry extends ChangeNotifier {
 
       final dcb = calloc<DCB>();
       dcb.ref.DCBlength = sizeOf<DCB>(); // ✅ must set before GetCommState
-      printd(
-          "DCBlength = ${dcb.ref.DCBlength}, sizeOf<DCB>() = ${sizeOf<DCB>()}");
+
       // Fill in defaults
       if (getDcb(handle, dcb) == 0) {
         final err = getLastError();
@@ -280,10 +303,10 @@ class WeightServiceTry extends ChangeNotifier {
         return false;
       }
 
-      // Configure values
-      dcb.ref.BaudRate = _baudRate; // e.g. 9600
-      dcb.ref.ByteSize = _dataBits; // usually 8
-      dcb.ref.Parity = _parity; // 0 = none
+      // Configure values from our service state
+      dcb.ref.BaudRate = _baudRate;
+      dcb.ref.ByteSize = _dataBits;
+      dcb.ref.Parity = _parity;
       dcb.ref.StopBits = (_stopBits == 2 ? 2 : 0); // 0=1 stop, 2=2 stops
 
       // Enable binary mode
@@ -294,7 +317,6 @@ class WeightServiceTry extends ChangeNotifier {
       if (!success) {
         final err = getLastError();
         updateStatus(ConnectionStatus.replugError);
-
         printd('SetCommState failed: $err');
       }
 
@@ -305,107 +327,47 @@ class WeightServiceTry extends ChangeNotifier {
       return false;
     }
   }
+  // ** END OF RESTORED METHOD **
 
-  void _readWeight() {
-    if (status != ConnectionStatus.connected || _comHandle == null) return;
+  void _startReadIsolate() {
+    if (_readIsolate != null) return;
 
-    try {
-      final kernel32 = DynamicLibrary.open('kernel32.dll');
-      final readFile = kernel32.lookupFunction<
-          Int32 Function(
-              IntPtr, Pointer<Uint8>, Int32, Pointer<Uint32>, IntPtr),
-          int Function(
-              int, Pointer<Uint8>, int, Pointer<Uint32>, int)>('ReadFile');
-
-      final buffer = calloc<Uint8>(64);
-      final bytesRead = calloc<Uint32>(1);
-
-      final result = readFile(_comHandle!, buffer, 64, bytesRead, 0);
-
-      if (result != 0 && bytesRead.value > 0) {
-        final data = String.fromCharCodes(buffer.asTypedList(bytesRead.value));
-        printd("raw data string" + data);
-        List lines = data.split('\n').toList();
-        for (String line in lines) {
-          printd("line is:" + line);
-          printd("line lenght is:" + line.length.toString());
-          if (line.length == 17) {
-            final weight = _parseWeightFromData(line);
-            if (weight != null) {
-              printd('weight have been updated =================');
-              _currentWeight = weight;
-              notifyListeners();
-            }
-          }
+    _receivePort = ReceivePort();
+    _receivePort!.listen((message) {
+      if (message is int) {
+        // We received a valid weight
+        if (_currentWeight != message) {
+          _currentWeight = message;
+          notifyListeners();
         }
+      } else if (message is Map && message.containsKey('error')) {
+        // We received an error from the isolate
+        debugPrint(
+            'WeightService: Error from read isolate: ${message['error']}');
+        _handleConnectionLost();
       }
+    });
 
-      calloc.free(buffer);
-      calloc.free(bytesRead);
-    } catch (e) {
-      debugPrint('WeightService: Error reading weight: $e');
-      updateStatus(ConnectionStatus.hasError);
-
-      _handleConnectionLost();
-    }
+    Isolate.spawn(
+      _readLoop,
+      {
+        'sendPort': _receivePort!.sendPort,
+        'comHandle': _comHandle!,
+      },
+    ).then((isolate) {
+      _readIsolate = isolate;
+      printd('WeightService: Read isolate started.');
+    });
   }
 
-  void _readIsolateWeight() {
-    if (status != ConnectionStatus.connected || _comHandle == null) return;
-
-    try {
-      final kernel32 = DynamicLibrary.open('kernel32.dll');
-      final readFile = kernel32.lookupFunction<
-          Int32 Function(
-              IntPtr, Pointer<Uint8>, Int32, Pointer<Uint32>, IntPtr),
-          int Function(
-              int, Pointer<Uint8>, int, Pointer<Uint32>, int)>('ReadFile');
-
-      final buffer = calloc<Uint8>(64);
-      final bytesRead = calloc<Uint32>(1);
-
-      final result = readFile(_comHandle!, buffer, 64, bytesRead, 0);
-
-      if (result != 0 && bytesRead.value > 0) {
-        final data = String.fromCharCodes(buffer.asTypedList(bytesRead.value));
-        printd("raw data string" + data);
-        List lines = data.split('\n').toList();
-        for (String line in lines) {
-          printd("line is:" + line);
-          printd("line lenght is:" + line.length.toString());
-          if (line.length == 17) {
-            final weight = _parseWeightFromData(line);
-            if (weight != null) {
-              printd('weight have been updated =================');
-            }
-          }
-        }
-      }
-
-      calloc.free(buffer);
-      calloc.free(bytesRead);
-    } catch (e) {
-      debugPrint('WeightService: Error reading weight: $e');
+  void _stopReadIsolate() {
+    if (_readIsolate != null) {
+      _readIsolate!.kill(priority: Isolate.immediate);
+      _readIsolate = null;
+      printd('WeightService: Read isolate stopped.');
     }
-  }
-
-  int? _parseWeightFromData(String data) {
-    try {
-      final RegExp weightRegex =
-          RegExp(r'[+-]?\d{1,6}(?=\s*KG|$)', caseSensitive: false);
-      final match = weightRegex.firstMatch(data);
-      if (match != null) {
-        final weightStr = match.group(0)!;
-        final weight = int.tryParse(weightStr);
-        if (weight != null && weight >= -999999 && weight <= 999999) {
-          return weight;
-        }
-      }
-      return null;
-    } catch (e) {
-      debugPrint('WeightService: Error parsing weight data "$data": $e');
-      return null;
-    }
+    _receivePort?.close();
+    _receivePort = null;
   }
 
   void _handleConnectionLost() {
@@ -418,6 +380,8 @@ class WeightServiceTry extends ChangeNotifier {
   }
 
   void disconnect() {
+    _stopReadIsolate(); // Stop the isolate first
+
     if (_comHandle != null && Platform.isWindows) {
       try {
         final kernel32 = DynamicLibrary.open('kernel32.dll');
@@ -425,7 +389,6 @@ class WeightServiceTry extends ChangeNotifier {
             kernel32.lookupFunction<Int32 Function(IntPtr), int Function(int)>(
                 'CloseHandle');
         closeHandle(_comHandle!);
-        status = ConnectionStatus.disconnected;
       } catch (e) {
         debugPrint('WeightService: Error closing handle: $e');
         status = ConnectionStatus.hasError;
@@ -436,6 +399,9 @@ class WeightServiceTry extends ChangeNotifier {
     _isConnected = false;
     _connectedPort = null;
     _currentWeight = 0;
+    if (status != ConnectionStatus.disconnected) {
+      updateStatus(ConnectionStatus.disconnected);
+    }
     debugPrint('WeightService: Disconnected');
     notifyListeners();
   }
@@ -445,6 +411,8 @@ class WeightServiceTry extends ChangeNotifier {
     if (status == ConnectionStatus.reconnecting) return;
     updateStatus(ConnectionStatus.reconnecting);
   }
+
+  // --- Other methods (unchanged) ---
 
   void updateSettings({
     String? port,
@@ -480,7 +448,6 @@ class WeightServiceTry extends ChangeNotifier {
     if (needsReconnect && _isConnected) {
       disconnect();
     }
-
     notifyListeners();
   }
 
@@ -496,7 +463,6 @@ class WeightServiceTry extends ChangeNotifier {
   void dispose() {
     debugPrint('WeightService: Disposing service');
     _connectionTimer?.cancel();
-    _readTimer?.cancel();
     disconnect();
     super.dispose();
   }

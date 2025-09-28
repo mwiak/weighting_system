@@ -6,7 +6,7 @@ import 'package:flutter_libserialport/flutter_libserialport.dart';
 
 import '../utils/debugging_methods.dart';
 
-class WeightServiceLib extends ChangeNotifier {
+class WeightServiceLibserial extends ChangeNotifier {
   // Connection state
   bool _isConnected = false;
   bool _isScanning = false;

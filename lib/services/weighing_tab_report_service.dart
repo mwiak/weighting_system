@@ -354,6 +354,9 @@ class WeighingTabReportService {
     params.add(startDate.toIso8601String().split('T')[0]);
     params.add(endDate.toIso8601String().split('T')[0]);
 
+    // Always include closed tabs in history (completed operations)
+    whereConditions.add('is_closed = 1');
+
     // Add filters
 
     if (status != null && status.isNotEmpty && status != 'all') {
