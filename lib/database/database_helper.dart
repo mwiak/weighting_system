@@ -173,8 +173,7 @@ class DatabaseHelper {
         is_paid INTEGER DEFAULT 0,
         show_price_on_print INTEGER DEFAULT 0,
         has_unsaved_changes INTEGER DEFAULT 0,
-        status TEXT DEFAULT 'incomplete',
-        is_closed INTEGER DEFAULT 0,
+        status TEXT DEFAULT 'in-progress',
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -234,8 +233,6 @@ class DatabaseHelper {
         'CREATE INDEX idx_weighing_tabs_truck ON weighing_tabs (truck_plate)');
     await db.execute(
         'CREATE INDEX idx_weighing_tabs_status ON weighing_tabs (status)');
-    await db.execute(
-        'CREATE INDEX idx_weighing_tabs_closed ON weighing_tabs (is_closed)');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -245,6 +242,11 @@ class DatabaseHelper {
   // Generic CRUD operations
   Future<int> insert(String table, Map<String, dynamic> data) async {
     final db = await database;
+    // For weighing_tabs, use abort to prevent data corruption
+    if (table == 'weighing_tabs') {
+      return await db.insert(table, data,
+          conflictAlgorithm: ConflictAlgorithm.abort);
+    }
     return await db.insert(table, data,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }

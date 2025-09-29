@@ -203,7 +203,7 @@ class WeighingTabList extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (tab.isEmpty)
+                if (!tab.hasData)
                   FilledButton(
                     style: ButtonStyle(
                       padding: WidgetStateProperty.all(
@@ -273,7 +273,7 @@ class WeighingTabList extends StatelessWidget {
   // _getOperationIcon method removed - operation type no longer used
 
   String _getStatusDisplay(WeighingTab tab) {
-    if (tab.isEmpty) return 'Empty';
+    if (!tab.hasData) return 'Empty';
     if (tab.isInProgress) return 'In Progress';
     if (tab.isComplete) return 'Ready';
     if (tab.isCompleted) return 'Completed';
@@ -388,7 +388,7 @@ class WeighingTabList extends StatelessWidget {
                 _cancelTab(context, tabsProvider, tab);
               },
             ),
-            if (!tab.isEmpty) ...[
+            if (tab.hasData) ...[
               const SizedBox(height: 8),
               Button(
                 child: const Row(

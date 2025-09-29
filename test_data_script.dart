@@ -48,7 +48,6 @@ void main() async {
         'operation_type': 'loading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'is_closed': 1,
         'created_at': DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
         'updated_at': DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
       },
@@ -66,7 +65,6 @@ void main() async {
         'operation_type': 'unloading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'is_closed': 1,
         'created_at': DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
         'updated_at': DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
       },
@@ -84,7 +82,6 @@ void main() async {
         'operation_type': 'loading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'is_closed': 1,
         'created_at': DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
         'updated_at': DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
       }
@@ -102,7 +99,7 @@ void main() async {
     // Verify the data was added
     final completedTabs = await db.query(
       'weighing_tabs',
-      where: 'status = ? AND is_closed = 1',
+      where: 'status = ?',
       whereArgs: ['completed'],
     );
 

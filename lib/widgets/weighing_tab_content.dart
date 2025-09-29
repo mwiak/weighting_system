@@ -174,7 +174,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       whereArgs: [_tab?.material],
     );
     if (data.isNotEmpty) {
-      final price = data[0]['price'] as num;
+      final price = data[0]['price'] ?? 0.0;
       _kiloPriceController.text = price.toStringAsFixed(3);
       _tab?.kilo_price = price; // or as double/int
       print('Price: $price');

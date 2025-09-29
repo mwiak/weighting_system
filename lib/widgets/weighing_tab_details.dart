@@ -284,7 +284,7 @@ class WeighingTabDetails extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        if (tab.isEmpty) ...[
+        if (!tab.hasData) ...[
           SizedBox(
             width: double.infinity,
             child: FilledButton(
@@ -415,7 +415,7 @@ class WeighingTabDetails extends StatelessWidget {
   // _getOperationColor method removed - operation type no longer used
 
   String _getStatusDisplay(WeighingTab tab) {
-    if (tab.isEmpty) return 'Empty';
+    if (!tab.hasData) return 'Empty';
     if (tab.isInProgress) return 'In Progress';
     if (tab.isComplete) return 'Ready to Complete';
     if (tab.isCompleted) return 'Completed';

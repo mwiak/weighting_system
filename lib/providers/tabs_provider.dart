@@ -36,8 +36,8 @@ class TabsProvider extends ChangeNotifier {
     try {
       final data = await _db.query(
         'weighing_tabs',
-        where: 'is_closed = ? AND status = ?',
-        whereArgs: [0, 'in-progress'],
+        where: 'status = ?',
+        whereArgs: ['in-progress'],
         orderBy: 'created_at ASC',
       );
 
@@ -66,21 +66,13 @@ class TabsProvider extends ChangeNotifier {
 
     final tab = WeighingTab();
 
-    try {
-      // Save to database immediately
-      final dbId = await _db.insert('weighing_tabs', tab.toMap());
-      tab.dbId = dbId;
+    // Don't save to database immediately - wait until user enters data
+    _tabs.add(tab);
+    _currentTabIndex = _tabs.length - 1;
 
-      _tabs.add(tab);
-      _currentTabIndex = _tabs.length - 1;
-
-      notifyListeners();
-      debugPrint('TabsProvider: Created new tab with DB ID $dbId');
-      return true;
-    } catch (e) {
-      debugPrint('TabsProvider: Error creating tab: $e');
-      return false;
-    }
+    notifyListeners();
+    debugPrint('TabsProvider: Created new tab ${tab.id}');
+    return true;
   }
 
   /// Check if a new tab can be created
@@ -124,16 +116,9 @@ class TabsProvider extends ChangeNotifier {
 
     try {
       if (tab.dbId != null) {
-        // Mark as closed in database but keep the data
-        await _db.update(
-          'weighing_tabs',
-          {
-            'is_closed': 1,
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          where: 'id = ?',
-          whereArgs: [tab.dbId],
-        );
+        // Set status to cancelled and save to database
+        tab.cancelTab();
+        await _saveTabToDatabase(tab);
       }
 
       // Remove from active tabs
@@ -286,7 +271,13 @@ class TabsProvider extends ChangeNotifier {
     if (hasChanges) {
       tab.markAsChanged();
       tab.updateStatus(); // Update complete/incomplete status
-      await _saveTabToDatabase(tab);
+      try {
+        await _saveTabToDatabase(tab);
+      } catch (e) {
+        debugPrint('TabsProvider: Failed to save tab changes: $e');
+        // Revert the changes if database save fails
+        tab.hasUnsavedChanges = true;
+      }
       notifyListeners();
     }
   }
@@ -305,20 +296,43 @@ class TabsProvider extends ChangeNotifier {
   }
 
   Future<void> _saveTabToDatabase(WeighingTab tab) async {
-    if (tab.dbId == null) return;
-
     try {
-      await _db.update(
-        'weighing_tabs',
-        tab.toMap(),
-        where: 'id = ?',
-        whereArgs: [tab.dbId],
-      );
+      if (tab.dbId == null) {
+        // First time saving - insert into database
+        final tabData = tab.toMap();
+        tabData.remove('id'); // Remove id field for insert
+
+        try {
+          final dbId = await _db.insert('weighing_tabs', tabData);
+          tab.dbId = dbId;
+          debugPrint('TabsProvider: Inserted new tab ${tab.id} to database with ID $dbId');
+        } catch (insertError) {
+          // Handle unique constraint violation on tab_id
+          if (insertError.toString().contains('UNIQUE constraint failed')) {
+            debugPrint('TabsProvider: Tab ID ${tab.id} already exists, generating new ID');
+            // Tab ID conflict detected - this indicates static counter was reset
+            // The proper fix is to restart the app to reload tab numbering correctly
+            throw Exception('Tab ID conflict detected. Please restart the app to fix tab numbering.');
+          }
+          rethrow;
+        }
+      } else {
+        // Update existing record
+        final tabData = tab.toMap();
+        tabData.remove('id'); // Remove id field for update to avoid conflicts
+        await _db.update(
+          'weighing_tabs',
+          tabData,
+          where: 'id = ?',
+          whereArgs: [tab.dbId],
+        );
+        debugPrint('TabsProvider: Updated tab ${tab.id} in database');
+      }
 
       tab.markAsSaved();
-      debugPrint('TabsProvider: Saved tab ${tab.id} to database');
     } catch (e) {
       debugPrint('TabsProvider: Error saving tab: $e');
+      rethrow; // Re-throw to let caller handle the error
     }
   }
 
@@ -358,19 +372,8 @@ class TabsProvider extends ChangeNotifier {
       // Mark as completed
       tab.completeTab();
 
-      // Save to database and close the tab
-      if (tab.dbId != null) {
-        await _db.update(
-          'weighing_tabs',
-          {
-            'status': 'completed',
-            'is_closed': 1,
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          where: 'id = ?',
-          whereArgs: [tab.dbId],
-        );
-      }
+      // Save to database
+      await _saveTabToDatabase(tab);
 
       // Remove from active tabs
       _tabs.removeAt(index);
@@ -564,19 +567,8 @@ class TabsProvider extends ChangeNotifier {
       // Mark as cancelled
       tab.cancelTab();
 
-      // Save to database and close the tab
-      if (tab.dbId != null) {
-        await _db.update(
-          'weighing_tabs',
-          {
-            'status': tab.status, // Will be 'cancelled' or 'empty'
-            'is_closed': 1,
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          where: 'id = ?',
-          whereArgs: [tab.dbId],
-        );
-      }
+      // Save to database
+      await _saveTabToDatabase(tab);
 
       // Remove from active tabs
       _tabs.removeAt(index);
@@ -604,7 +596,7 @@ class TabsProvider extends ChangeNotifier {
     DateTime? endDate,
   }) async {
     try {
-      String whereClause = 'is_closed = 1';
+      String whereClause = "status IN ('completed', 'cancelled')";
       List<dynamic> whereArgs = [];
 
       if (statusFilter != null && statusFilter != 'all') {

@@ -734,7 +734,7 @@ class ReportService {
     }
 
     // Build WHERE conditions for weighing_tabs table
-    final tabWhereConditions = <String>['t.is_closed = 1', "t.status IN ('completed', 'cancelled', 'empty')"];
+    final tabWhereConditions = <String>["t.status IN ('completed', 'cancelled', 'in-progress')"];
     final tabParams = <dynamic>[];
     
     // Add date filter for tabs

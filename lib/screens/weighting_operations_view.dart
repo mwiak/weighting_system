@@ -125,17 +125,12 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                             value: _statusFilter,
                             items: [
                               ComboBoxItem<String>(
-                                  value: 'completed', child: Text(l10n.statusCompleted)),
-                              ComboBoxItem<String>(
-                                  value: 'incomplete',
-                                  child: Text(l10n.statusIncomplete)),
-                              ComboBoxItem<String>(
                                   value: 'in-progress',
                                   child: Text(l10n.statusInProgress)),
                               ComboBoxItem<String>(
-                                  value: 'cancelled', child: Text(l10n.statusCancelled)),
+                                  value: 'completed', child: Text(l10n.statusCompleted)),
                               ComboBoxItem<String>(
-                                  value: 'empty', child: Text(l10n.statusEmpty)),
+                                  value: 'cancelled', child: Text(l10n.statusCancelled)),
                               ComboBoxItem<String>(
                                   value: 'all', child: Text(l10n.allStatuses)),
                             ],

@@ -34,7 +34,7 @@ class WeighingTab {
   bool hasUnsavedChanges = false;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
-  String status = 'empty'; // 'empty', 'in-progress', 'completed', 'cancelled'
+  String status = 'in-progress'; // 'in-progress', 'completed', 'cancelled'
 
   // Computed properties
   int get netWeight => (grossWeight != 0 && emptyWeight != 0)
@@ -61,11 +61,7 @@ class WeighingTab {
   }
 
   bool get isInProgress {
-    return hasData && !isComplete;
-  }
-
-  bool get isEmpty {
-    return !hasData;
+    return status == 'in-progress';
   }
 
   bool get isCompleted {
@@ -92,18 +88,9 @@ class WeighingTab {
       return;
     }
 
-    String newStatus;
-    if (isEmpty) {
-      newStatus = 'empty';
-    } else if (isComplete) {
-      // Don't auto-complete, wait for explicit complete action
-      newStatus = 'in-progress';
-    } else {
-      newStatus = 'in-progress';
-    }
-
-    if (status != newStatus) {
-      status = newStatus;
+    // Always keep as in-progress until explicitly completed or cancelled
+    if (status != 'in-progress') {
+      status = 'in-progress';
       updatedAt = DateTime.now();
       hasUnsavedChanges = true;
     }
@@ -118,7 +105,7 @@ class WeighingTab {
   }
 
   void cancelTab() {
-    status = isEmpty ? 'empty' : 'cancelled';
+    status = 'cancelled';
     updatedAt = DateTime.now();
     hasUnsavedChanges = true;
   }
@@ -163,13 +150,13 @@ class WeighingTab {
     isPaid = false;
     showPriceOnPrint = true;
     hasUnsavedChanges = false;
-    status = 'empty';
+    status = 'in-progress';
     updatedAt = DateTime.now();
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': dbId,
+      'id': dbId, // Only include for updates, null for inserts
       'tab_id': id,
       'empty_weight': emptyWeight,
       'scale_empty_weight': scaleEmptyWeightAt?.toIso8601String() ?? '',
@@ -193,7 +180,12 @@ class WeighingTab {
   }
 
   factory WeighingTab.fromMap(Map<String, dynamic> map) {
-    final tab = WeighingTab._internal(map['tab_id'] as int? ?? _nextId++);
+    final tabId = map['tab_id'] as int? ?? _nextId++;
+    // Update static counter to prevent conflicts
+    if (tabId >= _nextId) {
+      _nextId = tabId + 1;
+    }
+    final tab = WeighingTab._internal(tabId);
     tab.dbId = map['id'] as int?;
     tab.emptyWeight = (map['empty_weight'] as num?)?.toInt() ?? 0;
     tab.scaleEmptyWeightAt = map['scale_empty_weight'] != null &&
@@ -216,7 +208,7 @@ class WeighingTab {
     tab.isPaid = (map['is_paid'] as int?) == 1;
     tab.showPriceOnPrint = (map['show_price_on_print'] as int?) == 1;
     tab.hasUnsavedChanges = false; // Always start as saved when loaded from DB
-    tab.status = map['status'] as String? ?? 'empty';
+    tab.status = map['status'] as String? ?? 'in-progress';
 
     if (map['created_at'] != null) {
       tab.createdAt = DateTime.parse(map['created_at'] as String);

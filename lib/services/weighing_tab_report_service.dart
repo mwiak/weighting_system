@@ -75,7 +75,7 @@ class WeighingTabReportService {
       final totalTabs = totalTabsResult.first['count'] as int;
 
       final activeTabsResult = await _db.rawQuery(
-        'SELECT COUNT(*) as count FROM weighing_tabs WHERE status = ? AND is_closed = 0 AND DATE(created_at) BETWEEN DATE(?) AND DATE(?)',
+        'SELECT COUNT(*) as count FROM weighing_tabs WHERE status = ? AND DATE(created_at) BETWEEN DATE(?) AND DATE(?)',
         [
           'in-progress',
           startDate.toIso8601String().split('T')[0],
@@ -354,8 +354,7 @@ class WeighingTabReportService {
     params.add(startDate.toIso8601String().split('T')[0]);
     params.add(endDate.toIso8601String().split('T')[0]);
 
-    // Always include closed tabs in history (completed operations)
-    whereConditions.add('is_closed = 1');
+    // Include all tabs in history (all statuses: in-progress, completed, cancelled)
 
     // Add filters
 
