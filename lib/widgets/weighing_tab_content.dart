@@ -6,7 +6,7 @@ import 'package:weighing_system/models/print_template.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'dart:async';
-// import 'package:weighing_system/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/weighing_tab.dart';
 import '../providers/weight_provider.dart';
 import '../providers/tabs_provider.dart';
@@ -46,6 +46,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   bool _emptyWeightFieldFocused = false;
   bool _grossWeightFieldFocused = false;
 
+  // Track last synced values to avoid unnecessary updates
+  WeighingTab? _lastSyncedTab;
+  bool _isUpdatingControllers = false;
+
   WeighingTab? get _tab {
     final provider = context.read<TabsProvider>();
     return widget.tabIndex < provider.tabs.length
@@ -61,7 +65,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       await _printService.printTemplateStandardPDFNewSilently(
           defaultTemplate, _tab!, null, null, null);
     } else {
-      _showInfoBar('could not find a tempalte', InfoBarSeverity.error);
+      _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
+          InfoBarSeverity.error);
     }
   }
 
@@ -72,7 +77,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       await _printService.saveTemplateStandardPDFNewSilently(
           defaultTemplate, _tab!, null, null, null);
     } else {
-      _showInfoBar('could not find a tempalte', InfoBarSeverity.error);
+      _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
+          InfoBarSeverity.error);
     }
   }
 
@@ -81,14 +87,14 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     myProvider = Provider.of<TabsProvider>(context, listen: false);
     myProvider.updateTab(widget.tabIndex, {'kilo_price': value});
     calculateTotalPrice();
-    print("Text changed: $value");
+    debugPrint("Text changed: $value");
   }
 
   void _onTotalPriceChanged() {
     final value = num.tryParse(_totalPriceController.text);
     myProvider = Provider.of<TabsProvider>(context, listen: false);
     myProvider.updateTab(widget.tabIndex, {'total_price': value});
-    print("Text changed: $value");
+    debugPrint("Text changed: $value");
   }
 
   @override
@@ -117,12 +123,89 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
         text: tab?.total_price.toStringAsFixed(2) ?? (0.0).toStringAsFixed(2));
     _kiloPriceController.addListener(_onKiloPriceChanged);
     _totalPriceController.addListener(_onTotalPriceChanged);
+
+    // Initialize last synced tab
+    _lastSyncedTab = tab;
+  }
+
+  /// Sync controllers with tab data efficiently
+  void _syncControllersWithTab(WeighingTab tab) {
+    if (_isUpdatingControllers) return;
+
+    // Check if tab data has actually changed
+    if (_lastSyncedTab != null && _tabDataEquals(_lastSyncedTab!, tab)) {
+      return;
+    }
+
+    _isUpdatingControllers = true;
+
+    try {
+      // Update weight controllers only if not focused
+      if (!_emptyWeightFieldFocused) {
+        final emptyWeightText =
+            tab.emptyWeight > 0 ? tab.emptyWeight.toString() : '';
+        if (_emptyWeightController.text != emptyWeightText) {
+          _emptyWeightController.text = emptyWeightText;
+        }
+      }
+
+      if (!_grossWeightFieldFocused) {
+        final grossWeightText =
+            tab.grossWeight > 0 ? tab.grossWeight.toString() : '';
+        if (_grossWeightController.text != grossWeightText) {
+          _grossWeightController.text = grossWeightText;
+        }
+      }
+
+      // Update business field controllers
+      if (_truckPlateController.text != tab.truckPlate) {
+        _truckPlateController.text = tab.truckPlate;
+      }
+      if (_driverNameController.text != tab.driverName) {
+        _driverNameController.text = tab.driverName;
+      }
+      if (_clientController.text != tab.client) {
+        _clientController.text = tab.client;
+      }
+      if (_supplierController.text != tab.supplier) {
+        _supplierController.text = tab.supplier;
+      }
+      if (_materialController.text != tab.material) {
+        _materialController.text = tab.material;
+      }
+
+      _lastSyncedTab = tab;
+    } finally {
+      _isUpdatingControllers = false;
+    }
+  }
+
+  /// Check if tab data has meaningfully changed
+  bool _tabDataEquals(WeighingTab tab1, WeighingTab tab2) {
+    return tab1.emptyWeight == tab2.emptyWeight &&
+        tab1.grossWeight == tab2.grossWeight &&
+        tab1.truckPlate == tab2.truckPlate &&
+        tab1.driverName == tab2.driverName &&
+        tab1.client == tab2.client &&
+        tab1.supplier == tab2.supplier &&
+        tab1.material == tab2.material &&
+        tab1.kilo_price == tab2.kilo_price &&
+        tab1.total_price == tab2.total_price;
   }
 
   @override
   void dispose() {
+    // Cancel timers first to prevent any pending operations
+    _emptyWeightDebounceTimer?.cancel();
+    _emptyWeightDebounceTimer = null;
+    _grossWeightDebounceTimer?.cancel();
+    _grossWeightDebounceTimer = null;
+
+    // Remove listeners before disposing controllers
     _kiloPriceController.removeListener(_onKiloPriceChanged);
     _totalPriceController.removeListener(_onTotalPriceChanged);
+
+    // Dispose all controllers
     _emptyWeightController.dispose();
     _grossWeightController.dispose();
     _truckPlateController.dispose();
@@ -132,8 +215,6 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     _materialController.dispose();
     _kiloPriceController.dispose();
     _totalPriceController.dispose();
-    _emptyWeightDebounceTimer?.cancel();
-    _grossWeightDebounceTimer?.cancel();
 
     super.dispose();
   }
@@ -142,11 +223,15 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     _emptyWeightDebounceTimer?.cancel();
     _emptyWeightDebounceTimer = Timer(const Duration(milliseconds: 100), () {
       if (mounted) {
-        final weight = int.tryParse(value) ?? 0;
-        context
-            .read<TabsProvider>()
-            .updateTab(widget.tabIndex, {'emptyWeight': weight});
-        calculateTotalPrice();
+        try {
+          final weight = int.tryParse(value) ?? 0;
+          context
+              .read<TabsProvider>()
+              .updateTab(widget.tabIndex, {'emptyWeight': weight});
+          calculateTotalPrice();
+        } catch (e) {
+          debugPrint('WeighingTabContent: Error updating empty weight: $e');
+        }
       }
     });
   }
@@ -155,11 +240,15 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     _grossWeightDebounceTimer?.cancel();
     _grossWeightDebounceTimer = Timer(const Duration(milliseconds: 100), () {
       if (mounted) {
-        final weight = int.tryParse(value) ?? 0;
-        context
-            .read<TabsProvider>()
-            .updateTab(widget.tabIndex, {'grossWeight': weight});
-        calculateTotalPrice();
+        try {
+          final weight = int.tryParse(value) ?? 0;
+          context
+              .read<TabsProvider>()
+              .updateTab(widget.tabIndex, {'grossWeight': weight});
+          calculateTotalPrice();
+        } catch (e) {
+          debugPrint('WeighingTabContent: Error updating gross weight: $e');
+        }
       }
     });
   }
@@ -177,9 +266,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       final price = data[0]['price'] ?? 0.0;
       _kiloPriceController.text = price.toStringAsFixed(3);
       _tab?.kilo_price = price; // or as double/int
-      print('Price: $price');
+      debugPrint('Price: $price');
     } else {
-      print('No material found for ${_tab?.material}');
+      debugPrint('No material found for ${_tab?.material}');
     }
   }
 
@@ -187,7 +276,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     if (_tab!.netWeight != 0) {
       num? kiloPrice = num.tryParse(_kiloPriceController.text);
       if (kiloPrice != null) {
-        print('dodoododod');
+        debugPrint('Calculating total price');
         num totalPrice = kiloPrice * _tab!.netWeight;
         _totalPriceController.text = totalPrice.toStringAsFixed(2);
       }
@@ -205,49 +294,15 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
             : null;
 
         if (tab == null) {
-          return const Center(
-            child: Text('Tab not found'),
+          return Center(
+            child: Text(AppLocalizations.of(context)!.tabNotFound),
           );
         }
 
-        // Update controllers if data changed from elsewhere
-        if (!_emptyWeightFieldFocused) {
-          final emptyWeightText =
-              tab.emptyWeight > 0 ? tab.emptyWeight.toString() : '';
-          if (_emptyWeightController.text != emptyWeightText) {
-            _emptyWeightController.text = emptyWeightText;
-          }
-        }
-
-        if (!_grossWeightFieldFocused) {
-          final grossWeightText =
-              tab.grossWeight > 0 ? tab.grossWeight.toString() : '';
-          if (_grossWeightController.text != grossWeightText) {
-            _grossWeightController.text = grossWeightText;
-          }
-        }
-
-        // Update business field controllers
-        final truckPlateText = tab.truckPlate;
-        if (_truckPlateController.text != truckPlateText) {
-          _truckPlateController.text = truckPlateText;
-        }
-        final driverNameText = tab.driverName;
-        if (_driverNameController.text != driverNameText) {
-          _driverNameController.text = driverNameText;
-        }
-        final clientText = tab.client;
-        if (_clientController.text != clientText) {
-          _clientController.text = clientText;
-        }
-        final supplierText = tab.supplier;
-        if (_supplierController.text != supplierText) {
-          _supplierController.text = supplierText;
-        }
-        final materialText = tab.material;
-        if (_materialController.text != materialText) {
-          _materialController.text = materialText;
-        }
+        // Sync controllers efficiently
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _syncControllersWithTab(tab);
+        });
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,14 +318,14 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'معلومات الوزن',
+                        AppLocalizations.of(context)!.weightInformation,
                         style: FluentTheme.of(context).typography.subtitle,
                       ),
                       const SizedBox(height: 16),
 
                       // Empty Weight
                       _buildWeightField(
-                        label: 'Empty Weight (kg)',
+                        label: AppLocalizations.of(context)!.emptyWeightKg,
                         controller: _emptyWeightController,
                         onChanged: _onEmptyWeightChanged,
                         onScalePressed: () => _captureWeightFromScale(true),
@@ -281,7 +336,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
                       // Gross Weight
                       _buildWeightField(
-                        label: 'Gross Weight (kg)',
+                        label: AppLocalizations.of(context)!.grossWeightKg,
                         controller: _grossWeightController,
                         onChanged: _onGrossWeightChanged,
                         onScalePressed: () => _captureWeightFromScale(false),
@@ -292,7 +347,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
                       // Net Weight (calculated)
                       _buildCalculatedWeight(
-                        label: 'Net Weight (kg)',
+                        label: AppLocalizations.of(context)!.netWeightKg,
                         value: tab.netWeight,
                       ),
                       const SizedBox(height: 24),
@@ -312,7 +367,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Status: ${_getStatusText(tab.status)}',
+                              AppLocalizations.of(context)!.statusLabel(
+                                  _getStatusText(context, tab.status)),
                               style: TextStyle(
                                 color: _getStatusColor(tab.status),
                                 fontWeight: FontWeight.w600,
@@ -341,16 +397,18 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Business Information',
+                        AppLocalizations.of(context)!.businessInformation,
                         style: FluentTheme.of(context).typography.subtitle,
                       ),
                       const SizedBox(height: 16),
 
                       // Truck Plate
-                      _buildLabel('Truck Plate *'),
+                      _buildLabel(
+                          AppLocalizations.of(context)!.truckPlateRequired),
                       const SizedBox(height: 6),
                       AutoCompleteComboBox(
-                        placeholder: 'Enter truck plate...',
+                        placeholder:
+                            AppLocalizations.of(context)!.enterTruckPlate,
                         value: tab.truckPlate,
                         controller: _truckPlateController,
                         onChanged: (value) {
@@ -362,10 +420,11 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                       const SizedBox(height: 12),
 
                       // Driver Name
-                      _buildLabel('Driver Name'),
+                      _buildLabel(AppLocalizations.of(context)!.driverName),
                       const SizedBox(height: 6),
                       AutoCompleteComboBox(
-                        placeholder: 'Enter driver name...',
+                        placeholder:
+                            AppLocalizations.of(context)!.enterDriverName,
                         value: tab.driverName,
                         controller: _driverNameController,
                         onChanged: (value) {
@@ -377,10 +436,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                       const SizedBox(height: 12),
 
                       // Customer Field
-                      _buildLabel('Customer (Loading Operation)'),
+                      _buildLabel(AppLocalizations.of(context)!
+                          .customerLoadingOperation),
                       const SizedBox(height: 6),
                       AutoCompleteComboBox(
-                        placeholder: 'Select Customer...',
+                        placeholder:
+                            AppLocalizations.of(context)!.selectCustomer,
                         value: tab.client,
                         controller: _clientController,
                         onChanged: (value) {
@@ -401,10 +462,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                       const SizedBox(height: 12),
 
                       // Supplier Field
-                      _buildLabel('Supplier (Unloading Operation)'),
+                      _buildLabel(AppLocalizations.of(context)!
+                          .supplierUnloadingOperation),
                       const SizedBox(height: 6),
                       AutoCompleteComboBox(
-                        placeholder: 'Select Supplier...',
+                        placeholder:
+                            AppLocalizations.of(context)!.selectSupplier,
                         value: tab.supplier,
                         controller: _supplierController,
                         onChanged: (value) {
@@ -425,10 +488,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                       const SizedBox(height: 12),
 
                       // Material
-                      _buildLabel('Material *'),
+                      _buildLabel(
+                          AppLocalizations.of(context)!.materialRequired),
                       const SizedBox(height: 6),
                       AutoCompleteComboBox(
-                        placeholder: 'Select Material',
+                        placeholder:
+                            AppLocalizations.of(context)!.selectMaterial,
                         value: tab.material,
                         controller: _materialController,
                         onChanged: (value) async {
@@ -467,7 +532,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           tabsProvider
                               .updateTab(widget.tabIndex, {'isPaid': value});
                         },
-                        content: const Text('Paid'),
+                        content: Text(AppLocalizations.of(context)!.paid),
                       ),
                       const SizedBox(height: 12),
 
@@ -478,7 +543,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           tabsProvider.updateTab(
                               widget.tabIndex, {'showPriceOnPrint': value});
                         },
-                        content: const Text('Show Price on Print'),
+                        content: Text(
+                            AppLocalizations.of(context)!.showPriceOnPrint),
                       ),
                       const SizedBox(height: 24),
 
@@ -516,7 +582,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                   controller: controller,
                   placeholder: '0.0',
                   onChanged: onChanged,
-                  suffix: const Text('kg'),
+                  suffix: Text(AppLocalizations.of(context)!.kg),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                     TextInputFormatter.withFunction((oldValue, newValue) {
@@ -583,9 +649,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 ),
               ),
               const Spacer(),
-              const Text(
-                'kg',
-                style: TextStyle(color: Colors.grey),
+              Text(
+                AppLocalizations.of(context)!.kg,
+                style: const TextStyle(color: Colors.grey),
               ),
             ],
           ),
@@ -616,7 +682,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               children: [
                 const Icon(FluentIcons.cancel),
                 const SizedBox(width: 8),
-                const Text('Cancel'),
+                Text(AppLocalizations.of(context)!.cancel),
               ],
             ),
           ),
@@ -625,12 +691,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
         Expanded(
           child: Button(
             onPressed: () => printPDF(),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(FluentIcons.print),
                 SizedBox(width: 8),
-                Text('Print'),
+                Text(AppLocalizations.of(context)!.print),
               ],
             ),
           ),
@@ -639,12 +705,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
         Expanded(
           child: Button(
             onPressed: () => savePDF(),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(FluentIcons.print),
                 SizedBox(width: 8),
-                Text('Save PDF'),
+                Text(AppLocalizations.of(context)!.savePDF),
               ],
             ),
           ),
@@ -659,7 +725,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 Icon(
                     tab.isComplete ? FluentIcons.completed : FluentIcons.clear),
                 const SizedBox(width: 8),
-                Text(tab.isComplete ? 'Complete' : 'Incomplete'),
+                Text(tab.isComplete
+                    ? AppLocalizations.of(context)!.complete
+                    : AppLocalizations.of(context)!.incomplete),
               ],
             ),
           ),
@@ -699,25 +767,25 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     }
   }
 
-  String _getStatusText(String status) {
+  String _getStatusText(BuildContext context, String status) {
     switch (status) {
       case 'completed':
-        return 'Completed';
+        return AppLocalizations.of(context)!.completed;
       case 'in-progress':
-        return 'In Progress';
+        return AppLocalizations.of(context)!.inProgress;
       case 'cancelled':
-        return 'Cancelled';
+        return AppLocalizations.of(context)!.cancelled;
       case 'empty':
-        return 'Empty';
+        return AppLocalizations.of(context)!.empty;
       default:
-        return 'Unknown';
+        return AppLocalizations.of(context)!.unknown;
     }
   }
 
   void _captureWeightFromScale(bool isEmptyWeight) {
     final weightProvider = context.read<WeightProvider>();
     if (!weightProvider.isConnected) {
-      _showInfoBar('Scale must be connected before capturing weight',
+      _showInfoBar(AppLocalizations.of(context)!.scaleMustBeConnected,
           InfoBarSeverity.warning);
       return;
     }
@@ -736,8 +804,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       tabsProvider
           .updateTab(widget.tabIndex, {'scaleGrossWeight': DateTime.now()});
     } else {
-      _showInfoBar(
-          'Cannot capture weight while editing field', InfoBarSeverity.warning);
+      _showInfoBar(AppLocalizations.of(context)!.cannotCaptureWhileEditing,
+          InfoBarSeverity.warning);
       return;
     }
   }
@@ -745,23 +813,25 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   void _printTab(WeighingTab tab) {
     // TODO: Implement printing
 
-    _showInfoBar('Printing ${tab.tabTitle}...', InfoBarSeverity.info);
+    _showInfoBar(AppLocalizations.of(context)!.printingOperation(tab.tabTitle),
+        InfoBarSeverity.info);
   }
 
   void _cancelTab() {
     final tabsProvider = context.read<TabsProvider>();
     tabsProvider.cancelTab(widget.tabIndex);
-    _showInfoBar('Tab cancelled', InfoBarSeverity.info);
+    _showInfoBar(
+        AppLocalizations.of(context)!.tabCancelled, InfoBarSeverity.info);
   }
 
   void _completeTab() async {
     final tabsProvider = context.read<TabsProvider>();
     final success = await tabsProvider.completeTab(widget.tabIndex);
     if (success) {
-      _showInfoBar(
-          'Tab completed and moved to history', InfoBarSeverity.success);
+      _showInfoBar(AppLocalizations.of(context)!.tabCompletedAndMoved,
+          InfoBarSeverity.success);
     } else {
-      _showInfoBar('Unable to complete tab. Please fill all required fields.',
+      _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
           InfoBarSeverity.error);
     }
   }

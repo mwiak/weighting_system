@@ -24,6 +24,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   DateTime? _endDate;
   List<Map<String, dynamic>> _operations = [];
   bool _isLoading = false;
+  bool checked = true;
 
   @override
   void initState() {
@@ -78,252 +79,238 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     final l10n = AppLocalizations.of(context)!;
 
     return ScaffoldPage.scrollable(
-      header: PageHeader(
-        title: Text(l10n.loadingOperationsHistory),
-        commandBar: CommandBar(
-          primaryItems: [
-            CommandBarButton(
-              icon: const Icon(FluentIcons.refresh),
-              label: Text(l10n.refresh),
-              onPressed: _loadOperations,
-            ),
-            CommandBarSeparator(),
-            CommandBarButton(
-              icon: const Icon(FluentIcons.download),
-              label: Text(l10n.exportPdf),
-              onPressed: _exportToPdf,
-            ),
-            CommandBarButton(
-              icon: const Icon(FluentIcons.excel_document),
-              label: Text(l10n.exportCsv),
-              onPressed: _exportToCsv,
-            ),
-          ],
-        ),
-      ),
       children: [
-        // Filters Section
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // First Row of Filters
-                Row(
-                  children: [
-                    // Operation Type Filter
+        Expander(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(FluentIcons.search),
+          header: const Text('بحث'),
+          content: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // First Row of Filters
+                  Row(
+                    children: [
+                      // Operation Type Filter
 
-                    // Status Filter
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.status + ':'),
-                          const SizedBox(height: 4),
-                          ComboBox<String>(
-                            value: _statusFilter,
-                            items: [
-                              ComboBoxItem<String>(
-                                  value: 'in-progress',
-                                  child: Text(l10n.statusInProgress)),
-                              ComboBoxItem<String>(
-                                  value: 'completed', child: Text(l10n.statusCompleted)),
-                              ComboBoxItem<String>(
-                                  value: 'cancelled', child: Text(l10n.statusCancelled)),
-                              ComboBoxItem<String>(
-                                  value: 'all', child: Text(l10n.allStatuses)),
-                            ],
-                            onChanged: (value) => setState(
-                                () => _statusFilter = value ?? 'all'),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.material + ':'),
-                          const SizedBox(height: 4),
-                          AutoCompleteFilterComboBox(
-                            placeholder: l10n.filterByMaterial,
-                            onChanged: (value) =>
-                                setState(() => _materialFilter = value),
-                            value: _materialFilter,
-                            suggestionType: AutoCompleteType.material,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Driver Filter
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.driverName + ':'),
-                          const SizedBox(height: 4),
-                          AutoCompleteFilterComboBox(
-                            placeholder: l10n.filterByDriver,
-                            onChanged: (value) =>
-                                setState(() => _driverFilter = value),
-                            value: _driverFilter,
-                            suggestionType: AutoCompleteType.driver,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // Second Row of Filters
-                Row(
-                  children: [
-                    // Truck Plate Filter
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.truckPlate + ':'),
-                          const SizedBox(height: 4),
-                          AutoCompleteFilterComboBox(
-                            placeholder: l10n.filterByPlate,
-                            onChanged: (value) =>
-                                setState(() => _truckFilter = value),
-                            value: _truckFilter,
-                            suggestionType: AutoCompleteType.truckPlate,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Client/Supplier Filter
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.supplier + ':'),
-                          const SizedBox(height: 4),
-                          AutoCompleteFilterComboBox(
-                            placeholder: l10n.filterBySupplier,
-                            onChanged: (value) =>
-                                setState(() => _supplierFilter = value),
-                            value: _supplierFilter,
-                            suggestionType: AutoCompleteType.supplier,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.client + ':'),
-                          const SizedBox(height: 4),
-                          AutoCompleteFilterComboBox(
-                            placeholder: l10n.filterByClient,
-                            onChanged: (value) =>
-                                setState(() => _clientFilter = value),
-                            value: _clientFilter,
-                            suggestionType: AutoCompleteType.client,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Material Filter
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // Date Range Filter
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.startDate + ':'),
-                          const SizedBox(height: 4),
-                          DatePicker(
-                            selected: _startDate,
-                            onChanged: (date) =>
-                                setState(() => _startDate = date),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l10n.endDate + ':'),
-                          const SizedBox(height: 4),
-                          DatePicker(
-                            selected: _endDate,
-                            onChanged: (date) =>
-                                setState(() => _endDate = date),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    // Quick Date Buttons
-                    Column(
-                      children: [
-                        const SizedBox(height: 20), // Align with date pickers
-                        Button(
-                          child: Text(l10n.last7Days),
-                          onPressed: () => setState(() {
-                            _endDate = DateTime.now();
-                            _startDate =
-                                _endDate!.subtract(const Duration(days: 7));
-                          }),
+                      // Status Filter
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.status + ':'),
+                            const SizedBox(height: 4),
+                            ComboBox<String>(
+                              value: _statusFilter,
+                              items: [
+                                ComboBoxItem<String>(
+                                    value: 'in-progress',
+                                    child: Text(l10n.statusInProgress)),
+                                ComboBoxItem<String>(
+                                    value: 'completed',
+                                    child: Text(l10n.statusCompleted)),
+                                ComboBoxItem<String>(
+                                    value: 'cancelled',
+                                    child: Text(l10n.statusCancelled)),
+                                ComboBoxItem<String>(
+                                    value: 'all',
+                                    child: Text(l10n.allStatuses)),
+                              ],
+                              onChanged: (value) => setState(
+                                  () => _statusFilter = value ?? 'all'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        Button(
-                          child: Text(l10n.last30Days),
-                          onPressed: () => setState(() {
-                            _endDate = DateTime.now();
-                            _startDate =
-                                _endDate!.subtract(const Duration(days: 30));
-                          }),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.material + ':'),
+                            const SizedBox(height: 4),
+                            AutoCompleteFilterComboBox(
+                              placeholder: l10n.filterByMaterial,
+                              onChanged: (value) =>
+                                  setState(() => _materialFilter = value),
+                              value: _materialFilter,
+                              suggestionType: AutoCompleteType.material,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                      ),
+                      const SizedBox(width: 5),
+                      // Driver Filter
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.driverName + ':'),
+                            const SizedBox(height: 4),
+                            AutoCompleteFilterComboBox(
+                              placeholder: l10n.filterByDriver,
+                              onChanged: (value) =>
+                                  setState(() => _driverFilter = value),
+                              value: _driverFilter,
+                              suggestionType: AutoCompleteType.driver,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
 
-                // Apply/Clear Buttons
-                Row(
-                  children: [
-                    FilledButton(
-                      onPressed: _loadOperations,
-                      child: Text(l10n.applyFilters),
-                    ),
-                    const SizedBox(width: 8),
-                    Button(
-                      onPressed: _clearFilters,
-                      child: Text(l10n.clearFilters),
-                    ),
-                  ],
-                ),
-              ],
+                  // Second Row of Filters
+                  Row(
+                    children: [
+                      // Truck Plate Filter
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.truckPlate + ':'),
+                            const SizedBox(height: 4),
+                            AutoCompleteFilterComboBox(
+                              placeholder: l10n.filterByPlate,
+                              onChanged: (value) =>
+                                  setState(() => _truckFilter = value),
+                              value: _truckFilter,
+                              suggestionType: AutoCompleteType.truckPlate,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+
+                      // Client/Supplier Filter
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.supplier + ':'),
+                            const SizedBox(height: 4),
+                            AutoCompleteFilterComboBox(
+                              placeholder: l10n.filterBySupplier,
+                              onChanged: (value) =>
+                                  setState(() => _supplierFilter = value),
+                              value: _supplierFilter,
+                              suggestionType: AutoCompleteType.supplier,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.client + ':'),
+                            const SizedBox(height: 4),
+                            AutoCompleteFilterComboBox(
+                              placeholder: l10n.filterByClient,
+                              onChanged: (value) =>
+                                  setState(() => _clientFilter = value),
+                              value: _clientFilter,
+                              suggestionType: AutoCompleteType.client,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      // Material Filter
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Date Range Filter
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.startDate + ':'),
+                            const SizedBox(height: 4),
+                            DatePicker(
+                              selected: _startDate,
+                              onChanged: (date) =>
+                                  setState(() => _startDate = date),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.endDate + ':'),
+                            const SizedBox(height: 4),
+                            DatePicker(
+                              selected: _endDate,
+                              onChanged: (date) =>
+                                  setState(() => _endDate = date),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Quick Date Buttons
+                      Column(
+                        children: [
+                          const SizedBox(height: 20), // Align with date pickers
+                          Button(
+                            child: Text(l10n.last7Days),
+                            onPressed: () => setState(() {
+                              _endDate = DateTime.now();
+                              _startDate =
+                                  _endDate!.subtract(const Duration(days: 7));
+                            }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 8),
+                      Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          Button(
+                            child: Text(l10n.last30Days),
+                            onPressed: () => setState(() {
+                              _endDate = DateTime.now();
+                              _startDate =
+                                  _endDate!.subtract(const Duration(days: 30));
+                            }),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Apply/Clear Buttons
+                  Row(
+                    children: [
+                      FilledButton(
+                        onPressed: _loadOperations,
+                        child: Text(l10n.applyFilters),
+                      ),
+                      const SizedBox(width: 8),
+                      Button(
+                        onPressed: _clearFilters,
+                        child: Text(l10n.clearFilters),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+        // Filters Section
+
         const SizedBox(height: 16),
 
         // Operations Table

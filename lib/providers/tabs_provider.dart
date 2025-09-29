@@ -34,6 +34,9 @@ class TabsProvider extends ChangeNotifier {
   Future<void> loadTabs() async {
     _setLoading(true);
     try {
+      // First, initialize the ID counter based on existing data
+      await _initializeTabIdCounter();
+
       final data = await _db.query(
         'weighing_tabs',
         where: 'status = ?',
@@ -55,6 +58,30 @@ class TabsProvider extends ChangeNotifier {
       _currentTabIndex = -1;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  /// Initialize the tab ID counter to prevent conflicts
+  Future<void> _initializeTabIdCounter() async {
+    try {
+      // Get the highest tab_id from the database
+      final result = await _db.query(
+        'weighing_tabs',
+        columns: ['MAX(tab_id) as max_id'],
+      );
+
+      int maxId = 0;
+      if (result.isNotEmpty && result.first['max_id'] != null) {
+        maxId = result.first['max_id'] as int;
+      }
+
+      // Set the next ID to be one more than the maximum
+      WeighingTab.setNextId(maxId + 1);
+      debugPrint('TabsProvider: Initialized tab ID counter to ${maxId + 1}');
+    } catch (e) {
+      debugPrint('TabsProvider: Error initializing ID counter: $e');
+      // Fallback to default behavior
+      WeighingTab.setNextId(1);
     }
   }
 
@@ -309,10 +336,46 @@ class TabsProvider extends ChangeNotifier {
         } catch (insertError) {
           // Handle unique constraint violation on tab_id
           if (insertError.toString().contains('UNIQUE constraint failed')) {
-            debugPrint('TabsProvider: Tab ID ${tab.id} already exists, generating new ID');
-            // Tab ID conflict detected - this indicates static counter was reset
-            // The proper fix is to restart the app to reload tab numbering correctly
-            throw Exception('Tab ID conflict detected. Please restart the app to fix tab numbering.');
+            debugPrint('TabsProvider: Tab ID ${tab.id} conflict, reinitializing counter');
+
+            // Reinitialize the ID counter and retry with new ID
+            await _initializeTabIdCounter();
+
+            // Create a new tab with the updated ID counter
+            final newTab = WeighingTab();
+
+            // Copy all data to the new tab
+            newTab.emptyWeight = tab.emptyWeight;
+            newTab.grossWeight = tab.grossWeight;
+            newTab.scaleEmptyWeightAt = tab.scaleEmptyWeightAt;
+            newTab.scaleGrossWeightAt = tab.scaleGrossWeightAt;
+            newTab.truckPlate = tab.truckPlate;
+            newTab.driverName = tab.driverName;
+            newTab.supplier = tab.supplier;
+            newTab.client = tab.client;
+            newTab.material = tab.material;
+            newTab.kilo_price = tab.kilo_price;
+            newTab.total_price = tab.total_price;
+            newTab.isPaid = tab.isPaid;
+            newTab.showPriceOnPrint = tab.showPriceOnPrint;
+            newTab.status = tab.status;
+            newTab.createdAt = tab.createdAt;
+            newTab.updatedAt = tab.updatedAt;
+
+            // Update the reference and retry save
+            final index = _tabs.indexOf(tab);
+            if (index >= 0) {
+              _tabs[index] = newTab;
+            }
+
+            // Retry saving with new ID
+            final newTabData = newTab.toMap();
+            newTabData.remove('id');
+            final dbId = await _db.insert('weighing_tabs', newTabData);
+            newTab.dbId = dbId;
+
+            debugPrint('TabsProvider: Resolved ID conflict, saved tab with new ID ${newTab.id}');
+            return; // Success, exit the method
           }
           rethrow;
         }

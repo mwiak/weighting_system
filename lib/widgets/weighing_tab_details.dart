@@ -513,11 +513,15 @@ class WeighingTabDetails extends StatelessWidget {
           ),
           FilledButton(
             child: const Text('Yes, Cancel'),
-            onPressed: () {
-              tab.cancelTab();
-              tabsProvider.saveTab(tab);
+            onPressed: () async {
               Navigator.of(context).pop();
-              _showInfoBar(context, 'Tab cancelled', InfoBarSeverity.warning);
+              // Use unified cancellation logic from TabsProvider
+              final success = await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
+              if (success) {
+                _showInfoBar(context, 'Tab cancelled', InfoBarSeverity.warning);
+              } else {
+                _showInfoBar(context, 'Failed to cancel tab', InfoBarSeverity.error);
+              }
             },
           ),
         ],

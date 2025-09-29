@@ -1297,5 +1297,155 @@
   "vat": "VAT",
   "@vat": {
     "description": "VAT label"
+  },
+
+  "weightInformation": "Weight Information",
+  "@weightInformation": {
+    "description": "Weight information section title"
+  },
+
+  "emptyWeight": "Empty Weight",
+  "@emptyWeight": {
+    "description": "Empty weight field label"
+  },
+
+  "emptyWeightKg": "Empty Weight (kg)",
+  "@emptyWeightKg": {
+    "description": "Empty weight field label with unit"
+  },
+
+  "grossWeightKg": "Gross Weight (kg)",
+  "@grossWeightKg": {
+    "description": "Gross weight field label with unit"
+  },
+
+  "netWeightKg": "Net Weight (kg)",
+  "@netWeightKg": {
+    "description": "Net weight field label with unit"
+  },
+
+  "businessInformation": "Business Information",
+  "@businessInformation": {
+    "description": "Business information section title"
+  },
+
+  "truckPlateRequired": "Truck Plate *",
+  "@truckPlateRequired": {
+    "description": "Truck plate field label with required indicator"
+  },
+
+  "enterTruckPlate": "Enter truck plate...",
+  "@enterTruckPlate": {
+    "description": "Truck plate field placeholder"
+  },
+
+  "enterDriverName": "Enter driver name...",
+  "@enterDriverName": {
+    "description": "Driver name field placeholder"
+  },
+
+  "customerLoadingOperation": "Customer (Loading Operation)",
+  "@customerLoadingOperation": {
+    "description": "Customer field label for loading operations"
+  },
+
+  "selectCustomer": "Select Customer...",
+  "@selectCustomer": {
+    "description": "Customer field placeholder"
+  },
+
+  "supplierUnloadingOperation": "Supplier (Unloading Operation)",
+  "@supplierUnloadingOperation": {
+    "description": "Supplier field label for unloading operations"
+  },
+
+  "materialRequired": "Material *",
+  "@materialRequired": {
+    "description": "Material field label with required indicator"
+  },
+
+  "paid": "Paid",
+  "@paid": {
+    "description": "Payment status label"
+  },
+
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button text"
+  },
+
+  "incomplete": "Incomplete",
+  "@incomplete": {
+    "description": "Incomplete status text"
+  },
+
+  "savePDF": "Save PDF",
+  "@savePDF": {
+    "description": "Save PDF button text"
+  },
+
+  "inProgress": "In Progress",
+  "@inProgress": {
+    "description": "In progress status text"
+  },
+
+  "empty": "Empty",
+  "@empty": {
+    "description": "Empty status text"
+  },
+
+  "statusLabel": "Status: {status}",
+  "@statusLabel": {
+    "description": "Status label with value",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tabNotFound": "Tab not found",
+  "@tabNotFound": {
+    "description": "Tab not found error message"
+  },
+
+  "couldNotFindTemplate": "Could not find a template",
+  "@couldNotFindTemplate": {
+    "description": "Template not found error message"
+  },
+
+  "scaleMustBeConnected": "Scale must be connected before capturing weight",
+  "@scaleMustBeConnected": {
+    "description": "Scale connection warning message"
+  },
+
+  "cannotCaptureWhileEditing": "Cannot capture weight while editing field",
+  "@cannotCaptureWhileEditing": {
+    "description": "Cannot capture weight warning message"
+  },
+
+  "printingOperation": "Printing {operation}...",
+  "@printingOperation": {
+    "description": "Printing operation message",
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tabCancelled": "Tab cancelled",
+  "@tabCancelled": {
+    "description": "Tab cancelled info message"
+  },
+
+  "tabCompletedAndMoved": "Tab completed and moved to history",
+  "@tabCompletedAndMoved": {
+    "description": "Tab completion success message"
+  },
+
+  "unableToCompleteTab": "Unable to complete tab. Please fill all required fields.",
+  "@unableToCompleteTab": {
+    "description": "Tab completion error message"
   }
 }

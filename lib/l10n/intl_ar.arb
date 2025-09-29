@@ -499,5 +499,61 @@
 
   "exportedSuppliers": "تم تصدير {count} مورد",
 
-  "vat": "ضريبة القيمة المضافة"
+  "vat": "ضريبة القيمة المضافة",
+
+  "weightInformation": "معلومات الوزن",
+
+  "emptyWeight": "وزن الفارغ",
+
+  "emptyWeightKg": "وزن الفارغ (كيلو)",
+
+  "grossWeightKg": "الوزن الإجمالي (كيلو)",
+
+  "netWeightKg": "الوزن الصافي (كيلو)",
+
+  "businessInformation": "معلومات العمل",
+
+  "truckPlateRequired": "لوحة الشاحنة *",
+
+  "enterTruckPlate": "أدخل لوحة الشاحنة...",
+
+  "enterDriverName": "أدخل اسم السائق...",
+
+  "customerLoadingOperation": "العميل (عملية التحميل)",
+
+  "selectCustomer": "اختر العميل...",
+
+  "supplierUnloadingOperation": "المورد (عملية التفريغ)",
+
+  "materialRequired": "المادة *",
+
+  "paid": "مدفوع",
+
+  "complete": "مكتمل",
+
+  "incomplete": "غير مكتمل",
+
+  "savePDF": "حفظ PDF",
+
+  "inProgress": "قيد التقدم",
+
+  "empty": "فارغ",
+
+  "statusLabel": "الحالة: {status}",
+
+  "tabNotFound": "لم يتم العثور على التبويب",
+
+  "couldNotFindTemplate": "لا يمكن العثور على قالب",
+
+  "scaleMustBeConnected": "يجب توصيل الميزان قبل التقاط الوزن",
+
+  "cannotCaptureWhileEditing": "لا يمكن التقاط الوزن أثناء تحرير الحقل",
+
+  "printingOperation": "جاري طباعة {operation}...",
+
+  "tabCancelled": "تم إلغاء التبويب",
+
+  "tabCompletedAndMoved": "تم إكمال التبويب ونقله إلى السجل",
+
+  "unableToCompleteTab": "لا يمكن إكمال التبويب. يرجى ملء جميع الحقول المطلوبة."
 }

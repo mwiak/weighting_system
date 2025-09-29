@@ -1,10 +1,38 @@
+import 'package:flutter/foundation.dart';
+
 class WeighingTab {
   static int _nextId = 1;
+  static bool _isInitialized = false;
 
   final int id;
   int? dbId; // Database ID for persistence
 
-  WeighingTab() : id = _nextId++;
+  WeighingTab() : id = _getNextId();
+
+  static int _getNextId() {
+    return _nextId++;
+  }
+
+  /// Initialize the ID counter based on existing database records
+  static Future<void> initializeIdCounter() async {
+    if (_isInitialized) return;
+
+    try {
+      // This will be called from TabsProvider to set the proper next ID
+      // based on database records
+      _isInitialized = true;
+    } catch (e) {
+      debugPrint('WeighingTab: Error initializing ID counter: $e');
+      // Fallback to default if database query fails
+      _nextId = 1;
+    }
+  }
+
+  /// Set the next ID counter (used by TabsProvider)
+  static void setNextId(int nextId) {
+    _nextId = nextId;
+    _isInitialized = true;
+  }
 
   // Weight fields
   int emptyWeight = 0;
@@ -97,17 +125,56 @@ class WeighingTab {
   }
 
   void completeTab() {
-    if (isComplete) {
+    // Only allow completion if tab is in-progress and meets completion criteria
+    if (status == 'in-progress' && isComplete) {
       status = 'completed';
       updatedAt = DateTime.now();
       hasUnsavedChanges = true;
+    } else if (status != 'in-progress') {
+      debugPrint('WeighingTab: Cannot complete tab - invalid status: $status');
+    } else {
+      debugPrint('WeighingTab: Cannot complete tab - missing required fields');
     }
   }
 
   void cancelTab() {
-    status = 'cancelled';
-    updatedAt = DateTime.now();
-    hasUnsavedChanges = true;
+    // Only allow cancellation if tab is not already completed
+    if (status != 'completed') {
+      status = 'cancelled';
+      updatedAt = DateTime.now();
+      hasUnsavedChanges = true;
+    } else {
+      debugPrint('WeighingTab: Cannot cancel completed tab');
+    }
+  }
+
+  /// Validate status transition
+  bool canTransitionTo(String newStatus) {
+    switch (status) {
+      case 'in-progress':
+        // In-progress can transition to completed or cancelled
+        return newStatus == 'completed' || newStatus == 'cancelled';
+      case 'completed':
+        // Completed tabs cannot transition to any other state
+        return false;
+      case 'cancelled':
+        // Cancelled tabs can only be reopened to in-progress
+        return newStatus == 'in-progress';
+      default:
+        // Unknown status, allow transition to in-progress
+        return newStatus == 'in-progress';
+    }
+  }
+
+  /// Reset a cancelled tab back to in-progress (for reuse)
+  void reopenTab() {
+    if (status == 'cancelled') {
+      status = 'in-progress';
+      updatedAt = DateTime.now();
+      hasUnsavedChanges = true;
+    } else {
+      debugPrint('WeighingTab: Can only reopen cancelled tabs');
+    }
   }
 
   void markAsSaved() {
