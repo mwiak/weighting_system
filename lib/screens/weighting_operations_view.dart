@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:weighing_system/widgets/autom_complete_filter_combo_box.dart';
+import 'package:weighing_system/widgets/order_details_dialog.dart';
 import '../providers/report_provider.dart';
+import '../models/weighing_tab.dart';
 
 class WeightingOperationsView extends StatefulWidget {
   const WeightingOperationsView({super.key});
@@ -339,40 +341,44 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                   child: Row(
                     children: [
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.orderNumber,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.dateTime,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.truckPlate,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.driverName,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.client,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.supplier,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Text(l10n.material,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
-                          flex: 1,
+                          flex: 2,
                           child: Text(l10n.netWeightKg,
                               style: TextStyle(fontWeight: FontWeight.w600))),
                       Expanded(
                           flex: 1,
                           child: Text(l10n.status,
+                              style: TextStyle(fontWeight: FontWeight.w600))),
+                      Expanded(
+                          flex: 1,
+                          child: Text('Actions',
                               style: TextStyle(fontWeight: FontWeight.w600))),
                     ],
                   ),
@@ -415,32 +421,32 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                             child: Row(
                               children: [
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Text(
                                         '${operation['id'] ?? operation['tab_id'] ?? ''}')),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Text(_formatDateTime(
                                         operation['created_at']))),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child:
                                         Text(operation['truck_plate'] ?? '')),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child:
                                         Text(operation['driver_name'] ?? '')),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Text(operation['client'] ?? '')),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Text(operation['supplier'] ?? '')),
                                 Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Text(_getMaterialName(operation))),
                                 Expanded(
-                                    flex: 1,
+                                    flex: 2,
                                     child: Text(
                                         '${(operation['net_weight'] ?? 0.0).toStringAsFixed(1)}')),
                                 Expanded(
@@ -463,6 +469,15 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                                               operation['status']),
                                         ),
                                         textAlign: TextAlign.center,
+                                      ),
+                                    )),
+                                Expanded(
+                                    flex: 1,
+                                    child: Center(
+                                      child: Button(
+                                        onPressed: () =>
+                                            _showOrderDetails(operation),
+                                        child: const Icon(FluentIcons.info),
                                       ),
                                     )),
                               ],
@@ -491,6 +506,14 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     _loadOperations();
   }
 
+  void _showOrderDetails(Map<String, dynamic> operation) {
+    final weighingTab = WeighingTab.fromMap(operation);
+    showDialog<void>(
+      context: context,
+      builder: (context) => OrderDetailsDialog(operation: weighingTab),
+    );
+  }
+
   String _formatDateTime(dynamic dateTime) {
     if (dateTime == null) return '';
     try {
@@ -501,31 +524,12 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     }
   }
 
-  String _getClientSupplierName(Map<String, dynamic> operation) {
-    // Handle multiple possible field names for client/supplier
-    return operation['supplier_client'] ??
-        operation['client_name'] ??
-        operation['supplier_name'] ??
-        operation['client'] ??
-        operation['supplier'] ??
-        '';
-  }
-
   String _getMaterialName(Map<String, dynamic> operation) {
     // Handle multiple possible field names for material
     return operation['material'] ??
         operation['material_name'] ??
         operation['product_name'] ??
         'N/A';
-  }
-
-  String _formatOperationType(dynamic type) {
-    if (type == null) return 'Unknown';
-    return type
-        .toString()
-        .split('_')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
   }
 
   String _formatStatus(dynamic status) {
@@ -551,72 +555,6 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
         return Colors.red;
       default:
         return Colors.grey;
-    }
-  }
-
-  void _exportToPdf() async {
-    final l10n = AppLocalizations.of(context)!;
-    final reportProvider = context.read<ReportProvider>();
-    final filePath = await reportProvider.exportOrdersHistoryToPDF(
-      operations: _operations,
-      startDate: _startDate,
-      endDate: _endDate,
-      filters: {
-        'status': _statusFilter,
-        'driver': _driverFilter,
-        'truck': _truckFilter,
-        'client': _clientFilter,
-        'supplier': _supplierFilter,
-        'material': _materialFilter,
-      },
-    );
-
-    if (filePath != null) {
-      displayInfoBar(
-        context,
-        builder: (context, close) => InfoBar(
-          title: Text(l10n.exportSuccessful),
-          content: Text(l10n.pdfSavedTo(filePath)),
-          severity: InfoBarSeverity.success,
-          action: IconButton(
-            icon: const Icon(FluentIcons.clear),
-            onPressed: close,
-          ),
-        ),
-      );
-    }
-  }
-
-  void _exportToCsv() async {
-    final l10n = AppLocalizations.of(context)!;
-    final reportProvider = context.read<ReportProvider>();
-    final filePath = await reportProvider.exportOrdersHistoryToCSV(
-      operations: _operations,
-      startDate: _startDate,
-      endDate: _endDate,
-      filters: {
-        'status': _statusFilter,
-        'driver': _driverFilter,
-        'truck': _truckFilter,
-        'client': _clientFilter,
-        'supplier': _supplierFilter,
-        'material': _materialFilter,
-      },
-    );
-
-    if (filePath != null) {
-      displayInfoBar(
-        context,
-        builder: (context, close) => InfoBar(
-          title: Text(l10n.exportSuccessful),
-          content: Text(l10n.csvSavedTo(filePath)),
-          severity: InfoBarSeverity.success,
-          action: IconButton(
-            icon: const Icon(FluentIcons.clear),
-            onPressed: close,
-          ),
-        ),
-      );
     }
   }
 }

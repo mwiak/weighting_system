@@ -555,5 +555,21 @@
 
   "tabCompletedAndMoved": "تم إكمال التبويب ونقله إلى السجل",
 
-  "unableToCompleteTab": "لا يمكن إكمال التبويب. يرجى ملء جميع الحقول المطلوبة."
+  "unableToCompleteTab": "لا يمكن إكمال التبويب. يرجى ملء جميع الحقول المطلوبة.",
+
+  "orderDetails": "تفاصيل الطلب",
+
+  "basicInformation": "المعلومات الأساسية",
+
+  "vehicleInformation": "معلومات المركبة",
+
+  "businessPartners": "الشركاء التجاريين",
+
+  "weightMeasurements": "قياسات الوزن",
+
+  "financialInformation": "المعلومات المالية",
+
+  "printSuccessful": "تمت الطباعة بنجاح",
+
+  "pdfSaved": "تم حفظ PDF بنجاح"
 }

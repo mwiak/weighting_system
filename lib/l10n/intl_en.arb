@@ -1447,5 +1447,50 @@
   "unableToCompleteTab": "Unable to complete tab. Please fill all required fields.",
   "@unableToCompleteTab": {
     "description": "Tab completion error message"
+  },
+
+  "orderDetails": "Order Details",
+  "@orderDetails": {
+    "description": "Order details dialog title"
+  },
+
+  "basicInformation": "Basic Information",
+  "@basicInformation": {
+    "description": "Basic information section title"
+  },
+
+  "vehicleInformation": "Vehicle Information",
+  "@vehicleInformation": {
+    "description": "Vehicle information section title"
+  },
+
+  "businessPartners": "Business Partners",
+  "@businessPartners": {
+    "description": "Business partners section title"
+  },
+
+  "weightMeasurements": "Weight Measurements",
+  "@weightMeasurements": {
+    "description": "Weight measurements section title"
+  },
+
+  "financialInformation": "Financial Information",
+  "@financialInformation": {
+    "description": "Financial information section title"
+  },
+
+  "printSuccessful": "Print Successful",
+  "@printSuccessful": {
+    "description": "Print success message"
+  },
+
+  "pdfSaved": "PDF Saved Successfully",
+  "@pdfSaved": {
+    "description": "PDF save success message"
+  },
+
+  "couldNotFindTemplate": "Could not find default template",
+  "@couldNotFindTemplate": {
+    "description": "Template not found error message"
   }
 }
