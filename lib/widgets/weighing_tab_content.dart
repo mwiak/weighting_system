@@ -13,6 +13,14 @@ import '../providers/tabs_provider.dart';
 import '../services/template_print_service.dart';
 import 'auto_complete_combo_box.dart';
 
+// Text size constants for easy adjustment
+const double kStatusFontSize = 7.0;
+const double kWeightValueFontSize = 12.0;
+const double kWeightUnitFontSize = 10.0;
+const double kLabelFontSize = 11.0;
+const double kButtonFontSize = 11.0;
+const double kIconSize = 12.0;
+
 class WeighingTabContent extends StatefulWidget {
   final int tabIndex;
 
@@ -312,17 +320,11 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               flex: 2,
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.weightInformation,
-                        style: FluentTheme.of(context).typography.subtitle,
-                      ),
-                      const SizedBox(height: 16),
-
                       // Empty Weight
                       _buildWeightField(
                         label: AppLocalizations.of(context)!.emptyWeightKg,
@@ -332,7 +334,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         onFocusChanged: (focused) =>
                             setState(() => _emptyWeightFieldFocused = focused),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 4),
 
                       // Gross Weight
                       _buildWeightField(
@@ -343,18 +345,18 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         onFocusChanged: (focused) =>
                             setState(() => _grossWeightFieldFocused = focused),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 4),
 
                       // Net Weight (calculated)
                       _buildCalculatedWeight(
                         label: AppLocalizations.of(context)!.netWeightKg,
                         value: tab.netWeight,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 4),
 
                       // Operation Status
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: _getStatusColor(tab.status).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -364,14 +366,16 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                             Icon(
                               _getStatusIcon(tab.status),
                               color: _getStatusColor(tab.status),
+                              size: kIconSize,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 4),
                             Text(
                               AppLocalizations.of(context)!.statusLabel(
                                   _getStatusText(context, tab.status)),
                               style: TextStyle(
                                 color: _getStatusColor(tab.status),
                                 fontWeight: FontWeight.w600,
+                                fontSize: kStatusFontSize,
                               ),
                             ),
                           ],
@@ -384,28 +388,22 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 ),
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 8),
 
             // Right Column - Business Information
             Expanded(
               flex: 3,
               child: Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.businessInformation,
-                        style: FluentTheme.of(context).typography.subtitle,
-                      ),
-                      const SizedBox(height: 16),
-
                       // Truck Plate
                       _buildLabel(
                           AppLocalizations.of(context)!.truckPlateRequired),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       AutoCompleteComboBox(
                         placeholder:
                             AppLocalizations.of(context)!.enterTruckPlate,
@@ -417,11 +415,11 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         suggestionType: AutoCompleteType.truckPlate,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Driver Name
                       _buildLabel(AppLocalizations.of(context)!.driverName),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       AutoCompleteComboBox(
                         placeholder:
                             AppLocalizations.of(context)!.enterDriverName,
@@ -433,12 +431,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         suggestionType: AutoCompleteType.driver,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Customer Field
                       _buildLabel(AppLocalizations.of(context)!
                           .customerLoadingOperation),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       AutoCompleteComboBox(
                         placeholder:
                             AppLocalizations.of(context)!.selectCustomer,
@@ -459,12 +457,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         suggestionType: AutoCompleteType.client,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Supplier Field
                       _buildLabel(AppLocalizations.of(context)!
                           .supplierUnloadingOperation),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       AutoCompleteComboBox(
                         placeholder:
                             AppLocalizations.of(context)!.selectSupplier,
@@ -485,12 +483,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         suggestionType: AutoCompleteType.supplier,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Material
                       _buildLabel(
                           AppLocalizations.of(context)!.materialRequired),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       AutoCompleteComboBox(
                         placeholder:
                             AppLocalizations.of(context)!.selectMaterial,
@@ -505,7 +503,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         suggestionType: AutoCompleteType.material,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       Row(
                         children: [
@@ -515,7 +513,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                 calculateTotalPrice();
                               }),
                           SizedBox(
-                            width: 10,
+                            width: 8,
                           ),
                           TotalPriceBox(
                               controller: _totalPriceController,
@@ -523,7 +521,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         ],
                       ),
 
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Payment Status
                       ToggleSwitch(
@@ -534,7 +532,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         },
                         content: Text(AppLocalizations.of(context)!.paid),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
                       // Show Price on Print
                       ToggleSwitch(
@@ -546,7 +544,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         content: Text(
                             AppLocalizations.of(context)!.showPriceOnPrint),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 12),
 
                       // Action Buttons
                       _buildActionButtons(tab),
@@ -572,7 +570,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(label),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Row(
           children: [
             Expanded(
@@ -629,10 +627,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel(label),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: Colors.grey.withOpacity(0.1),
             borderRadius: BorderRadius.circular(4),
@@ -643,7 +641,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               Text(
                 value.toStringAsFixed(1),
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: kWeightValueFontSize,
                   fontWeight: FontWeight.w600,
                   color: value > 0 ? Colors.green : Colors.grey,
                 ),
@@ -651,7 +649,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               const Spacer(),
               Text(
                 AppLocalizations.of(context)!.kg,
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey, fontSize: kWeightUnitFontSize),
               ),
             ],
           ),
@@ -665,7 +663,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       text,
       style: const TextStyle(
         fontWeight: FontWeight.w500,
-        fontSize: 14,
+        fontSize: kLabelFontSize,
       ),
     );
   }
@@ -680,54 +678,59 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(FluentIcons.cancel),
-                const SizedBox(width: 8),
-                Text(AppLocalizations.of(context)!.cancel),
+                const Icon(FluentIcons.cancel, size: kIconSize),
+                const SizedBox(width: 6),
+                Text(AppLocalizations.of(context)!.cancel,
+                    style: TextStyle(fontSize: kButtonFontSize)),
               ],
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
           child: Button(
             onPressed: () => printPDF(),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(FluentIcons.print),
-                SizedBox(width: 8),
-                Text(AppLocalizations.of(context)!.print),
+                Icon(FluentIcons.print, size: kIconSize),
+                SizedBox(width: 6),
+                Text(AppLocalizations.of(context)!.print,
+                    style: TextStyle(fontSize: kButtonFontSize)),
               ],
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
           child: Button(
             onPressed: () => savePDF(),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(FluentIcons.print),
-                SizedBox(width: 8),
-                Text(AppLocalizations.of(context)!.savePDF),
+                Icon(FluentIcons.print, size: kIconSize),
+                SizedBox(width: 6),
+                Text(AppLocalizations.of(context)!.savePDF,
+                    style: TextStyle(fontSize: kButtonFontSize)),
               ],
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Expanded(
           child: FilledButton(
             onPressed: tab.isComplete ? () => _completeTab() : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                    tab.isComplete ? FluentIcons.completed : FluentIcons.clear),
-                const SizedBox(width: 8),
-                Text(tab.isComplete
-                    ? AppLocalizations.of(context)!.complete
-                    : AppLocalizations.of(context)!.incomplete),
+                Icon(tab.isComplete ? FluentIcons.completed : FluentIcons.clear,
+                    size: kIconSize),
+                const SizedBox(width: 6),
+                Text(
+                    tab.isComplete
+                        ? AppLocalizations.of(context)!.complete
+                        : AppLocalizations.of(context)!.incomplete,
+                    style: TextStyle(fontSize: kButtonFontSize)),
               ],
             ),
           ),
@@ -808,13 +811,6 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           InfoBarSeverity.warning);
       return;
     }
-  }
-
-  void _printTab(WeighingTab tab) {
-    // TODO: Implement printing
-
-    _showInfoBar(AppLocalizations.of(context)!.printingOperation(tab.tabTitle),
-        InfoBarSeverity.info);
   }
 
   void _cancelTab() {

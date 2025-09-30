@@ -142,7 +142,7 @@ class _TabsScreenState extends State<TabsScreen> {
                     ? _buildEmptyState(context)
                     : provider.currentTabIndex >= 0
                         ? SingleChildScrollView(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                             child: WeighingTabContent(
                               key: ValueKey(
                                   'tab_content_${provider.currentTabIndex}'),

@@ -63,6 +63,9 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     }
     _focusNode.addListener(_handleFocusChange);
 
+    // Listen to controller changes for immediate UI updates
+    _controller.addListener(_onControllerChanged);
+
     // Load suggestions after the build to avoid setState during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -103,11 +106,22 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     _overlayEntry?.remove();
     _overlayEntry = null;
     _debounceTimer?.cancel();
+    _controller.removeListener(_onControllerChanged);
     if (_ownsController) {
       _controller.dispose();
     }
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _onControllerChanged() {
+    // Trigger immediate UI update when controller text changes
+    if (mounted && _showSuggestions) {
+      setState(() {
+        // This will cause the overlay to rebuild with updated filteredSuggestions
+      });
+      _updateOverlay();
+    }
   }
 
   void _handleFocusChange() async {
@@ -120,8 +134,21 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
   }
 
   void _onTextChanged(String value) {
+    // Immediately update UI by triggering rebuild for filtered suggestions
+    if (mounted) {
+      setState(() {
+        // This will cause filteredSuggestions to be recalculated
+      });
+    }
+
+    // Update overlay if it's showing
+    if (_showSuggestions) {
+      _updateOverlay();
+    }
+
+    // Debounced callback to parent (reduced from 600ms to 200ms for better responsiveness)
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 600), () {
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
       if (mounted) {
         debugPrint(
             'AutoCompleteComboBox: Debounced onChanged called with: $value');
@@ -149,6 +176,16 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
       setState(() {
         _showSuggestions = false;
       });
+    }
+  }
+
+  void _updateOverlay() {
+    if (_overlayEntry != null && _showSuggestions) {
+      _overlayEntry?.remove();
+      _overlayEntry = _createOverlayEntry();
+      if (mounted) {
+        Overlay.of(context).insert(_overlayEntry!);
+      }
     }
   }
 
@@ -412,7 +449,8 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
           debugPrint(
               'AutoCompleteComboBox: TextFormBox onChanged called with: $value');
           _onTextChanged(value);
-          if (_controller.text.isNotEmpty || _focusNode.hasFocus) {
+          // Show overlay if we have suggestions and focus, or if user is typing
+          if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) || value.isNotEmpty) {
             _showOverlay();
           } else {
             _hideOverlay();

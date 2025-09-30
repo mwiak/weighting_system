@@ -201,6 +201,7 @@ class WeightServiceIsolate extends ChangeNotifier {
     updateStatus(ConnectionStatus.scanning);
     try {
       if (_selectedPort == 'auto') {
+        printd('auto discovery on!');
         await _autoDiscoverDevice();
       } else {
         await _connectToPort(_selectedPort);
@@ -215,6 +216,7 @@ class WeightServiceIsolate extends ChangeNotifier {
     if (_availablePorts.isNotEmpty) {
       for (String port in _availablePorts) {
         if (status != ConnectionStatus.connected) {
+          printd('found a port!');
           await _connectToPort(port);
         }
       }
@@ -231,6 +233,7 @@ class WeightServiceIsolate extends ChangeNotifier {
 
   Future<void> _connectWindows(String portName) async {
     try {
+      printd('trying to connect');
       final kernel32 = DynamicLibrary.open('kernel32.dll');
 
       final createFile = kernel32.lookupFunction<
@@ -249,6 +252,7 @@ class WeightServiceIsolate extends ChangeNotifier {
       );
 
       if (handle != -1) {
+        printd('handle created');
         // ** HERE ** We call your original, correct _configurePort method
         if (await _configurePort(kernel32, handle)) {
           _comHandle = handle;
@@ -262,11 +266,14 @@ class WeightServiceIsolate extends ChangeNotifier {
           notifyListeners();
         } else {
           lastError = 'config_error';
-          updateStatus(ConnectionStatus.notFound);
+          updateStatus(ConnectionStatus.hasError);
           final closeHandle = kernel32.lookupFunction<Int32 Function(IntPtr),
               int Function(int)>('CloseHandle');
           closeHandle(handle);
         }
+      } else {
+        updateStatus(ConnectionStatus.hasError);
+        printd('could not open handle');
       }
       calloc.free(portPath);
     } catch (e) {
