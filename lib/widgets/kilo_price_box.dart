@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:weighing_system/widgets/weighing_tab_content.dart';
 
 class KiloPriceBox extends StatefulWidget {
   final TextEditingController controller;
@@ -17,10 +18,16 @@ class _KiloPriceBoxState extends State<KiloPriceBox> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 60,
-      width: 200,
+      width: MediaQuery.of(context).size.width * 0.15,
       child: Column(
         children: [
-          Text('سعر الكيلو'),
+          const Text(
+            'سعر الكيلو',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: kLabelFontSize,
+            ),
+          ),
           SizedBox(
             height: 5,
           ),
@@ -62,10 +69,16 @@ class _TotalPriceBoxState extends State<TotalPriceBox> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 60,
-      width: 200,
+      width: MediaQuery.of(context).size.width * 0.15,
       child: Column(
         children: [
-          Text('السعر الإجمالي'),
+          const Text(
+            'السعر الإجمالي',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: kLabelFontSize,
+            ),
+          ),
           SizedBox(
             height: 5,
           ),

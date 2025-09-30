@@ -440,6 +440,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.15,
       key: _textFieldKey,
       child: TextFormBox(
         controller: _controller,
@@ -450,7 +451,8 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
               'AutoCompleteComboBox: TextFormBox onChanged called with: $value');
           _onTextChanged(value);
           // Show overlay if we have suggestions and focus, or if user is typing
-          if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) || value.isNotEmpty) {
+          if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) ||
+              value.isNotEmpty) {
             _showOverlay();
           } else {
             _hideOverlay();

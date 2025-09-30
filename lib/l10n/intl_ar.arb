@@ -41,7 +41,7 @@
   
   "unloading": "تفريغ",
   
-  "client": "العميل",
+  "client": "الزبون",
   
   "supplier": "المورد",
   
@@ -513,9 +513,9 @@
 
   "businessInformation": "معلومات العمل",
 
-  "truckPlateRequired": "لوحة الشاحنة *",
+  "truckPlateRequired": "رقم السيارة",
 
-  "enterTruckPlate": "أدخل لوحة الشاحنة...",
+  "enterTruckPlate": "أدخل الأرقام فقط...",
 
   "enterDriverName": "أدخل اسم السائق...",
 

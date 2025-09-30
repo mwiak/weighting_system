@@ -809,11 +809,15 @@ class ReportService {
         $orderWhereClause
         
         UNION ALL
-        
-        SELECT 
+
+        SELECT
           t.id,
-          ('WT-' || t.tab_id) as order_number,
-          t.operation_type,
+          ('WT-' || t.id) as order_number,
+          CASE
+            WHEN t.supplier IS NOT NULL AND t.supplier != '' THEN 'unloading'
+            WHEN t.client IS NOT NULL AND t.client != '' THEN 'loading'
+            ELSE 'unknown'
+          END as operation_type,
           NULL as client_id,
           NULL as supplier_id,
           NULL as material_id,

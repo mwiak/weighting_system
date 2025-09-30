@@ -90,7 +90,9 @@ class WeightDisplayCard extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text.rich(
                     TextSpan(
-                        text: weightProvider.displayWeight.toString(),
+                        text: weightProvider.displayWeight
+                            .toString()
+                            .padLeft(6, '0'),
                         style: TextStyle(
                           fontSize: 38,
                           fontWeight: FontWeight.bold,

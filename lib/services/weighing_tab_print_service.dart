@@ -351,7 +351,7 @@ class WeighingTabPrintService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text('Tab ID:', style: pw.TextStyle(font: _unicodeFont)),
-              pw.Text('${tab.id}', style: pw.TextStyle(font: _unicodeFont)),
+              pw.Text('${tab.id ?? 0}', style: pw.TextStyle(font: _unicodeFont)),
             ],
           ),
           pw.Row(
@@ -382,7 +382,7 @@ class WeighingTabPrintService {
           children: [
             pw.Text('Tab ID:',
                 style: pw.TextStyle(font: _unicodeFont, fontSize: 10)),
-            pw.Text('${tab.id}',
+            pw.Text('${tab.id ?? 0}',
                 style: pw.TextStyle(font: _unicodeFont, fontSize: 10)),
           ],
         ),

@@ -49,18 +49,10 @@ class DatabaseHelper {
       CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT,
         phone TEXT,
         mobile TEXT,
-        street TEXT,
-        street2 TEXT,
         city TEXT,
-        zip TEXT,
-        vat TEXT,
-        is_company INTEGER DEFAULT 0,
         active INTEGER DEFAULT 1,
-        supplier_rank INTEGER DEFAULT 0,
-        customer_rank INTEGER DEFAULT 0,
         create_date TEXT DEFAULT CURRENT_TIMESTAMP,
         write_date TEXT DEFAULT CURRENT_TIMESTAMP,
         odoo_id INTEGER,
@@ -73,18 +65,10 @@ class DatabaseHelper {
       CREATE TABLE suppliers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT,
         phone TEXT,
         mobile TEXT,
-        street TEXT,
-        street2 TEXT,
         city TEXT,
-        zip TEXT,
-        vat TEXT,
-        is_company INTEGER DEFAULT 0,
         active INTEGER DEFAULT 1,
-        supplier_rank INTEGER DEFAULT 1,
-        customer_rank INTEGER DEFAULT 0,
         create_date TEXT DEFAULT CURRENT_TIMESTAMP,
         write_date TEXT DEFAULT CURRENT_TIMESTAMP,
         odoo_id INTEGER,
@@ -157,7 +141,6 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE weighing_tabs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tab_id INTEGER NOT NULL UNIQUE,
         empty_weight INTEGER DEFAULT 0,
         scale_empty_weight TEXT,
         gross_weight INTEGER DEFAULT 0,
@@ -227,8 +210,6 @@ class DatabaseHelper {
         'CREATE INDEX idx_driver_plates_plate ON driver_plates (plate_number)');
     await db.execute(
         'CREATE INDEX idx_app_settings_key ON app_settings (setting_key)');
-    await db.execute(
-        'CREATE INDEX idx_weighing_tabs_tab_id ON weighing_tabs (tab_id)');
     await db.execute(
         'CREATE INDEX idx_weighing_tabs_truck ON weighing_tabs (truck_plate)');
     await db.execute(

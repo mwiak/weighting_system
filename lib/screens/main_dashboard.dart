@@ -113,10 +113,10 @@ class _MainDashboardState extends State<MainDashboard> {
         backgroundColor: Colors.transparent,
         height: 80,
         title: Center(child: WeightDisplayCard()),
-        actions: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: ConnectionStatusBar(),
-        ),
+        // actions: Padding(
+        //   padding: EdgeInsets.all(8.0),
+        //   child: ConnectionStatusBar(),
+        // ),
       ),
       pane: NavigationPane(
         size: const NavigationPaneSize(openMaxWidth: 170, compactWidth: 50),

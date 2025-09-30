@@ -381,7 +381,7 @@ class OdooService {
         'create',
         [
           {
-            'tab_id': tab.id,
+            'tab_id': tab.id ?? 0,
             'truck_plate': tab.truckPlate,
             'driver_name': tab.driverName,
             'supplier_client': tab.supplier,

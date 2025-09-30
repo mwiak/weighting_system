@@ -20,6 +20,9 @@ class CustomTemplateService {
 
   // Cache for Arabic/Unicode font
   pw.Font? _arabicFont;
+  pw.Font? _arabicSemiBoldFont;
+  pw.Font? _arabicBoldFont;
+  pw.Font? _arabicExtraBoldFont;
   pw.Font? _unicodeFont;
 
   // Available data variables that can be used in templates
@@ -84,7 +87,7 @@ class CustomTemplateService {
     Material? material,
     Map<String, String>? arabicTranslations,
   }) async {
-    await _loadFonts();
+    await _loadCustomFonts();
 
     final pdf = pw.Document();
     final now = DateTime.now();
@@ -368,9 +371,9 @@ class CustomTemplateService {
     final values = <String, String>{};
 
     // WeighingTab information
-    values['tabId'] = weighingTab.id.toString();
+    values['tabId'] = (weighingTab.id ?? 0).toString();
     values['tabTitle'] = weighingTab.tabTitle;
-    values['orderNumber'] = weighingTab.dbId?.toString() ?? '';
+    values['orderNumber'] = (weighingTab.id ?? 0).toString();
 
     values['status'] = weighingTab.status.toUpperCase();
     values['createDate'] = dateToArabicDatetime(DateTime.now());
@@ -482,6 +485,44 @@ class CustomTemplateService {
         final systemFontData = await _getSystemFont();
         if (systemFontData != null) {
           _unicodeFont = pw.Font.ttf(systemFontData.buffer.asByteData());
+
+          _arabicFont = _unicodeFont;
+        }
+      }
+    } catch (e) {
+      debugPrint('Failed to load Arabic fonts: $e');
+      // Will use default fonts (might not display Arabic correctly)
+    }
+  }
+
+  Future<void> _loadCustomFonts() async {
+    if (_arabicFont != null && _unicodeFont != null) return;
+
+    try {
+      // Load Arabic-supporting fonts
+      final arabicFontData = await _getArabicFont();
+      final normalArabicFontData = await _loadCustomArabicFont('normal');
+      final semiBoldArabicFontData = await _loadCustomArabicFont('semibold');
+      final boldArabicFontData = await _loadCustomArabicFont('bold');
+      final extraBoldArabicFontData = await _loadCustomArabicFont('extrabold');
+
+      if (normalArabicFontData != null &&
+          semiBoldArabicFontData != null &&
+          boldArabicFontData != null &&
+          extraBoldArabicFontData != null) {
+        _arabicFont = pw.Font.ttf(normalArabicFontData.buffer.asByteData());
+        _arabicSemiBoldFont =
+            pw.Font.ttf(semiBoldArabicFontData.buffer.asByteData());
+        _arabicBoldFont = pw.Font.ttf(boldArabicFontData.buffer.asByteData());
+        _arabicExtraBoldFont =
+            pw.Font.ttf(extraBoldArabicFontData.buffer.asByteData());
+        _unicodeFont = _arabicFont; // Use same font for both
+      } else {
+        // Fallback to system fonts
+        final systemFontData = await _getSystemFont();
+        if (systemFontData != null) {
+          _unicodeFont = pw.Font.ttf(systemFontData.buffer.asByteData());
+
           _arabicFont = _unicodeFont;
         }
       }
@@ -508,6 +549,26 @@ class CustomTemplateService {
         if (await file.exists()) {
           return await file.readAsBytes();
         }
+      }
+    } catch (e) {
+      debugPrint('Error loading Arabic font: $e');
+    }
+    return null;
+  }
+
+  Future<Uint8List?> _loadCustomArabicFont(String fontWeight) async {
+    final Map<String, String> fontsPaths = {
+      'normal': './used_fonts/NotoSansArabic-Regular.ttf',
+      'semibold': './used_fonts/NotoSansArabic-SemiBold.ttf',
+      'bold': './used_fonts/NotoSansArabic-Bold.ttf',
+      'extrabold': './used_fonts/NotoSansArabic-ExtraBold.ttf'
+    };
+
+    try {
+      final currentFontPath = fontsPaths[fontWeight];
+      final file = File(currentFontPath!);
+      if (await file.exists()) {
+        return await file.readAsBytes();
       }
     } catch (e) {
       debugPrint('Error loading Arabic font: $e');
@@ -641,9 +702,9 @@ class CustomTemplateService {
       child: pw.Text(
         text,
         style: pw.TextStyle(
-          fontSize: field.fontSize,
-          fontWeight: fontWeight,
-        ),
+            fontSize: field.fontSize,
+            fontWeight: fontWeight,
+            fontBold: _arabicBoldFont),
         textAlign: textAlign,
         textDirection:
             _isArabicText(text) ? pw.TextDirection.rtl : pw.TextDirection.ltr,

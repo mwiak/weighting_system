@@ -17,8 +17,8 @@ import 'auto_complete_combo_box.dart';
 const double kStatusFontSize = 7.0;
 const double kWeightValueFontSize = 12.0;
 const double kWeightUnitFontSize = 10.0;
-const double kLabelFontSize = 11.0;
-const double kButtonFontSize = 11.0;
+const double kLabelFontSize = 13.0;
+const double kButtonFontSize = 12.5;
 const double kIconSize = 12.0;
 
 class WeighingTabContent extends StatefulWidget {
@@ -327,17 +327,6 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                     children: [
                       // Empty Weight
                       _buildWeightField(
-                        label: AppLocalizations.of(context)!.emptyWeightKg,
-                        controller: _emptyWeightController,
-                        onChanged: _onEmptyWeightChanged,
-                        onScalePressed: () => _captureWeightFromScale(true),
-                        onFocusChanged: (focused) =>
-                            setState(() => _emptyWeightFieldFocused = focused),
-                      ),
-                      const SizedBox(height: 4),
-
-                      // Gross Weight
-                      _buildWeightField(
                         label: AppLocalizations.of(context)!.grossWeightKg,
                         controller: _grossWeightController,
                         onChanged: _onGrossWeightChanged,
@@ -345,6 +334,18 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         onFocusChanged: (focused) =>
                             setState(() => _grossWeightFieldFocused = focused),
                       ),
+                      const SizedBox(height: 4),
+                      _buildWeightField(
+                        label: AppLocalizations.of(context)!.emptyWeightKg,
+                        controller: _emptyWeightController,
+                        onChanged: _onEmptyWeightChanged,
+                        onScalePressed: () => _captureWeightFromScale(true),
+                        onFocusChanged: (focused) =>
+                            setState(() => _emptyWeightFieldFocused = focused),
+                      ),
+
+                      // Gross Weight
+
                       const SizedBox(height: 4),
 
                       // Net Weight (calculated)
@@ -355,30 +356,70 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                       const SizedBox(height: 4),
 
                       // Operation Status
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(tab.status).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                      // Container(
+                      //   padding: const EdgeInsets.all(10),
+                      //   decoration: BoxDecoration(
+                      //     color: _getStatusColor(tab.status).withOpacity(0.1),
+                      //     borderRadius: BorderRadius.circular(8),
+                      //   ),
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(
+                      //         _getStatusIcon(tab.status),
+                      //         color: _getStatusColor(tab.status),
+                      //         size: kIconSize,
+                      //       ),
+                      //       const SizedBox(width: 4),
+                      //       Text(
+                      //         AppLocalizations.of(context)!.statusLabel(
+                      //             _getStatusText(context, tab.status)),
+                      //         style: TextStyle(
+                      //           color: _getStatusColor(tab.status),
+                      //           fontWeight: FontWeight.w600,
+                      //           fontSize: kStatusFontSize,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      const SizedBox(height: 30),
+
+                      Button(
+                        onPressed: () => _cancelTab(),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                              if (states.isDisabled) {
+                                return Colors.grey;
+                              }
+                              if (states.isPressed) {
+                                return Colors.red.darkest.withOpacity(0.44);
+                              }
+                              if (states.isHovered) {
+                                return Colors.red.dark.withOpacity(0.36);
+                              }
+                              return Colors.red.darker
+                                  .withOpacity(0.60); // default
+                            },
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _getStatusIcon(tab.status),
-                              color: _getStatusColor(tab.status),
-                              size: kIconSize,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              AppLocalizations.of(context)!.statusLabel(
-                                  _getStatusText(context, tab.status)),
-                              style: TextStyle(
-                                color: _getStatusColor(tab.status),
-                                fontWeight: FontWeight.w600,
-                                fontSize: kStatusFontSize,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(FluentIcons.cancel, size: kIconSize),
+                              const SizedBox(width: 6),
+                              Text(
+                                AppLocalizations.of(context)!.cancel,
+                                style: TextStyle(
+                                  fontSize: kButtonFontSize + 2,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
 
@@ -401,88 +442,111 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Truck Plate
-                      _buildLabel(
-                          AppLocalizations.of(context)!.truckPlateRequired),
-                      const SizedBox(height: 4),
-                      AutoCompleteComboBox(
-                        placeholder:
-                            AppLocalizations.of(context)!.enterTruckPlate,
-                        value: tab.truckPlate,
-                        controller: _truckPlateController,
-                        onChanged: (value) {
-                          tabsProvider.updateTab(
-                              widget.tabIndex, {'truckPlate': value});
-                        },
-                        suggestionType: AutoCompleteType.truckPlate,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            children: [
+                              _buildLabel(AppLocalizations.of(context)!
+                                  .truckPlateRequired),
+                              const SizedBox(height: 4),
+                              AutoCompleteComboBox(
+                                placeholder: AppLocalizations.of(context)!
+                                    .enterTruckPlate,
+                                value: tab.truckPlate,
+                                controller: _truckPlateController,
+                                onChanged: (value) {
+                                  tabsProvider.updateTab(
+                                      widget.tabIndex, {'truckPlate': value});
+                                },
+                                suggestionType: AutoCompleteType.truckPlate,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Column(
+                            children: [
+                              _buildLabel(
+                                  AppLocalizations.of(context)!.driverName),
+                              const SizedBox(height: 4),
+                              AutoCompleteComboBox(
+                                placeholder: AppLocalizations.of(context)!
+                                    .enterDriverName,
+                                value: tab.driverName,
+                                controller: _driverNameController,
+                                onChanged: (value) {
+                                  tabsProvider.updateTab(
+                                      widget.tabIndex, {'driverName': value});
+                                },
+                                suggestionType: AutoCompleteType.driver,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
+
                       const SizedBox(height: 8),
 
-                      // Driver Name
-                      _buildLabel(AppLocalizations.of(context)!.driverName),
-                      const SizedBox(height: 4),
-                      AutoCompleteComboBox(
-                        placeholder:
-                            AppLocalizations.of(context)!.enterDriverName,
-                        value: tab.driverName,
-                        controller: _driverNameController,
-                        onChanged: (value) {
-                          tabsProvider.updateTab(
-                              widget.tabIndex, {'driverName': value});
-                        },
-                        suggestionType: AutoCompleteType.driver,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            children: [
+                              _buildLabel(AppLocalizations.of(context)!.client),
+                              const SizedBox(height: 4),
+                              AutoCompleteComboBox(
+                                placeholder: AppLocalizations.of(context)!
+                                    .selectCustomer,
+                                value: tab.client,
+                                controller: _clientController,
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    // Clear supplier when client is set
+                                    _supplierController.text = '';
+                                    tabsProvider.updateTab(widget.tabIndex, {
+                                      'client': value,
+                                      'supplier': '',
+                                    });
+                                  } else {
+                                    tabsProvider.updateTab(
+                                        widget.tabIndex, {'client': value});
+                                  }
+                                },
+                                suggestionType: AutoCompleteType.client,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Column(
+                            children: [
+                              _buildLabel(
+                                  AppLocalizations.of(context)!.supplier),
+                              const SizedBox(height: 4),
+                              AutoCompleteComboBox(
+                                placeholder: AppLocalizations.of(context)!
+                                    .selectSupplier,
+                                value: tab.supplier,
+                                controller: _supplierController,
+                                onChanged: (value) {
+                                  if (value.isNotEmpty) {
+                                    // Clear client when supplier is set
+                                    _clientController.text = '';
+                                    tabsProvider.updateTab(widget.tabIndex, {
+                                      'supplier': value,
+                                      'client': '',
+                                    });
+                                  } else {
+                                    tabsProvider.updateTab(
+                                        widget.tabIndex, {'supplier': value});
+                                  }
+                                },
+                                suggestionType: AutoCompleteType.supplier,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
 
-                      // Customer Field
-                      _buildLabel(AppLocalizations.of(context)!
-                          .customerLoadingOperation),
-                      const SizedBox(height: 4),
-                      AutoCompleteComboBox(
-                        placeholder:
-                            AppLocalizations.of(context)!.selectCustomer,
-                        value: tab.client,
-                        controller: _clientController,
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            // Clear supplier when client is set
-                            _supplierController.text = '';
-                            tabsProvider.updateTab(widget.tabIndex, {
-                              'client': value,
-                              'supplier': '',
-                            });
-                          } else {
-                            tabsProvider
-                                .updateTab(widget.tabIndex, {'client': value});
-                          }
-                        },
-                        suggestionType: AutoCompleteType.client,
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Supplier Field
-                      _buildLabel(AppLocalizations.of(context)!
-                          .supplierUnloadingOperation),
-                      const SizedBox(height: 4),
-                      AutoCompleteComboBox(
-                        placeholder:
-                            AppLocalizations.of(context)!.selectSupplier,
-                        value: tab.supplier,
-                        controller: _supplierController,
-                        onChanged: (value) {
-                          if (value.isNotEmpty) {
-                            // Clear client when supplier is set
-                            _clientController.text = '';
-                            tabsProvider.updateTab(widget.tabIndex, {
-                              'supplier': value,
-                              'client': '',
-                            });
-                          } else {
-                            tabsProvider.updateTab(
-                                widget.tabIndex, {'supplier': value});
-                          }
-                        },
-                        suggestionType: AutoCompleteType.supplier,
-                      ),
                       const SizedBox(height: 8),
 
                       // Material
@@ -649,7 +713,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               const Spacer(),
               Text(
                 AppLocalizations.of(context)!.kg,
-                style: const TextStyle(color: Colors.grey, fontSize: kWeightUnitFontSize),
+                style: const TextStyle(
+                    color: Colors.grey, fontSize: kWeightUnitFontSize),
               ),
             ],
           ),
@@ -670,70 +735,66 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
   Widget _buildActionButtons(WeighingTab tab) {
     // final l10n = AppLocalizations.of(context)!;
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Button(
-            onPressed: () => _cancelTab(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(FluentIcons.cancel, size: kIconSize),
-                const SizedBox(width: 6),
-                Text(AppLocalizations.of(context)!.cancel,
-                    style: TextStyle(fontSize: kButtonFontSize)),
-              ],
+        Row(
+          children: [
+            Expanded(
+              child: Button(
+                onPressed: () => printPDF(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FluentIcons.print, size: kIconSize),
+                    SizedBox(width: 6),
+                    Text(AppLocalizations.of(context)!.print,
+                        style: TextStyle(fontSize: kButtonFontSize)),
+                  ],
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Button(
+                onPressed: () => savePDF(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FluentIcons.print, size: kIconSize),
+                    SizedBox(width: 6),
+                    Text(AppLocalizations.of(context)!.savePDF,
+                        style: TextStyle(fontSize: kButtonFontSize)),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Button(
-            onPressed: () => printPDF(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(FluentIcons.print, size: kIconSize),
-                SizedBox(width: 6),
-                Text(AppLocalizations.of(context)!.print,
-                    style: TextStyle(fontSize: kButtonFontSize)),
-              ],
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton(
+                onPressed: tab.isComplete ? () => _completeTab() : null,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                        tab.isComplete
+                            ? FluentIcons.completed
+                            : FluentIcons.clear,
+                        size: kIconSize),
+                    const SizedBox(width: 6),
+                    Text(
+                        tab.isComplete
+                            ? AppLocalizations.of(context)!.complete
+                            : AppLocalizations.of(context)!.incomplete,
+                        style: TextStyle(fontSize: kButtonFontSize)),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Button(
-            onPressed: () => savePDF(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(FluentIcons.print, size: kIconSize),
-                SizedBox(width: 6),
-                Text(AppLocalizations.of(context)!.savePDF,
-                    style: TextStyle(fontSize: kButtonFontSize)),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: FilledButton(
-            onPressed: tab.isComplete ? () => _completeTab() : null,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(tab.isComplete ? FluentIcons.completed : FluentIcons.clear,
-                    size: kIconSize),
-                const SizedBox(width: 6),
-                Text(
-                    tab.isComplete
-                        ? AppLocalizations.of(context)!.complete
-                        : AppLocalizations.of(context)!.incomplete,
-                    style: TextStyle(fontSize: kButtonFontSize)),
-              ],
-            ),
-          ),
+          ],
         ),
       ],
     );

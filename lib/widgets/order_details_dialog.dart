@@ -186,7 +186,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                 l10n.basicInformation,
                                 [
                                   _buildDetailRow(l10n.orderNumber,
-                                      '${widget.operation.dbId}'),
+                                      '${widget.operation.id}'),
                                   _buildDetailRow(l10n.status,
                                       _formatStatus(widget.operation.status)),
                                   _buildDetailRow(
@@ -290,7 +290,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                           : 'لا'),
                                   _buildDetailRow(
                                       'رقم قاعدة البيانات',
-                                      widget.operation.dbId?.toString() ??
+                                      widget.operation.id?.toString() ??
                                           'غير محفوظ'),
                                 ],
                               ),

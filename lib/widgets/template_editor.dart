@@ -189,7 +189,7 @@ class _TemplateEditorState extends State<TemplateEditor> {
 
     return fluent.ScaffoldPage(
       header: _buildHeader(),
-      content: isSmallScreen ? _buildTabletLayout() : _buildDesktopLayout(),
+      content: _buildDesktopLayout(),
     );
   }
 
@@ -1679,7 +1679,7 @@ class _TemplateEditorState extends State<TemplateEditor> {
 
   Widget _buildCompactPropertiesPanel() {
     return Container(
-      width: 200,
+      width: 400,
       color: fluent.FluentTheme.of(context).scaffoldBackgroundColor,
       child: Column(
         children: [

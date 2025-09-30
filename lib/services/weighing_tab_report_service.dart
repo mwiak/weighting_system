@@ -246,10 +246,11 @@ class WeighingTabReportService {
 
     final query = '''
       SELECT
-        tab_id,
+        id,
         truck_plate,
         driver_name,
-        supplier_client,
+        supplier,
+        client,
         material,
         empty_weight,
         gross_weight,
@@ -283,11 +284,15 @@ class WeighingTabReportService {
       ];
 
       final rows = results.map((row) {
+        final supplier = row['supplier']?.toString() ?? '';
+        final client = row['client']?.toString() ?? '';
+        final clientSupplier = supplier.isNotEmpty ? supplier : client;
+
         return {
-          'Tab ID': row['tab_id']?.toString() ?? '',
+          'Tab ID': row['id']?.toString() ?? '',
           'Truck Plate': row['truck_plate']?.toString() ?? '',
           'Driver': row['driver_name']?.toString() ?? '',
-          'Client/Supplier': row['supplier_client']?.toString() ?? '',
+          'Client/Supplier': clientSupplier,
           'Material': row['material']?.toString() ?? '',
           'Empty Weight (kg)':
               (row['empty_weight'] as double?)?.toStringAsFixed(0) ?? '0',
@@ -394,20 +399,7 @@ class WeighingTabReportService {
 
     final query = '''
       SELECT
-        tab_id as id,
-        truck_plate,
-        driver_name,
-        client,
-        supplier,
-        material,
-        empty_weight,
-        gross_weight,
-        net_weight,
-        status,
-        is_paid,
-        created_at,
-        updated_at,
-        'weighing_tabs' as source_table
+        *
       FROM weighing_tabs
       $whereClause
       ORDER BY created_at DESC
@@ -644,7 +636,7 @@ class WeighingTabReportService {
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(4),
-                  child: pw.Text('${tab['tab_id'] ?? ''}',
+                  child: pw.Text('${tab['id'] ?? ''}',
                       style: const pw.TextStyle(fontSize: 9)),
                 ),
                 pw.Padding(

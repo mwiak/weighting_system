@@ -34,9 +34,6 @@ class TabsProvider extends ChangeNotifier {
   Future<void> loadTabs() async {
     _setLoading(true);
     try {
-      // First, initialize the ID counter based on existing data
-      await _initializeTabIdCounter();
-
       final data = await _db.query(
         'weighing_tabs',
         where: 'status = ?',
@@ -61,30 +58,6 @@ class TabsProvider extends ChangeNotifier {
     }
   }
 
-  /// Initialize the tab ID counter to prevent conflicts
-  Future<void> _initializeTabIdCounter() async {
-    try {
-      // Get the highest tab_id from the database
-      final result = await _db.query(
-        'weighing_tabs',
-        columns: ['MAX(tab_id) as max_id'],
-      );
-
-      int maxId = 0;
-      if (result.isNotEmpty && result.first['max_id'] != null) {
-        maxId = result.first['max_id'] as int;
-      }
-
-      // Set the next ID to be one more than the maximum
-      WeighingTab.setNextId(maxId + 1);
-      debugPrint('TabsProvider: Initialized tab ID counter to ${maxId + 1}');
-    } catch (e) {
-      debugPrint('TabsProvider: Error initializing ID counter: $e');
-      // Fallback to default behavior
-      WeighingTab.setNextId(1);
-    }
-  }
-
   /// Create a new tab
   Future<bool> createNewTab() async {
     if (_tabs.length >= maxTabs) {
@@ -93,13 +66,23 @@ class TabsProvider extends ChangeNotifier {
 
     final tab = WeighingTab();
 
-    // Don't save to database immediately - wait until user enters data
-    _tabs.add(tab);
-    _currentTabIndex = _tabs.length - 1;
+    // Immediately insert into database to get ID
+    try {
+      final tabData = tab.toMap();
+      tabData.remove('id'); // Remove null id for insert
+      final dbId = await _db.insert('weighing_tabs', tabData);
+      tab.id = dbId;
 
-    notifyListeners();
-    debugPrint('TabsProvider: Created new tab ${tab.id}');
-    return true;
+      _tabs.add(tab);
+      _currentTabIndex = _tabs.length - 1;
+
+      notifyListeners();
+      debugPrint('TabsProvider: Created new tab with ID ${tab.id}');
+      return true;
+    } catch (e) {
+      debugPrint('TabsProvider: Error creating new tab: $e');
+      return false;
+    }
   }
 
   /// Check if a new tab can be created
@@ -142,7 +125,7 @@ class TabsProvider extends ChangeNotifier {
     final tab = _tabs[index];
 
     try {
-      if (tab.dbId != null) {
+      if (tab.id != null) {
         // Set status to cancelled and save to database
         tab.cancelTab();
         await _saveTabToDatabase(tab);
@@ -324,70 +307,22 @@ class TabsProvider extends ChangeNotifier {
 
   Future<void> _saveTabToDatabase(WeighingTab tab) async {
     try {
-      if (tab.dbId == null) {
+      if (tab.id == null) {
         // First time saving - insert into database
         final tabData = tab.toMap();
         tabData.remove('id'); // Remove id field for insert
 
-        try {
-          final dbId = await _db.insert('weighing_tabs', tabData);
-          tab.dbId = dbId;
-          debugPrint('TabsProvider: Inserted new tab ${tab.id} to database with ID $dbId');
-        } catch (insertError) {
-          // Handle unique constraint violation on tab_id
-          if (insertError.toString().contains('UNIQUE constraint failed')) {
-            debugPrint('TabsProvider: Tab ID ${tab.id} conflict, reinitializing counter');
-
-            // Reinitialize the ID counter and retry with new ID
-            await _initializeTabIdCounter();
-
-            // Create a new tab with the updated ID counter
-            final newTab = WeighingTab();
-
-            // Copy all data to the new tab
-            newTab.emptyWeight = tab.emptyWeight;
-            newTab.grossWeight = tab.grossWeight;
-            newTab.scaleEmptyWeightAt = tab.scaleEmptyWeightAt;
-            newTab.scaleGrossWeightAt = tab.scaleGrossWeightAt;
-            newTab.truckPlate = tab.truckPlate;
-            newTab.driverName = tab.driverName;
-            newTab.supplier = tab.supplier;
-            newTab.client = tab.client;
-            newTab.material = tab.material;
-            newTab.kilo_price = tab.kilo_price;
-            newTab.total_price = tab.total_price;
-            newTab.isPaid = tab.isPaid;
-            newTab.showPriceOnPrint = tab.showPriceOnPrint;
-            newTab.status = tab.status;
-            newTab.createdAt = tab.createdAt;
-            newTab.updatedAt = tab.updatedAt;
-
-            // Update the reference and retry save
-            final index = _tabs.indexOf(tab);
-            if (index >= 0) {
-              _tabs[index] = newTab;
-            }
-
-            // Retry saving with new ID
-            final newTabData = newTab.toMap();
-            newTabData.remove('id');
-            final dbId = await _db.insert('weighing_tabs', newTabData);
-            newTab.dbId = dbId;
-
-            debugPrint('TabsProvider: Resolved ID conflict, saved tab with new ID ${newTab.id}');
-            return; // Success, exit the method
-          }
-          rethrow;
-        }
+        final dbId = await _db.insert('weighing_tabs', tabData);
+        tab.id = dbId;
+        debugPrint('TabsProvider: Inserted new tab to database with ID $dbId');
       } else {
         // Update existing record
         final tabData = tab.toMap();
-        tabData.remove('id'); // Remove id field for update to avoid conflicts
         await _db.update(
           'weighing_tabs',
           tabData,
           where: 'id = ?',
-          whereArgs: [tab.dbId],
+          whereArgs: [tab.id],
         );
         debugPrint('TabsProvider: Updated tab ${tab.id} in database');
       }

@@ -1,38 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 class WeighingTab {
-  static int _nextId = 1;
-  static bool _isInitialized = false;
+  int? id; // Database ID (null until persisted)
 
-  final int id;
-  int? dbId; // Database ID for persistence
-
-  WeighingTab() : id = _getNextId();
-
-  static int _getNextId() {
-    return _nextId++;
-  }
-
-  /// Initialize the ID counter based on existing database records
-  static Future<void> initializeIdCounter() async {
-    if (_isInitialized) return;
-
-    try {
-      // This will be called from TabsProvider to set the proper next ID
-      // based on database records
-      _isInitialized = true;
-    } catch (e) {
-      debugPrint('WeighingTab: Error initializing ID counter: $e');
-      // Fallback to default if database query fails
-      _nextId = 1;
-    }
-  }
-
-  /// Set the next ID counter (used by TabsProvider)
-  static void setNextId(int nextId) {
-    _nextId = nextId;
-    _isInitialized = true;
-  }
+  WeighingTab(); // Default constructor
 
   // Weight fields
   int emptyWeight = 0;
@@ -75,7 +46,7 @@ class WeighingTab {
     } else if (truckPlate.isNotEmpty) {
       return truckPlate;
     }
-    return 'Tab $id';
+    return 'Tab ${id ?? 'New'}';
   }
 
   bool get isComplete {
@@ -223,8 +194,7 @@ class WeighingTab {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': dbId, // Only include for updates, null for inserts
-      'tab_id': id,
+      'id': id, // Only include for updates, null for inserts
       'empty_weight': emptyWeight,
       'scale_empty_weight': scaleEmptyWeightAt?.toIso8601String() ?? '',
       'gross_weight': grossWeight,
@@ -247,13 +217,8 @@ class WeighingTab {
   }
 
   factory WeighingTab.fromMap(Map<String, dynamic> map) {
-    final tabId = map['tab_id'] as int? ?? _nextId++;
-    // Update static counter to prevent conflicts
-    if (tabId >= _nextId) {
-      _nextId = tabId + 1;
-    }
-    final tab = WeighingTab._internal(tabId);
-    tab.dbId = map['id'] as int?;
+    final tab = WeighingTab();
+    tab.id = map['id'] as int?;
     tab.emptyWeight = (map['empty_weight'] as num?)?.toInt() ?? 0;
     tab.scaleEmptyWeightAt = map['scale_empty_weight'] != null &&
             (map['scale_empty_weight'] as String).isNotEmpty
@@ -286,8 +251,6 @@ class WeighingTab {
 
     return tab;
   }
-
-  WeighingTab._internal(this.id);
 
   @override
   String toString() {
