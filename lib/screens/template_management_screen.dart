@@ -69,6 +69,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   Future<void> _loadTemplates() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -113,7 +114,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
       // Use default template on error
       _templates = [DefaultTemplates.a3WeighingTicket];
     }
-
+    if (!mounted) return;
     setState(() => _isLoading = false);
   }
 

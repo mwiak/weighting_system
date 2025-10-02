@@ -10,6 +10,7 @@ import '../providers/driver_plate_provider.dart';
 import '../models/supplier.dart';
 import '../models/material.dart' as m;
 import '../database/database_helper.dart';
+import '../utils/arabic_normalize.dart';
 
 enum AutoCompleteType {
   truckPlate,
@@ -436,9 +437,13 @@ class _AutoCompleteFilterComboBoxState
   List<String> get filteredSuggestions {
     if (_controller.text.isEmpty) return _suggestions;
 
+    final normalizedInput = normalizeArabic(_controller.text);
     return _suggestions
-        .where((suggestion) =>
-            suggestion.toLowerCase().contains(_controller.text.toLowerCase()))
+        .where((suggestion) {
+          final normalizedSuggestion = normalizeArabic(suggestion);
+          return normalizedSuggestion.contains(normalizedInput) ||
+                 suggestion.toLowerCase().contains(_controller.text.toLowerCase());
+        })
         .toList();
   }
 

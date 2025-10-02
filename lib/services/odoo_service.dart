@@ -154,17 +154,10 @@ class OdooService {
         [
           {
             'name': client.name,
-            'email': client.email,
             'phone': client.phone,
             'mobile': client.mobile,
-            'street': client.street,
-            'street2': client.street2,
             'city': client.city,
-            'zip': client.zip,
-            'vat': client.vat,
-            'is_company': client.isCompany,
-            'supplier_rank': client.supplierRank,
-            'customer_rank': client.customerRank,
+            'customer_rank': 1,
             'active': client.active,
           }
         ],
@@ -185,17 +178,10 @@ class OdooService {
         [
           {
             'name': supplier.name,
-            'email': supplier.email,
             'phone': supplier.phone,
             'mobile': supplier.mobile,
-            'street': supplier.street,
-            'street2': supplier.street2,
             'city': supplier.city,
-            'zip': supplier.zip,
-            'vat': supplier.vat,
-            'is_company': supplier.isCompany,
-            'supplier_rank': supplier.supplierRank,
-            'customer_rank': supplier.customerRank,
+            'supplier_rank': 1,
             'active': supplier.active,
           }
         ],

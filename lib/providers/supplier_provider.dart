@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../database/database_helper.dart';
 import '../models/supplier.dart';
+import '../utils/arabic_normalize.dart';
 
 class SupplierProvider extends ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -29,8 +30,9 @@ class SupplierProvider extends ChangeNotifier {
 
     // Filter by search query
     if (_searchQuery.isNotEmpty) {
+      final normalizedQuery = normalizeArabic(_searchQuery);
       suppliers = suppliers.where((supplier) {
-        return supplier.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+        return (supplier.normalizedName?.contains(normalizedQuery) ?? false) ||
                (supplier.phone?.contains(_searchQuery) ?? false) ||
                (supplier.city?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
       }).toList();

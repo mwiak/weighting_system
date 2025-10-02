@@ -48,6 +48,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        normalized_name TEXT NOT NULL,
         name TEXT NOT NULL,
         phone TEXT,
         mobile TEXT,
@@ -64,6 +65,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE suppliers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        normalized_name TEXT NOT NULL,
         name TEXT NOT NULL,
         phone TEXT,
         mobile TEXT,
@@ -80,6 +82,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE materials (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        normalized_name TEXT NOT NULL,
         name TEXT NOT NULL,
         price REAL,
         description TEXT,
@@ -113,6 +116,7 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        normalized_name TEXT NOT NULL,
         name TEXT NOT NULL,
         phone TEXT,
         mobile TEXT,
@@ -194,6 +198,12 @@ class DatabaseHelper {
       ('print_schema_template', '', 'text', 'Custom print schema template'),
       ('company_name', '', 'string', 'Company name for documents'),
       ('auto_sync_enabled', '1', 'boolean', 'Enable automatic synchronization with Odoo')
+    ''');
+
+    await db.execute('''
+      INSERT INTO users (username, password, type) VALUES
+      ("Mohammed", "362646", "admin"),
+      ("Abo Hussien", "0", "user")
     ''');
 
     // Create indexes for better performance

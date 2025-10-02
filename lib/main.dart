@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:weighing_system/providers/user_provider.dart';
+import 'package:weighing_system/screens/login_screen.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -66,11 +68,12 @@ class WeighingSystemApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DriverProvider()),
         ChangeNotifierProvider(create: (_) => DriverPlateProvider()),
         ChangeNotifierProvider(create: (_) => TabsProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: fluent.FluentApp(
         title: 'Truck Weighing System',
         theme: AppTheme.lightTheme,
-        home: const MainDashboard(),
+        home: const LoginScreen(),
         debugShowCheckedModeBanner: false,
         localizationsDelegates: [
           AppLocalizations.delegate,

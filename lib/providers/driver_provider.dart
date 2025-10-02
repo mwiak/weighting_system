@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../database/database_helper.dart';
 import '../models/driver.dart';
+import '../utils/arabic_normalize.dart';
 
 /// Driver Provider
 /// 
@@ -246,13 +247,14 @@ class DriverProvider extends ChangeNotifier {
   void _applyFilters() {
     _filteredDrivers = _drivers.where((driver) {
       if (_searchQuery.isEmpty) return true;
-      
+
+      final normalizedQuery = normalizeArabic(_searchQuery);
       final query = _searchQuery.toLowerCase();
-      return driver.name.toLowerCase().contains(query) ||
+      return (driver.normalizedName?.contains(normalizedQuery) ?? false) ||
              driver.plateNumbers.any((plate) => plate.toLowerCase().contains(query)) ||
              (driver.city?.toLowerCase().contains(query) ?? false);
     }).toList();
-    
+
     notifyListeners();
   }
 

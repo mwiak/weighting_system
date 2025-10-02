@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../utils/arabic_normalize.dart';
 
 part 'supplier.g.dart';
 
@@ -6,43 +7,29 @@ part 'supplier.g.dart';
 class Supplier {
   final int? id;
   final String name;
-  final String? email;
+  final String? normalizedName;
   final String? phone;
   final String? mobile;
-  final String? street;
-  final String? street2;
   final String? city;
-  final String? zip;
-  final String? vat;
-  final bool isCompany;
   final bool active;
-  final int supplierRank;
-  final int customerRank;
-  final int? odooId;
-  final int syncStatus;
   final String? createDate;
   final String? writeDate;
+  final int? odooId;
+  final int syncStatus;
 
   Supplier({
     this.id,
     required this.name,
-    this.email,
+    String? normalizedName,
     this.phone,
     this.mobile,
-    this.street,
-    this.street2,
     this.city,
-    this.zip,
-    this.vat,
-    this.isCompany = false,
     this.active = true,
-    this.supplierRank = 1,
-    this.customerRank = 0,
-    this.odooId,
-    this.syncStatus = 0,
     this.createDate,
     this.writeDate,
-  });
+    this.odooId,
+    this.syncStatus = 0,
+  }) : normalizedName = normalizedName ?? normalizeArabic(name);
 
   factory Supplier.fromJson(Map<String, dynamic> json) => _$SupplierFromJson(json);
   Map<String, dynamic> toJson() => _$SupplierToJson(this);
@@ -51,22 +38,15 @@ class Supplier {
     return Supplier(
       id: map['id'],
       name: map['name'],
-      email: map['email'],
+      normalizedName: map['normalized_name'],
       phone: map['phone'],
       mobile: map['mobile'],
-      street: map['street'],
-      street2: map['street2'],
       city: map['city'],
-      zip: map['zip'],
-      vat: map['vat'],
-      isCompany: (map['is_company'] ?? 0) == 1,
       active: (map['active'] ?? 1) == 1,
-      supplierRank: map['supplier_rank'] ?? 1,
-      customerRank: map['customer_rank'] ?? 0,
-      odooId: map['odoo_id'],
-      syncStatus: map['sync_status'] ?? 0,
       createDate: map['create_date'],
       writeDate: map['write_date'],
+      odooId: map['odoo_id'],
+      syncStatus: map['sync_status'] ?? 0,
     );
   }
 
@@ -78,22 +58,15 @@ class Supplier {
     return {
       if (id != null) 'id': id,
       'name': name,
-      'email': email,
+      'normalized_name': normalizedName ?? normalizeArabic(name),
       'phone': phone,
       'mobile': mobile,
-      'street': street,
-      'street2': street2,
       'city': city,
-      'zip': zip,
-      'vat': vat,
-      'is_company': isCompany ? 1 : 0,
       'active': active ? 1 : 0,
-      'supplier_rank': supplierRank,
-      'customer_rank': customerRank,
-      'odoo_id': odooId,
-      'sync_status': syncStatus,
       'create_date': createDate,
       'write_date': writeDate,
+      'odoo_id': odooId,
+      'sync_status': syncStatus,
     };
   }
 
@@ -104,42 +77,29 @@ class Supplier {
   Supplier copyWith({
     int? id,
     String? name,
-    String? email,
+    String? normalizedName,
     String? phone,
     String? mobile,
-    String? street,
-    String? street2,
     String? city,
-    String? zip,
-    String? vat,
-    bool? isCompany,
     bool? active,
-    int? supplierRank,
-    int? customerRank,
-    int? odooId,
-    int? syncStatus,
     String? createDate,
     String? writeDate,
+    int? odooId,
+    int? syncStatus,
   }) {
+    final newName = name ?? this.name;
     return Supplier(
       id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
+      name: newName,
+      normalizedName: normalizedName ?? (name != null ? normalizeArabic(newName) : this.normalizedName),
       phone: phone ?? this.phone,
       mobile: mobile ?? this.mobile,
-      street: street ?? this.street,
-      street2: street2 ?? this.street2,
       city: city ?? this.city,
-      zip: zip ?? this.zip,
-      vat: vat ?? this.vat,
-      isCompany: isCompany ?? this.isCompany,
       active: active ?? this.active,
-      supplierRank: supplierRank ?? this.supplierRank,
-      customerRank: customerRank ?? this.customerRank,
-      odooId: odooId ?? this.odooId,
-      syncStatus: syncStatus ?? this.syncStatus,
       createDate: createDate ?? this.createDate,
       writeDate: writeDate ?? this.writeDate,
+      odooId: odooId ?? this.odooId,
+      syncStatus: syncStatus ?? this.syncStatus,
     );
   }
 
@@ -165,6 +125,6 @@ class Supplier {
 
   @override
   String toString() {
-    return 'Supplier(id: $id, name: $name, email: $email, phone: $phone, mobile: $mobile, city: $city, active: $active)';
+    return 'Supplier(id: $id, name: $name, phone: $phone, mobile: $mobile, city: $city, active: $active)';
   }
 }

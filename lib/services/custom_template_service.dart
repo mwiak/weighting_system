@@ -399,11 +399,8 @@ class CustomTemplateService {
 
     // Client information
     if (client != null) {
-      values['clientAddress'] = client.street ?? '';
       values['clientCity'] = client.city ?? '';
       values['clientPhone'] = client.phone ?? '';
-      values['clientEmail'] = client.email ?? '';
-      values['clientVat'] = client.vat ?? '';
     } else if (weighingTab.supplier.isNotEmpty) {
       // Use the string value from weighingTab if no client object provided
 
@@ -413,11 +410,8 @@ class CustomTemplateService {
     // Supplier information
     if (supplier != null) {
       values['supplierName'] = weighingTab.supplier ?? 'مورد';
-      values['supplierAddress'] = supplier.street ?? '';
       values['supplierCity'] = supplier.city ?? '';
       values['supplierPhone'] = supplier.phone ?? '';
-      values['supplierEmail'] = supplier.email ?? '';
-      values['supplierVat'] = supplier.vat ?? '';
     } else if (weighingTab.supplier.isNotEmpty) {
       // Use the string value from weighingTab if no supplier object provided
       values['supplierName'] = weighingTab.supplier;

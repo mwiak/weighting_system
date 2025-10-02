@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../utils/arabic_normalize.dart';
 
 part 'material.g.dart';
 
@@ -6,6 +7,7 @@ part 'material.g.dart';
 class Material {
   final int? id;
   final String name;
+  final String? normalizedName;
   final double? price; // Optional price per kilogram
   final String? description;
   final bool active;
@@ -17,6 +19,7 @@ class Material {
   Material({
     this.id,
     required this.name,
+    String? normalizedName,
     this.price,
     this.description,
     this.active = true,
@@ -24,7 +27,7 @@ class Material {
     this.writeDate,
     this.odooId,
     this.syncStatus = 0,
-  });
+  }) : normalizedName = normalizedName ?? normalizeArabic(name);
 
   factory Material.fromJson(Map<String, dynamic> json) => _$MaterialFromJson(json);
   Map<String, dynamic> toJson() => _$MaterialToJson(this);
@@ -33,14 +36,15 @@ class Material {
     return Material(
       id: map['id'],
       name: map['name'],
+      normalizedName: map['normalized_name'],
       price: (map['price'] as num?)?.toDouble(),
       description: map['description'],
       active: (map['active'] as int?) == 1,
-      createDate: map['create_date'] != null 
-          ? DateTime.parse(map['create_date']) 
+      createDate: map['create_date'] != null
+          ? DateTime.parse(map['create_date'])
           : null,
-      writeDate: map['write_date'] != null 
-          ? DateTime.parse(map['write_date']) 
+      writeDate: map['write_date'] != null
+          ? DateTime.parse(map['write_date'])
           : null,
       odooId: map['odoo_id'],
       syncStatus: map['sync_status'] ?? 0,
@@ -51,6 +55,7 @@ class Material {
     return {
       if (id != null) 'id': id,
       'name': name,
+      'normalized_name': normalizedName ?? normalizeArabic(name),
       'price': price,
       'description': description,
       'active': active ? 1 : 0,
@@ -64,6 +69,7 @@ class Material {
   Material copyWith({
     int? id,
     String? name,
+    String? normalizedName,
     double? price,
     String? description,
     bool? active,
@@ -72,9 +78,11 @@ class Material {
     int? odooId,
     int? syncStatus,
   }) {
+    final newName = name ?? this.name;
     return Material(
       id: id ?? this.id,
-      name: name ?? this.name,
+      name: newName,
+      normalizedName: normalizedName ?? (name != null ? normalizeArabic(newName) : this.normalizedName),
       price: price ?? this.price,
       description: description ?? this.description,
       active: active ?? this.active,

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/client.dart';
 import '../database/database_helper.dart';
+import '../utils/arabic_normalize.dart';
 
 class ClientProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
@@ -54,15 +55,9 @@ class ClientProvider extends ChangeNotifier {
 
   Future<Client?> createClient({
     required String name,
-    String? email,
     String? phone,
     String? mobile,
-    String? street,
-    String? street2,
     String? city,
-    String? zip,
-    String? vat,
-    bool isCompany = false,
     bool active = true,
   }) async {
     _clearError();
@@ -70,15 +65,9 @@ class ClientProvider extends ChangeNotifier {
     try {
       final client = Client(
         name: name,
-        email: email,
         phone: phone,
         mobile: mobile,
-        street: street,
-        street2: street2,
         city: city,
-        zip: zip,
-        vat: vat,
-        isCompany: isCompany,
         active: active,
         createDate: DateTime.now().toIso8601String(),
         writeDate: DateTime.now().toIso8601String(),
@@ -164,17 +153,19 @@ class ClientProvider extends ChangeNotifier {
   }
 
   Client? findClientByName(String name) {
-    return _clients.where((client) => 
-      client.name.toLowerCase() == name.toLowerCase()
+    final normalizedSearchName = normalizeArabic(name);
+    return _clients.where((client) =>
+      client.normalizedName == normalizedSearchName
     ).firstOrNull;
   }
 
   List<Client> searchClients(String query) {
     if (query.isEmpty) return _clients;
 
+    final normalizedQuery = normalizeArabic(query);
     final lowerQuery = query.toLowerCase();
     return _clients.where((client) =>
-      client.name.toLowerCase().contains(lowerQuery) ||
+      (client.normalizedName?.contains(normalizedQuery) ?? false) ||
       (client.phone?.contains(query) ?? false) ||
       (client.city?.toLowerCase().contains(lowerQuery) ?? false)
     ).toList();
@@ -206,11 +197,11 @@ class ClientProvider extends ChangeNotifier {
 
     // Search filter
     if (_searchQuery.isNotEmpty) {
+      final normalizedQuery = normalizeArabic(_searchQuery);
       filteredClients = filteredClients.where((client) {
-        return client.name.toLowerCase().contains(_searchQuery) ||
+        return (client.normalizedName?.contains(normalizedQuery) ?? false) ||
                (client.phone?.contains(_searchQuery) ?? false) ||
                (client.mobile?.contains(_searchQuery) ?? false) ||
-               (client.email?.toLowerCase().contains(_searchQuery) ?? false) ||
                (client.city?.toLowerCase().contains(_searchQuery) ?? false);
       }).toList();
     }
@@ -259,15 +250,9 @@ class ClientProvider extends ChangeNotifier {
         if (existing == null) {
           await createClient(
             name: client.name,
-            email: client.email,
             phone: client.phone,
             mobile: client.mobile,
-            street: client.street,
-            street2: client.street2,
             city: client.city,
-            zip: client.zip,
-            vat: client.vat,
-            isCompany: client.isCompany,
             active: client.active,
           );
           importCount++;

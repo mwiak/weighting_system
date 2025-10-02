@@ -5,6 +5,7 @@ String normalizeArabic(String input) {
   return input
       .replaceAll(diacritics, '') // Remove diacritics
       .replaceAll(tatweel, '') // Remove Tatweel
+      .replaceAll(' ', '')
       .replaceAll(RegExp(r'[إأآٱ]'), 'ا') // Alef variants → Alef
       .replaceAll('ى', 'ي') // Alef Maqsura → Yeh
       .replaceAll('ة', 'ت')

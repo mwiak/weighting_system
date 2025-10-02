@@ -46,7 +46,7 @@ class WeighingTab {
     } else if (truckPlate.isNotEmpty) {
       return truckPlate;
     }
-    return 'Tab ${id ?? 'New'}';
+    return 'عملية ${id ?? 'جديد'}';
   }
 
   bool get isComplete {

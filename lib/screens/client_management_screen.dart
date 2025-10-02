@@ -121,16 +121,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
             ),
           ),
           const SizedBox(width: 16),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildStatCard(
-              context,
-              l10n.individuals,
-              '${clientProvider.clients.where((c) => !c.isCompany).length}',
-              FluentIcons.people,
-              Colors.purple,
-            ),
-          ),
         ],
       ),
       const SizedBox(height: 24),
@@ -224,25 +214,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
           ),
         ),
         const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard(
-            context,
-            l10n.companies,
-            '${supplierProvider.suppliers.where((s) => s.isCompany).length}',
-            FluentIcons.city_next,
-            Colors.orange,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard(
-            context,
-            l10n.individuals,
-            '${supplierProvider.suppliers.where((s) => !s.isCompany).length}',
-            FluentIcons.people,
-            Colors.purple,
-          ),
-        ),
       ],
     ),
     const SizedBox(height: 24),
@@ -453,22 +424,9 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
         // Name
         Expanded(
           flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                client.name,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              if (client.vat != null && client.vat!.isNotEmpty)
-                Text(
-                  '${l10n.vat}: ${client.vat}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[100],
-                  ),
-                ),
-            ],
+          child: Text(
+            client.name,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
 
@@ -478,8 +436,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (client.email != null && client.email!.isNotEmpty)
-                Text(client.email!, style: const TextStyle(fontSize: 13)),
               if (client.phone != null && client.phone!.isNotEmpty)
                 Text(client.phone!, style: const TextStyle(fontSize: 13)),
               if (client.mobile != null && client.mobile!.isNotEmpty)
@@ -502,28 +458,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
         ),
 
         // Type
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: client.isCompany
-                  ? Colors.blue.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              client.isCompany ? l10n.company : l10n.individual,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: client.isCompany ? Colors.blue : Colors.green,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-
         // Status
         Expanded(
           flex: 1,
@@ -764,22 +698,9 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
         // Name
         Expanded(
           flex: 3,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                supplier.name,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              if (supplier.vat != null && supplier.vat!.isNotEmpty)
-                Text(
-                  '${l10n.vat}: ${supplier.vat}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[100],
-                  ),
-                ),
-            ],
+          child: Text(
+            supplier.name,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
 
@@ -789,8 +710,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (supplier.email != null && supplier.email!.isNotEmpty)
-                Text(supplier.email!, style: const TextStyle(fontSize: 13)),
               if (supplier.phone != null && supplier.phone!.isNotEmpty)
                 Text(supplier.phone!, style: const TextStyle(fontSize: 13)),
               if (supplier.mobile != null && supplier.mobile!.isNotEmpty)
@@ -813,28 +732,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
         ),
 
         // Type
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: supplier.isCompany
-                  ? Colors.blue.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              supplier.isCompany ? l10n.company : l10n.individual,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: supplier.isCompany ? Colors.blue : Colors.green,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-
         // Status
         Expanded(
           flex: 1,

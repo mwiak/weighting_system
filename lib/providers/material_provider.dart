@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/material.dart';
 import '../database/database_helper.dart';
+import '../utils/arabic_normalize.dart';
 
 class MaterialProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
@@ -133,8 +134,9 @@ class MaterialProvider extends ChangeNotifier {
   }
 
   Material? findMaterialByName(String name) {
-    return _materials.where((material) => 
-      material.name.toLowerCase() == name.toLowerCase()
+    final normalizedSearchName = normalizeArabic(name);
+    return _materials.where((material) =>
+      material.normalizedName == normalizedSearchName
     ).firstOrNull;
   }
 
@@ -142,10 +144,11 @@ class MaterialProvider extends ChangeNotifier {
 
   List<Material> searchMaterials(String query) {
     if (query.isEmpty) return _materials;
-    
+
+    final normalizedQuery = normalizeArabic(query);
     final lowerQuery = query.toLowerCase();
-    return _materials.where((material) => 
-      material.name.toLowerCase().contains(lowerQuery) ||
+    return _materials.where((material) =>
+      (material.normalizedName?.contains(normalizedQuery) ?? false) ||
       (material.description?.toLowerCase().contains(lowerQuery) ?? false)
     ).toList();
   }
@@ -178,8 +181,9 @@ class MaterialProvider extends ChangeNotifier {
 
     // Search filter
     if (_searchQuery.isNotEmpty) {
+      final normalizedQuery = normalizeArabic(_searchQuery);
       filteredMaterials = filteredMaterials.where((material) {
-        return material.name.toLowerCase().contains(_searchQuery) ||
+        return (material.normalizedName?.contains(normalizedQuery) ?? false) ||
                (material.description?.toLowerCase().contains(_searchQuery) ?? false);
       }).toList();
     }
