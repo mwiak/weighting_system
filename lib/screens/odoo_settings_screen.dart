@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-// import 'package:weighing_system/gen_l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/app_settings_provider.dart';
 import '../services/odoo_service.dart';
 import '../widgets/custom_info_label.dart';
@@ -72,13 +72,14 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
       await settingsProvider.updateSetting(key: 'odoo_database', value: _databaseController.text.trim());
       await settingsProvider.updateSetting(key: 'odoo_username', value: _usernameController.text.trim());
       await settingsProvider.updateSetting(key: 'odoo_password', value: _passwordController.text.trim());
-      
+
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         displayInfoBar(
           context,
           builder: (context, close) => InfoBar(
-            title: const Text('Save'),
-            content: const Text('Odoo settings saved successfully!'),
+            title: Text(l10n.save),
+            content: Text(l10n.odooSettingsSavedSuccess),
             severity: InfoBarSeverity.success,
             action: IconButton(
               icon: const Icon(FluentIcons.clear),
@@ -89,11 +90,12 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         displayInfoBar(
           context,
           builder: (context, close) => InfoBar(
-            title: const Text('Error'),
-            content: Text('Failed to save settings: $e'),
+            title: Text(l10n.error),
+            content: Text('${l10n.failedToSaveSettings}: $e'),
             severity: InfoBarSeverity.error,
             action: IconButton(
               icon: const Icon(FluentIcons.clear),
@@ -129,17 +131,19 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
       // Test authentication
       final success = await odooService.authenticate();
       
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         _connectionSuccessful = success;
-        _connectionTestResult = success 
-            ? 'Connection successful!'
-            : 'Connection failed!';
+        _connectionTestResult = success
+            ? l10n.connectionSuccessful
+            : l10n.connectionFailed;
       });
-      
+
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         _connectionSuccessful = false;
-        _connectionTestResult = 'Connection failed: ${e.toString()}';
+        _connectionTestResult = '${l10n.connectionFailedWithError}: ${e.toString()}';
       });
     } finally {
       setState(() {
@@ -150,16 +154,16 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return ScaffoldPage.scrollable(
       header: PageHeader(
-        title: const Text('Odoo Settings'),
+        title: Text(l10n.odooSettings),
         commandBar: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.back),
-              label: const Text('Back'),
+              label: Text(l10n.back),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -175,12 +179,12 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Odoo Settings',
+                    l10n.odooSettings,
                     style: FluentTheme.of(context).typography.subtitle,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Configure connection settings for Odoo ERP integration',
+                    l10n.odooSettingsDescription,
                     style: TextStyle(
                       color: Colors.grey[120],
                       fontSize: 14,
@@ -190,18 +194,18 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                   
                   // Odoo URL
                   CustomInfoLabel(
-                    label: 'Odoo URL',
+                    label: l10n.odooUrl,
                     isRequired: true,
                     child: TextFormBox(
                       controller: _urlController,
-                      placeholder: 'https://your-odoo-instance.com',
+                      placeholder: l10n.odooUrlPlaceholder,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Odoo URL is required';
+                          return l10n.odooUrlRequired;
                         }
                         final uri = Uri.tryParse(value.trim());
                         if (uri == null || !uri.hasScheme) {
-                          return 'Please enter a valid URL';
+                          return l10n.pleaseEnterValidUrl;
                         }
                         return null;
                       },
@@ -211,52 +215,52 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                   
                   // Database Name
                   CustomInfoLabel(
-                    label: 'Database Name',
+                    label: l10n.databaseName,
                     isRequired: true,
                     child: TextFormBox(
                       controller: _databaseController,
-                      placeholder: 'your-database-name',
+                      placeholder: l10n.databaseNamePlaceholder,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Database name is required';
+                          return l10n.databaseNameRequired;
                         }
                         return null;
                       },
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Username
                   CustomInfoLabel(
-                    label: 'Username',
+                    label: l10n.odooUsername,
                     isRequired: true,
                     child: TextFormBox(
                       controller: _usernameController,
-                      placeholder: 'admin',
+                      placeholder: l10n.adminPlaceholder,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Username is required';
+                          return l10n.usernameRequired;
                         }
                         return null;
                       },
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Password
                   CustomInfoLabel(
-                    label: 'Password',
+                    label: l10n.odooPassword,
                     isRequired: true,
                     child: Row(
                       children: [
                         Expanded(
                           child: TextFormBox(
                             controller: _passwordController,
-                            placeholder: '••••••••',
+                            placeholder: l10n.passwordPlaceholder,
                             obscureText: !_showPassword,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Password is required';
+                                return l10n.passwordRequired;
                               }
                               return null;
                             },
@@ -279,15 +283,15 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                   // Connection Test Result
                   if (_connectionTestResult != null) ...[
                     InfoBar(
-                      title: const Text('Test Connection'),
+                      title: Text(l10n.testConnection),
                       content: Text(_connectionTestResult!),
-                      severity: _connectionSuccessful 
-                          ? InfoBarSeverity.success 
+                      severity: _connectionSuccessful
+                          ? InfoBarSeverity.success
                           : InfoBarSeverity.error,
                     ),
                     const SizedBox(height: 16),
                   ],
-                  
+
                   // Action Buttons
                   Row(
                     children: [
@@ -303,20 +307,20 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                                     child: ProgressRing(strokeWidth: 2),
                                   ),
                                   const SizedBox(width: 8),
-                                  const Text('Testing...'),
+                                  Text(l10n.testing),
                                 ],
                               )
-                            : const Text('Test Connection'),
+                            : Text(l10n.testConnection),
                       ),
                       const SizedBox(width: 12),
                       Button(
                         onPressed: _saveSettings,
-                        child: const Text('Save'),
+                        child: Text(l10n.save),
                       ),
                       const SizedBox(width: 12),
                       Button(
                         onPressed: _loadCurrentSettings,
-                        child: const Text('Reset'),
+                        child: Text(l10n.reset),
                       ),
                     ],
                   ),
@@ -325,31 +329,31 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                   
                   // Information section
                   Expander(
-                    header: const Text('Connection Information'),
+                    header: Text(l10n.connectionInformation),
                     content: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Connection Requirements:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          Text(
+                            l10n.connectionRequirements,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
-                          const Text('• Ensure your Odoo instance is accessible'),
-                          const Text('• Verify the database name is correct'),
-                          const Text('• Use a user with proper access rights'),
-                          const Text('• Check firewall and network connectivity'),
+                          Text(l10n.odooRequirement1),
+                          Text(l10n.odooRequirement2),
+                          Text(l10n.odooRequirement3),
+                          Text(l10n.odooRequirement4),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Supported Operations:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          Text(
+                            l10n.supportedOperations,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
-                          const Text('• Sync clients and suppliers as res.partner'),
-                          const Text('• Sync materials as product.product'),
-                          const Text('• Create sales orders for loading operations'),
-                          const Text('• Create purchase orders for unloading operations'),
+                          Text(l10n.odooOperation1),
+                          Text(l10n.odooOperation2),
+                          Text(l10n.odooOperation3),
+                          Text(l10n.odooOperation4),
                         ],
                       ),
                     ),

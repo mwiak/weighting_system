@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/weight_provider.dart';
 
 class ScaleSettingsScreen extends StatefulWidget {
@@ -12,14 +13,16 @@ class ScaleSettingsScreen extends StatefulWidget {
 class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ScaffoldPage(
       header: PageHeader(
-        title: const Text('Scale Connection Settings'),
+        title: Text(l10n.scaleConnectionSettings),
         commandBar: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.back),
-              label: const Text('Back'),
+              label: Text(l10n.back),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -51,7 +54,7 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Connection Status',
+                              l10n.connectionStatus,
                               style: FluentTheme.of(context).typography.subtitle,
                             ),
                           ],
@@ -59,17 +62,17 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         const SizedBox(height: 12),
                         Text(
                           weightProvider.isConnected
-                              ? 'Connected to ${weightProvider.connectedPort}'
+                              ? '${l10n.connectedTo} ${weightProvider.connectedPort}'
                               : weightProvider.isScanning
-                                  ? 'Scanning for devices...'
-                                  : 'Not connected',
+                                  ? l10n.scanningForDevices
+                                  : l10n.notConnected,
                           style: FluentTheme.of(context).typography.body,
                         ),
                         if (!weightProvider.isConnected) ...[
                           const SizedBox(height: 12),
                           FilledButton(
                             onPressed: () => weightProvider.reconnect(),
-                            child: const Text('Try to Connect'),
+                            child: Text(l10n.tryToConnect),
                           ),
                         ],
                       ],
@@ -87,7 +90,7 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Port Configuration',
+                          l10n.portConfiguration,
                           style: FluentTheme.of(context).typography.subtitle,
                         ),
                         const SizedBox(height: 16),
@@ -95,9 +98,9 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         // COM Port Selection
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 120,
-                              child: Text('COM Port:'),
+                              child: Text(l10n.comPort),
                             ),
                             Expanded(
                               child: ComboBox<String>(
@@ -105,7 +108,7 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                                 items: weightProvider.getAvailablePorts().map(
                                   (port) => ComboBoxItem<String>(
                                     value: port,
-                                    child: Text(port == 'auto' ? 'Auto-detect' : port),
+                                    child: Text(port == 'auto' ? l10n.autoDetect : port),
                                   ),
                                 ).toList(),
                                 onChanged: (value) {
@@ -123,9 +126,9 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         // Baud Rate
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 120,
-                              child: Text('Baud Rate:'),
+                              child: Text(l10n.baudRate),
                             ),
                             Expanded(
                               child: ComboBox<int>(
@@ -151,9 +154,9 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         // Data Bits
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 120,
-                              child: Text('Data Bits:'),
+                              child: Text(l10n.dataBits),
                             ),
                             Expanded(
                               child: ComboBox<int>(
@@ -179,9 +182,9 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         // Stop Bits
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 120,
-                              child: Text('Stop Bits:'),
+                              child: Text(l10n.stopBits),
                             ),
                             Expanded(
                               child: ComboBox<int>(
@@ -207,9 +210,9 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                         // Parity
                         Row(
                           children: [
-                            const SizedBox(
+                            SizedBox(
                               width: 120,
-                              child: Text('Parity:'),
+                              child: Text(l10n.parity),
                             ),
                             Expanded(
                               child: ComboBox<int>(
@@ -244,44 +247,44 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Scale Information',
+                          l10n.scaleInformation,
                           style: FluentTheme.of(context).typography.subtitle,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         InfoLabel(
-                          label: 'Protocol:',
-                          child: const Text('Serial COM - Read Only'),
+                          label: l10n.protocol,
+                          child: Text(l10n.serialComReadOnly),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         InfoLabel(
-                          label: 'Expected Format:',
-                          child: const Text('(±)(6 digits)(KG)'),
+                          label: l10n.expectedFormat,
+                          child: Text(l10n.weightFormatExample),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         InfoLabel(
-                          label: 'Reading Interval:',
-                          child: const Text('100ms'),
+                          label: l10n.readingInterval,
+                          child: Text(l10n.readingInterval100ms),
                         ),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         InfoLabel(
-                          label: 'Connection Retry:',
-                          child: const Text('Every 40ms'),
+                          label: l10n.connectionRetry,
+                          child: Text(l10n.connectionRetryInterval),
                         ),
-                        
+
                         if (weightProvider.isConnected) ...[
                           const SizedBox(height: 16),
-                          
+
                           InfoLabel(
-                            label: 'Current Weight:',
+                            label: l10n.currentWeightLabel,
                             child: Text(
-                              '${weightProvider.currentWeight} kg',
+                              '${weightProvider.currentWeight} ${l10n.kgUnit}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.green,
@@ -301,25 +304,25 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                   children: [
                     Button(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Close'),
+                      child: Text(l10n.close),
                     ),
                     const SizedBox(width: 12),
                     if (weightProvider.isConnected) ...[
                       Button(
                         onPressed: () {
                           weightProvider.disconnect();
-                          _showInfoBar(context, 'Disconnected from scale', InfoBarSeverity.info);
+                          _showInfoBar(context, l10n.disconnectedFromScale, InfoBarSeverity.info);
                         },
-                        child: const Text('Disconnect'),
+                        child: Text(l10n.disconnect),
                       ),
                       const SizedBox(width: 12),
                     ],
                     FilledButton(
                       onPressed: () {
                         weightProvider.reconnect();
-                        _showInfoBar(context, 'Attempting to reconnect...', InfoBarSeverity.info);
+                        _showInfoBar(context, l10n.attemptingToReconnect, InfoBarSeverity.info);
                       },
-                      child: const Text('Reconnect'),
+                      child: Text(l10n.reconnect),
                     ),
                   ],
                 ),

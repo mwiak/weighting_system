@@ -55,7 +55,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
       }
     } catch (e) {
       _showInfoBar(
-        'Print failed: $e',
+        '${AppLocalizations.of(context)!.printFailed}: $e',
         InfoBarSeverity.error,
       );
     }
@@ -82,7 +82,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
       }
     } catch (e) {
       _showInfoBar(
-        'Save PDF failed: $e',
+        '${AppLocalizations.of(context)!.savePdfFailed}: $e',
         InfoBarSeverity.error,
       );
     }
@@ -194,7 +194,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                       _formatDateTime(
                                           widget.operation.createdAt)),
                                   _buildDetailRow(
-                                      'آخر تحديث',
+                                      l10n.lastUpdated,
                                       _formatDateTime(
                                           widget.operation.updatedAt)),
                                   if (widget.operation.scaleEmptyWeightAt !=
@@ -248,11 +248,11 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                 l10n.weightMeasurements,
                                 [
                                   _buildDetailRow(l10n.grossWeight,
-                                      '${widget.operation.grossWeight} كجم'),
+                                      '${widget.operation.grossWeight} kg'),
                                   _buildDetailRow(l10n.tareWeight,
-                                      '${widget.operation.emptyWeight} كجم'),
+                                      '${widget.operation.emptyWeight} kg'),
                                   _buildDetailRow(l10n.netWeight,
-                                      '${widget.operation.netWeight} كجم'),
+                                      '${widget.operation.netWeight} kg'),
                                 ],
                               ),
                               const SizedBox(height: 16),
@@ -264,34 +264,34 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                       '${widget.operation.kilo_price.toStringAsFixed(2)}'),
                                   _buildDetailRow(l10n.totalAmount,
                                       '${widget.operation.total_price.toStringAsFixed(2)}'),
-                                  _buildDetailRow('مدفوع',
-                                      widget.operation.isPaid ? 'نعم' : 'لا'),
+                                  _buildDetailRow(l10n.paid,
+                                      widget.operation.isPaid ? l10n.yes : l10n.no),
                                   _buildDetailRow(
-                                      'إظهار السعر في الطباعة',
+                                      l10n.showPriceOnPrint,
                                       widget.operation.showPriceOnPrint
-                                          ? 'نعم'
-                                          : 'لا'),
+                                          ? l10n.yes
+                                          : l10n.no),
                                 ],
                               ),
                               const SizedBox(height: 16),
                               // Additional Information
                               _buildSection(
-                                'معلومات إضافية',
+                                l10n.additionalInfo,
                                 [
                                   _buildDetailRow(
-                                      'تغييرات غير محفوظة',
+                                      l10n.unsavedChanges,
                                       widget.operation.hasUnsavedChanges
-                                          ? 'نعم'
-                                          : 'لا'),
+                                          ? l10n.yes
+                                          : l10n.no),
                                   _buildDetailRow(
-                                      'مكتمل',
+                                      l10n.completed,
                                       widget.operation.isComplete
-                                          ? 'نعم'
-                                          : 'لا'),
+                                          ? l10n.yes
+                                          : l10n.no),
                                   _buildDetailRow(
-                                      'رقم قاعدة البيانات',
+                                      l10n.databaseId,
                                       widget.operation.id?.toString() ??
-                                          'غير محفوظ'),
+                                          l10n.unsaved),
                                 ],
                               ),
                             ],
@@ -340,6 +340,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
   }
 
   Widget _buildDetailRow(String label, String value) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -349,12 +350,12 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
             width: 120,
             child: Text(
               '$label:',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
             ),
           ),
           Expanded(
             child: Text(
-              value.isEmpty ? 'غير متوفر' : value,
+              value.isEmpty ? l10n.notAvailable : value,
               style: FluentTheme.of(context)
                   .typography
                   .body
@@ -367,17 +368,19 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
   }
 
   String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return 'N/A';
+    final l10n = AppLocalizations.of(context)!;
+    if (dateTime == null) return l10n.na;
     return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   String _formatOperationType(dynamic type) {
-    if (type == null) return 'N/A';
+    final l10n = AppLocalizations.of(context)!;
+    if (type == null) return l10n.na;
     switch (type.toString().toLowerCase()) {
       case 'loading':
-        return 'Loading (Outgoing)';
+        return l10n.loadingOutgoing;
       case 'unloading':
-        return 'Unloading (Incoming)';
+        return l10n.unloadingIncoming;
       default:
         return type.toString();
     }

@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'template_management_screen.dart';
 import '../theme/app_theme.dart';
 
@@ -11,9 +12,11 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return fluent.ScaffoldPage(
-      header: const fluent.PageHeader(
-        title: Text('Print Configuration'),
+      header: fluent.PageHeader(
+        title: Text(l10n.printConfiguration),
       ),
       content: Center(
         child: Column(
@@ -28,13 +31,13 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
                   ),
                 );
               },
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Icon(fluent.FluentIcons.print, size: 32),
-                    SizedBox(height: 8),
-                    Text('Manage Print Templates'),
+                    const Icon(fluent.FluentIcons.print, size: 32),
+                    const SizedBox(height: 8),
+                    Text(l10n.managePrintTemplates),
                   ],
                 ),
               ),
@@ -55,20 +58,20 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Print Template System',
+                    l10n.printTemplateSystem,
                     style: fluent.FluentTheme.of(context).typography.subtitle,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Configure print templates for your pre-printed A3 forms:',
-                    style: TextStyle(color: AppTheme.secondaryTextColor),
+                  Text(
+                    l10n.configureTemplatesDescription,
+                    style: const TextStyle(color: AppTheme.secondaryTextColor),
                   ),
                   const SizedBox(height: 12),
-                  _buildFeatureRow(fluent.FluentIcons.edit, 'Create custom templates'),
-                  _buildFeatureRow(fluent.FluentIcons.move, 'Drag & drop field positioning'),
-                  _buildFeatureRow(fluent.FluentIcons.settings, 'Configure fonts and formatting'),
-                  _buildFeatureRow(fluent.FluentIcons.save, 'Import/Export templates'),
-                  _buildFeatureRow(fluent.FluentIcons.print, 'Test print alignment'),
+                  _buildFeatureRow(fluent.FluentIcons.edit, l10n.createCustomTemplates),
+                  _buildFeatureRow(fluent.FluentIcons.move, l10n.dragDropFieldPositioning),
+                  _buildFeatureRow(fluent.FluentIcons.settings, l10n.configureFontsFormatting),
+                  _buildFeatureRow(fluent.FluentIcons.save, l10n.importExportTemplates),
+                  _buildFeatureRow(fluent.FluentIcons.print, l10n.testPrintAlignment),
                 ],
               ),
             ),

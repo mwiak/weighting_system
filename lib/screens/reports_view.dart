@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
-// import 'package:weighing_system/gen_l10n/app_localizations.dart'; // Commented out - localization not available
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
 import '../providers/report_provider.dart';
 
@@ -15,13 +15,7 @@ class ReportsView extends StatefulWidget {
 class _ReportsViewState extends State<ReportsView> {
   int _selectedReportIndex = 0;
 
-  final List<String> _reportTypes = [
-    'Dashboard',
-    'Orders Report',
-    'Revenue Report',
-    'Client Report',
-    'Material Report',
-  ];
+  List<String> _reportTypes = [];
 
   @override
   void initState() {
@@ -34,25 +28,36 @@ class _ReportsViewState extends State<ReportsView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Initialize report types with localization
+    _reportTypes = [
+      l10n.dashboard,
+      l10n.ordersReport,
+      l10n.revenueReport,
+      l10n.clientReport,
+      l10n.materialReport,
+    ];
+
     return ScaffoldPage.scrollable(
       header: PageHeader(
-        title: const Text('Reports & Analytics'),
+        title: Text(l10n.reportsAndAnalytics),
         commandBar: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.refresh),
-              label: const Text('Refresh'),
+              label: Text(l10n.refresh),
               onPressed: () => _refreshCurrentReport(),
             ),
             CommandBarSeparator(),
             CommandBarButton(
               icon: const Icon(FluentIcons.download),
-              label: const Text('Export PDF'),
+              label: Text(l10n.exportPdf),
               onPressed: () => _exportToPDF(),
             ),
             CommandBarButton(
               icon: const Icon(FluentIcons.excel_document),
-              label: const Text('Export CSV'),
+              label: Text(l10n.exportCsv),
               onPressed: () => _exportToCSV(),
             ),
           ],
@@ -72,7 +77,7 @@ class _ReportsViewState extends State<ReportsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Report Types',
+                        l10n.reportTypes,
                         style: FluentTheme.of(context).typography.subtitle,
                       ),
                       const SizedBox(height: 12),
@@ -123,6 +128,8 @@ class _ReportsViewState extends State<ReportsView> {
   }
 
   Widget _buildFiltersSection(ReportProvider reportProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -130,7 +137,7 @@ class _ReportsViewState extends State<ReportsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Filters',
+              l10n.filters,
               style: FluentTheme.of(context).typography.subtitle,
             ),
             const SizedBox(height: 12),
@@ -143,7 +150,7 @@ class _ReportsViewState extends State<ReportsView> {
                     children: [
                       Expanded(
                         child: InfoLabel(
-                          label: 'Start Date',
+                          label: l10n.startDate,
                           child: DatePicker(
                             selected: reportProvider.startDate,
                             onChanged: (date) {
@@ -158,7 +165,7 @@ class _ReportsViewState extends State<ReportsView> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: InfoLabel(
-                          label: 'End Date',
+                          label: l10n.endDate,
                           child: DatePicker(
                             selected: reportProvider.endDate,
                             onChanged: (date) {
@@ -177,22 +184,22 @@ class _ReportsViewState extends State<ReportsView> {
 
                 // Quick date ranges
                 DropDownButton(
-                  title: const Text('Quick Range'),
+                  title: Text(l10n.quickRange),
                   items: [
                     MenuFlyoutItem(
-                      text: const Text('Last 7 Days'),
+                      text: Text(l10n.last7Days),
                       onPressed: () => _setQuickDateRange(7),
                     ),
                     MenuFlyoutItem(
-                      text: const Text('Last 30 Days'),
+                      text: Text(l10n.last30Days),
                       onPressed: () => _setQuickDateRange(30),
                     ),
                     MenuFlyoutItem(
-                      text: const Text('Last 90 Days'),
+                      text: Text(l10n.last90Days),
                       onPressed: () => _setQuickDateRange(90),
                     ),
                     MenuFlyoutItem(
-                      text: const Text('This Year'),
+                      text: Text(l10n.thisYear),
                       onPressed: () => _setQuickDateRange(365),
                     ),
                   ],
@@ -211,10 +218,10 @@ class _ReportsViewState extends State<ReportsView> {
                               child: ProgressRing(strokeWidth: 2),
                             ),
                             const SizedBox(width: 8),
-                            const Text('Loading...'),
+                            Text(l10n.generatingReport),
                           ],
                         )
-                      : const Text('Apply Filters'),
+                      : Text(l10n.applyFilters),
                 ),
                 const SizedBox(width: 8),
                 Button(
@@ -222,7 +229,7 @@ class _ReportsViewState extends State<ReportsView> {
                     reportProvider.clearFilters();
                     _applyFilters();
                   },
-                  child: const Text('Clear'),
+                  child: Text(l10n.clear),
                 ),
               ],
             ),
@@ -236,14 +243,14 @@ class _ReportsViewState extends State<ReportsView> {
                     child: Consumer<ClientProvider>(
                       builder: (context, clientProvider, child) {
                         return InfoLabel(
-                          label: 'Client Filter',
+                          label: l10n.clientFilter,
                           child: ComboBox<int?>(
-                            placeholder: const Text('All Clients'),
+                            placeholder: Text(l10n.allClients),
                             value: reportProvider.selectedClientId,
                             items: [
-                              const ComboBoxItem<int?>(
+                              ComboBoxItem<int?>(
                                 value: null,
-                                child: Text('All Clients'),
+                                child: Text(l10n.allClients),
                               ),
                               ...clientProvider.clients.map(
                                 (client) => ComboBoxItem<int?>(
@@ -261,26 +268,26 @@ class _ReportsViewState extends State<ReportsView> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: InfoLabel(
-                      label: 'Status Filter',
+                      label: l10n.statusFilter,
                       child: ComboBox<String?>(
-                        placeholder: const Text('All Statuses'),
+                        placeholder: Text(l10n.allStatuses),
                         value: reportProvider.selectedStatus,
-                        items: const [
+                        items: [
                           ComboBoxItem<String?>(
                             value: null,
-                            child: Text('All Statuses'),
+                            child: Text(l10n.allStatuses),
                           ),
                           ComboBoxItem<String?>(
                             value: 'active',
-                            child: Text('Active'),
+                            child: Text(l10n.active),
                           ),
                           ComboBoxItem<String?>(
                             value: 'completed',
-                            child: Text('Completed'),
+                            child: Text(l10n.completed),
                           ),
                           ComboBoxItem<String?>(
                             value: 'cancelled',
-                            child: Text('Cancelled'),
+                            child: Text(l10n.cancelled),
                           ),
                         ],
                         onChanged: reportProvider.setStatusFilter,
@@ -296,13 +303,13 @@ class _ReportsViewState extends State<ReportsView> {
               SizedBox(
                 width: 200,
                 child: InfoLabel(
-                  label: 'Group By',
+                  label: l10n.groupBy,
                   child: ComboBox<String>(
                     value: reportProvider.revenueGroupBy,
-                    items: const [
-                      ComboBoxItem(value: 'day', child: Text('Daily')),
-                      ComboBoxItem(value: 'week', child: Text('Weekly')),
-                      ComboBoxItem(value: 'month', child: Text('Monthly')),
+                    items: [
+                      ComboBoxItem(value: 'day', child: Text(l10n.daily)),
+                      ComboBoxItem(value: 'week', child: Text(l10n.weekly)),
+                      ComboBoxItem(value: 'month', child: Text(l10n.monthly)),
                     ],
                     onChanged: (value) =>
                         reportProvider.setRevenueGroupBy(value ?? 'month'),
@@ -317,16 +324,18 @@ class _ReportsViewState extends State<ReportsView> {
   }
 
   Widget _buildReportContent(ReportProvider reportProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (reportProvider.isGenerating) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(48),
+          padding: const EdgeInsets.all(48),
           child: Center(
             child: Column(
               children: [
-                ProgressRing(),
-                SizedBox(height: 16),
-                Text('Generating report...'),
+                const ProgressRing(),
+                const SizedBox(height: 16),
+                Text(l10n.generatingReport),
               ],
             ),
           ),
@@ -339,8 +348,8 @@ class _ReportsViewState extends State<ReportsView> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: InfoBar(
-            title: const Text('Error'),
-            content: Text(reportProvider.lastError ?? 'Unknown error'),
+            title: Text(l10n.error),
+            content: Text(reportProvider.lastError ?? l10n.unknown),
             severity: InfoBarSeverity.error,
           ),
         ),
@@ -356,22 +365,23 @@ class _ReportsViewState extends State<ReportsView> {
       case 4:
         return _buildReportTableView(reportProvider);
       default:
-        return const Card(
+        return Card(
           child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('Select a report type to view data'),
+            padding: const EdgeInsets.all(16),
+            child: Text(l10n.selectReportType),
           ),
         );
     }
   }
 
   Widget _buildDashboardView(ReportProvider reportProvider) {
+    final l10n = AppLocalizations.of(context)!;
     final stats = reportProvider.dashboardStats;
     if (stats == null) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No dashboard data available'),
+          padding: const EdgeInsets.all(16),
+          child: Text(l10n.noDashboardData),
         ),
       );
     }
@@ -383,7 +393,7 @@ class _ReportsViewState extends State<ReportsView> {
           children: [
             Expanded(
               child: _buildStatCard(
-                'Total Tabs',
+                l10n.totalTabs,
                 stats.totalTabs.toString(),
                 FluentIcons.clipboard_list,
                 Colors.blue,
@@ -392,7 +402,7 @@ class _ReportsViewState extends State<ReportsView> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildStatCard(
-                'Total Weight',
+                l10n.totalWeight,
                 reportProvider.formatWeight(stats.totalWeight),
                 FluentIcons.scale_volume,
                 Colors.green,
@@ -401,7 +411,7 @@ class _ReportsViewState extends State<ReportsView> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildStatCard(
-                'Total Weight',
+                l10n.totalRevenue,
                 reportProvider.formatWeight(stats.totalWeight),
                 FluentIcons.money,
                 Colors.orange,
@@ -410,7 +420,7 @@ class _ReportsViewState extends State<ReportsView> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildStatCard(
-                'Active Tabs',
+                l10n.activeTabs,
                 stats.activeTabs.toString(),
                 FluentIcons.processing,
                 Colors.purple,
@@ -432,7 +442,7 @@ class _ReportsViewState extends State<ReportsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Orders by Status',
+                        l10n.ordersByStatus,
                         style: FluentTheme.of(context).typography.subtitle,
                       ),
                       const SizedBox(height: 12),
@@ -464,7 +474,7 @@ class _ReportsViewState extends State<ReportsView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Top Drivers by Weight',
+                        l10n.topDriversByWeight,
                         style: FluentTheme.of(context).typography.subtitle,
                       ),
                       const SizedBox(height: 12),
@@ -478,7 +488,7 @@ class _ReportsViewState extends State<ReportsView> {
                                   Expanded(
                                     child: Text(
                                       driver['driver_name']?.toString() ??
-                                          'Unknown',
+                                          l10n.unknown,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -501,12 +511,13 @@ class _ReportsViewState extends State<ReportsView> {
   }
 
   Widget _buildReportTableView(ReportProvider reportProvider) {
+    final l10n = AppLocalizations.of(context)!;
     final report = reportProvider.currentReport;
     if (report == null) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No report data available'),
+          padding: const EdgeInsets.all(16),
+          child: Text(l10n.noReportData),
         ),
       );
     }
@@ -529,7 +540,7 @@ class _ReportsViewState extends State<ReportsView> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Generated: ${reportProvider.formatDate(report.generatedAt)} | ${report.rows.length} records',
+                      '${l10n.generated}: ${reportProvider.formatDate(report.generatedAt)} | ${report.rows.length} ${l10n.records}',
                       style: TextStyle(color: Colors.grey[120]),
                     ),
                   ],
@@ -610,7 +621,7 @@ class _ReportsViewState extends State<ReportsView> {
             if (report.rows.length > 100) ...[
               const SizedBox(height: 8),
               Text(
-                'Showing first 100 of ${report.rows.length} records. Export to view all data.',
+                '${l10n.showingFirst} 100 ${l10n.records}.',
                 style: TextStyle(color: Colors.grey[120], fontSize: 12),
               ),
             ],
@@ -750,6 +761,7 @@ class _ReportsViewState extends State<ReportsView> {
   }
 
   void _exportToPDF() async {
+    final l10n = AppLocalizations.of(context)!;
     final reportProvider = context.read<ReportProvider>();
     final filePath = await reportProvider.exportCurrentReportToPDF();
 
@@ -757,8 +769,8 @@ class _ReportsViewState extends State<ReportsView> {
       displayInfoBar(
         context,
         builder: (context, close) => InfoBar(
-          title: const Text('Export Successful'),
-          content: Text('PDF saved to: $filePath'),
+          title: Text(l10n.exportSuccessful),
+          content: Text('${l10n.pdfSavedTo}: $filePath'),
           severity: InfoBarSeverity.success,
           action: IconButton(
             icon: const Icon(FluentIcons.clear),
@@ -770,6 +782,7 @@ class _ReportsViewState extends State<ReportsView> {
   }
 
   void _exportToCSV() async {
+    final l10n = AppLocalizations.of(context)!;
     final reportProvider = context.read<ReportProvider>();
     final filePath = await reportProvider.exportCurrentReportToCSV();
 
@@ -777,8 +790,8 @@ class _ReportsViewState extends State<ReportsView> {
       displayInfoBar(
         context,
         builder: (context, close) => InfoBar(
-          title: const Text('Export Successful'),
-          content: Text('CSV saved to: $filePath'),
+          title: Text(l10n.exportSuccessful),
+          content: Text('${l10n.csvSavedTo}: $filePath'),
           severity: InfoBarSeverity.success,
           action: IconButton(
             icon: const Icon(FluentIcons.clear),

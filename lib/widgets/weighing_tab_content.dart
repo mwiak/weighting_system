@@ -867,6 +867,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       tabsProvider.updateTab(widget.tabIndex, {'grossWeight': currentWeight});
       tabsProvider
           .updateTab(widget.tabIndex, {'scaleGrossWeight': DateTime.now()});
+      calculateTotalPrice();
     } else {
       _showInfoBar(AppLocalizations.of(context)!.cannotCaptureWhileEditing,
           InfoBarSeverity.warning);

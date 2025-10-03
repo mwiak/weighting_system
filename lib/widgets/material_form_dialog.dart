@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-// import 'package:weighing_system/gen_l10n/app_localizations.dart'; // Commented out - localization not available
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/material_provider.dart';
 import '../models/material.dart';
 
@@ -79,8 +79,8 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
                   child: TextFormBox(
                     controller: _priceController,
                     placeholder: '0.00',
-                    prefix: const Text('\$ '),
-                    suffix: const Text('/kg'),
+                    prefix: Text('${AppLocalizations.of(context)!.currencySymbol} '),
+                    suffix: Text(AppLocalizations.of(context)!.perKg),
                     validator: (value) {
                       if (value != null && value.isNotEmpty) {
                         final price = double.tryParse(value);
@@ -113,21 +113,21 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
       actions: [
         Button(
           onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
         FilledButton(
           onPressed: _isSubmitting ? null : _submitForm,
           child: _isSubmitting
-              ? const Row(
+              ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                       height: 16,
                       child: ProgressRing(strokeWidth: 2),
                     ),
-                    SizedBox(width: 8),
-                    Text('Saving...'),
+                    const SizedBox(width: 8),
+                    Text(AppLocalizations.of(context)!.saving),
                   ],
                 )
               : Text(widget.isEditing ? 'Save' : 'Add'),
@@ -208,7 +208,7 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
     displayInfoBar(
       context,
       builder: (context, close) => InfoBar(
-        title: const Text('Error'),
+        title: Text(AppLocalizations.of(context)!.error),
         content: Text(message),
         severity: InfoBarSeverity.error,
         action: IconButton(

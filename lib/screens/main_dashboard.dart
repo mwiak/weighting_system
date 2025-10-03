@@ -139,9 +139,10 @@ class SyncView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ScaffoldPage.scrollable(
-      header: const PageHeader(
-        title: Text('Synchronization'),
+      header: PageHeader(
+        title: Text(l10n.synchronization),
       ),
       children: [
         Consumer<SyncProvider>(
@@ -156,7 +157,7 @@ class SyncView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Sync Status',
+                          l10n.syncStatus,
                           style: FluentTheme.of(context).typography.subtitle,
                         ),
                         const SizedBox(height: 12),
@@ -172,13 +173,13 @@ class SyncView extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(syncProvider.getConnectionStatusText() ??
-                                'Unknown'),
+                                l10n.unknown),
                           ],
                         ),
                         if (syncProvider.pendingSyncCount > 0) ...[
                           const SizedBox(height: 8),
                           Text(
-                              'Pending items: ${syncProvider.pendingSyncCount}'),
+                              '${l10n.pendingItems}: ${syncProvider.pendingSyncCount}'),
                         ],
                       ],
                     ),
@@ -191,12 +192,12 @@ class SyncView extends StatelessWidget {
                       onPressed: syncProvider.canSync
                           ? () => syncProvider.performFullSync()
                           : null,
-                      child: const Text('Sync Now'),
+                      child: Text(l10n.syncNow),
                     ),
                     const SizedBox(width: 12),
                     Button(
                       onPressed: () => syncProvider.clearFailedSyncItems(),
-                      child: const Text('Clear Failed'),
+                      child: Text(l10n.clearFailed),
                     ),
                   ],
                 ),

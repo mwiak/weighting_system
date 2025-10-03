@@ -84,6 +84,7 @@ class WeighingSystemApp extends StatelessWidget {
         supportedLocales: const [
           Locale('ar'), // Arabic
           Locale('en'), // English
+          Locale('tr'), // Turkish
         ],
         locale: const Locale('ar'), // Default to Arabic
       ),

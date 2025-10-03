@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/material_provider.dart';
 import '../models/material.dart';
 import '../widgets/material_form_dialog.dart';
@@ -9,33 +10,35 @@ class MaterialManagementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer<MaterialProvider>(
       builder: (context, materialProvider, child) {
         return ScaffoldPage.scrollable(
           header: PageHeader(
-            title: const Text('Material Management'),
+            title: Text(l10n.materialManagement),
             commandBar: CommandBar(
               primaryItems: [
                 CommandBarButton(
                   icon: const Icon(FluentIcons.add),
-                  label: const Text('New Material'),
-                  onPressed: () => _showCreateMaterialDialog(context),
+                  label: Text(l10n.newMaterial),
+                  onPressed: () => _showCreateMaterialDialog(context, l10n),
                 ),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.refresh),
-                  label: const Text('Refresh'),
+                  label: Text(l10n.refresh),
                   onPressed: () => materialProvider.loadMaterials(),
                 ),
                 CommandBarSeparator(),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.download),
-                  label: const Text('Import'),
-                  onPressed: () => _showImportDialog(context),
+                  label: Text(l10n.import),
+                  onPressed: () => _showImportDialog(context, l10n),
                 ),
                 CommandBarButton(
                   icon: const Icon(FluentIcons.upload),
-                  label: const Text('Export'),
-                  onPressed: () => _exportMaterials(context, materialProvider),
+                  label: Text(l10n.export),
+                  onPressed: () => _exportMaterials(context, materialProvider, l10n),
                 ),
               ],
             ),
@@ -47,7 +50,7 @@ class MaterialManagementScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context,
-                    'Total Materials',
+                    l10n.totalMaterials,
                     '${materialProvider.totalMaterials}',
                     FluentIcons.package,
                     Colors.blue,
@@ -57,7 +60,7 @@ class MaterialManagementScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatCard(
                     context,
-                    'With Price',
+                    l10n.withPrice,
                     '${materialProvider.materials.where((m) => m.price != null && m.price! > 0).length}',
                     FluentIcons.money,
                     Colors.green,
@@ -77,13 +80,13 @@ class MaterialManagementScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
-                              Icon(FluentIcons.money, size: 20),
-                              SizedBox(width: 8),
+                              const Icon(FluentIcons.money, size: 20),
+                              const SizedBox(width: 8),
                               Text(
-                                'Pricing Overview',
-                                style: TextStyle(
+                                l10n.pricingOverview,
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -97,7 +100,7 @@ class MaterialManagementScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Average Price', style: TextStyle(color: Colors.grey)),
+                                    Text(l10n.averagePrice, style: const TextStyle(color: Colors.grey)),
                                     Text(
                                       '\$${materialProvider.averagePrice.toStringAsFixed(2)}',
                                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -109,9 +112,9 @@ class MaterialManagementScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Most Expensive', style: TextStyle(color: Colors.grey)),
+                                    Text(l10n.mostExpensive, style: const TextStyle(color: Colors.grey)),
                                     Text(
-                                      materialProvider.mostExpensive?.name ?? 'None',
+                                      materialProvider.mostExpensive?.name ?? l10n.na,
                                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -143,26 +146,26 @@ class MaterialManagementScreen extends StatelessWidget {
                     SizedBox(
                       width: 300,
                       child: TextBox(
-                        placeholder: 'Search materials...',
+                        placeholder: l10n.searchMaterials,
                         prefix: const Icon(FluentIcons.search),
                         onChanged: materialProvider.setSearchQuery,
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Active Only Filter
                     Checkbox(
                       checked: materialProvider.showActiveOnly,
-                      onChanged: (value) => 
+                      onChanged: (value) =>
                           materialProvider.setShowActiveOnly(value ?? true),
-                      content: const Text('Active only'),
+                      content: Text(l10n.activeOnly),
                     ),
                     const Spacer(),
-                    
+
                     // Clear Filters
                     Button(
                       onPressed: materialProvider.clearFilters,
-                      child: const Text('Clear Filters'),
+                      child: Text(l10n.clearFiltersButton),
                     ),
                   ],
                 ),
@@ -179,16 +182,16 @@ class MaterialManagementScreen extends StatelessWidget {
                 ),
               )
             else if (materialProvider.filteredMaterials.isEmpty)
-              _buildEmptyState(context)
+              _buildEmptyState(context, l10n)
             else
-              _buildMaterialList(context, materialProvider),
-              
+              _buildMaterialList(context, materialProvider, l10n),
+
             // Error Display
             if (materialProvider.lastError != null)
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: InfoBar(
-                  title: const Text('Error'),
+                  title: Text(l10n.error),
                   content: Text(materialProvider.lastError!),
                   severity: InfoBarSeverity.error,
                 ),
@@ -239,7 +242,7 @@ class MaterialManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -252,23 +255,23 @@ class MaterialManagementScreen extends StatelessWidget {
               color: Colors.grey,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'No materials found',
-              style: TextStyle(
+            Text(
+              l10n.noMaterialsFound,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Create your first material to get started',
-              style: TextStyle(color: Colors.grey),
+            Text(
+              l10n.createFirstMaterial,
+              style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
             FilledButton(
-              onPressed: () => _showCreateMaterialDialog(context),
-              child: const Text('Create Material'),
+              onPressed: () => _showCreateMaterialDialog(context, l10n),
+              child: Text(l10n.createMaterial),
             ),
           ],
         ),
@@ -276,7 +279,7 @@ class MaterialManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMaterialList(BuildContext context, MaterialProvider materialProvider) {
+  Widget _buildMaterialList(BuildContext context, MaterialProvider materialProvider, AppLocalizations l10n) {
     return Card(
       child: Column(
         children: [
@@ -290,28 +293,28 @@ class MaterialManagementScreen extends StatelessWidget {
                 topRight: Radius.circular(8),
               ),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Expanded(flex: 3, child: Text('Name', style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(flex: 1, child: Text('Code', style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(flex: 1, child: Text('Type', style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(flex: 1, child: Text('Price', style: TextStyle(fontWeight: FontWeight.w600))),
-                Expanded(flex: 1, child: Text('Status', style: TextStyle(fontWeight: FontWeight.w600))),
-                SizedBox(width: 120, child: Text('Actions', style: TextStyle(fontWeight: FontWeight.w600))),
+                Expanded(flex: 3, child: Text(l10n.name, style: const TextStyle(fontWeight: FontWeight.w600))),
+                Expanded(flex: 1, child: Text(l10n.code, style: const TextStyle(fontWeight: FontWeight.w600))),
+                Expanded(flex: 1, child: Text(l10n.type, style: const TextStyle(fontWeight: FontWeight.w600))),
+                Expanded(flex: 1, child: Text(l10n.price, style: const TextStyle(fontWeight: FontWeight.w600))),
+                Expanded(flex: 1, child: Text(l10n.status, style: const TextStyle(fontWeight: FontWeight.w600))),
+                SizedBox(width: 120, child: Text(l10n.actions, style: const TextStyle(fontWeight: FontWeight.w600))),
               ],
             ),
           ),
           
           // Material Items
-          ...materialProvider.filteredMaterials.map((material) => 
-            _buildMaterialItem(context, materialProvider, material)
+          ...materialProvider.filteredMaterials.map((material) =>
+            _buildMaterialItem(context, materialProvider, material, l10n)
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMaterialItem(BuildContext context, MaterialProvider materialProvider, Material material) {
+  Widget _buildMaterialItem(BuildContext context, MaterialProvider materialProvider, Material material, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -344,21 +347,21 @@ class MaterialManagementScreen extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Price
           Expanded(
             flex: 1,
             child: Text(
-              material.price != null && material.price! > 0 
+              material.price != null && material.price! > 0
                   ? '\$${material.price!.toStringAsFixed(2)}/kg'
-                  : 'No price',
+                  : l10n.noPrice,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          
+
           // Status
           Expanded(
             flex: 1,
@@ -369,7 +372,7 @@ class MaterialManagementScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                material.active ? 'Active' : 'Inactive',
+                material.active ? l10n.active : l10n.inactive,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -379,7 +382,7 @@ class MaterialManagementScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Actions
           SizedBox(
             width: 120,
@@ -387,7 +390,7 @@ class MaterialManagementScreen extends StatelessWidget {
               children: [
                 IconButton(
                   icon: const Icon(FluentIcons.edit, size: 16),
-                  onPressed: () => _showEditMaterialDialog(context, material),
+                  onPressed: () => _showEditMaterialDialog(context, material, l10n),
                 ),
                 IconButton(
                   icon: Icon(
@@ -398,7 +401,7 @@ class MaterialManagementScreen extends StatelessWidget {
                 ),
                 IconButton(
                   icon: const Icon(FluentIcons.delete, size: 16),
-                  onPressed: () => _showDeleteConfirmation(context, materialProvider, material),
+                  onPressed: () => _showDeleteConfirmation(context, materialProvider, material, l10n),
                 ),
               ],
             ),
@@ -410,33 +413,33 @@ class MaterialManagementScreen extends StatelessWidget {
 
   // Method removed - no longer needed with simplified model
 
-  void _showCreateMaterialDialog(BuildContext context) {
+  void _showCreateMaterialDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => const MaterialFormDialog(),
     );
   }
 
-  void _showEditMaterialDialog(BuildContext context, Material material) {
+  void _showEditMaterialDialog(BuildContext context, Material material, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => MaterialFormDialog(material: material),
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, MaterialProvider provider, Material material) {
+  void _showDeleteConfirmation(BuildContext context, MaterialProvider provider, Material material, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Delete Material'),
-        content: Text('Are you sure you want to delete "${material.name}"?'),
+        title: Text(l10n.deleteMaterial),
+        content: Text(l10n.deleteMaterialConfirm(material.name)),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
             onPressed: () {
               provider.deleteMaterial(material);
               Navigator.of(context).pop();
@@ -447,22 +450,22 @@ class MaterialManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showImportDialog(BuildContext context) {
+  void _showImportDialog(BuildContext context, AppLocalizations l10n) {
     displayInfoBar(
       context,
-      builder: (context, close) => const InfoBar(
-        title: Text('Import functionality coming soon'),
+      builder: (context, close) => InfoBar(
+        title: Text(l10n.importFunctionalityComingSoon),
         severity: InfoBarSeverity.info,
       ),
     );
   }
 
-  void _exportMaterials(BuildContext context, MaterialProvider provider) {
+  void _exportMaterials(BuildContext context, MaterialProvider provider, AppLocalizations l10n) {
     final data = provider.exportMaterialsToJson();
     displayInfoBar(
       context,
       builder: (context, close) => InfoBar(
-        title: Text('Exported ${data['total_count']} materials'),
+        title: Text(l10n.exportedMaterials(data['total_count'])),
         severity: InfoBarSeverity.success,
       ),
     );

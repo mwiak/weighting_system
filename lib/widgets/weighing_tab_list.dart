@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/tabs_provider.dart';
 import '../models/weighing_tab.dart';
 import 'weighing_tab_print_actions.dart';
@@ -9,6 +10,7 @@ class WeighingTabList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Consumer<TabsProvider>(
       builder: (context, tabsProvider, child) {
         return Card(
@@ -23,7 +25,7 @@ class WeighingTabList extends StatelessWidget {
                     const Icon(FluentIcons.tab, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Active Weighing Tabs',
+                      l10n.activeTabs,
                       style: FluentTheme.of(context).typography.subtitle,
                     ),
                     const SizedBox(width: 16),
@@ -48,7 +50,7 @@ class WeighingTabList extends StatelessWidget {
                     SizedBox(
                       width: 200,
                       child: TextBox(
-                        placeholder: 'Search tabs...',
+                        placeholder: l10n.search,
                         prefix: const Icon(FluentIcons.search),
                         onChanged: (value) {
                           // TODO: Implement search functionality
@@ -106,6 +108,7 @@ class WeighingTabList extends StatelessWidget {
 
   Widget _buildTabsList(BuildContext context, TabsProvider tabsProvider) {
     final tabs = tabsProvider.tabs;
+    final l10n = AppLocalizations.of(context)!;
 
     return ListView.builder(
       itemCount: tabs.length,
@@ -145,7 +148,7 @@ class WeighingTabList extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    _getStatusDisplay(tab),
+                    _getStatusDisplay(tab, context),
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -211,7 +214,7 @@ class WeighingTabList extends StatelessWidget {
                       ),
                     ),
                     onPressed: () => _startWeighing(context, tabsProvider, tab),
-                    child: const Text('Start'),
+                    child: Text(l10n.start),
                   )
                 else if (tab.isInProgress)
                   FilledButton(
@@ -221,7 +224,7 @@ class WeighingTabList extends StatelessWidget {
                       ),
                     ),
                     onPressed: () => _continueWeighing(context, tabsProvider, tab),
-                    child: const Text('Continue'),
+                    child: Text(l10n.continueButton),
                   )
                 else if (tab.isComplete)
                   Button(
@@ -231,7 +234,7 @@ class WeighingTabList extends StatelessWidget {
                       ),
                     ),
                     onPressed: () => _completeTab(context, tabsProvider, tab),
-                    child: const Text('Complete'),
+                    child: Text(l10n.complete),
                   ),
                 const SizedBox(width: 8),
                 Button(
@@ -272,12 +275,13 @@ class WeighingTabList extends StatelessWidget {
 
   // _getOperationIcon method removed - operation type no longer used
 
-  String _getStatusDisplay(WeighingTab tab) {
-    if (!tab.hasData) return 'Empty';
-    if (tab.isInProgress) return 'In Progress';
-    if (tab.isComplete) return 'Ready';
-    if (tab.isCompleted) return 'Completed';
-    if (tab.isCancelled) return 'Cancelled';
+  String _getStatusDisplay(WeighingTab tab, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (!tab.hasData) return l10n.empty;
+    if (tab.isInProgress) return l10n.inProgress;
+    if (tab.isComplete) return l10n.readyToComplete;
+    if (tab.isCompleted) return l10n.completed;
+    if (tab.isCancelled) return l10n.cancelled;
     return tab.status.toUpperCase();
   }
 
@@ -298,18 +302,19 @@ class WeighingTabList extends StatelessWidget {
   }
 
   void _completeTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Complete Tab'),
-        content: Text('Mark tab "${tab.tabTitle}" as completed?'),
+        title: Text(l10n.completeTabTitle),
+        content: Text(l10n.markTabAsCompleted(tab.tabTitle)),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Complete'),
+            child: Text(l10n.complete),
             onPressed: () {
               tab.completeTab();
               tabsProvider.saveTab(tab);
@@ -322,19 +327,20 @@ class WeighingTabList extends StatelessWidget {
   }
 
   void _showTabActions(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: Text('Tab ${tab.tabTitle}'),
+        title: Text(l10n.tabTitle(tab.tabTitle)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Button(
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(FluentIcons.edit),
-                  SizedBox(width: 8),
-                  Text('Switch to Tab'),
+                  const Icon(FluentIcons.edit),
+                  const SizedBox(width: 8),
+                  Text(l10n.switchToTab),
                 ],
               ),
               onPressed: () {
@@ -347,11 +353,11 @@ class WeighingTabList extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Button(
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(FluentIcons.print),
-                  SizedBox(width: 8),
-                  Text('Print Actions'),
+                  const Icon(FluentIcons.print),
+                  const SizedBox(width: 8),
+                  Text(l10n.printActions),
                 ],
               ),
               onPressed: () {
@@ -362,11 +368,11 @@ class WeighingTabList extends StatelessWidget {
             const SizedBox(height: 8),
             if (tab.isComplete && !tab.isCompleted)
               Button(
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(FluentIcons.accept),
-                    SizedBox(width: 8),
-                    Text('Complete Tab'),
+                    const Icon(FluentIcons.accept),
+                    const SizedBox(width: 8),
+                    Text(l10n.completeTab),
                   ],
                 ),
                 onPressed: () {
@@ -376,11 +382,11 @@ class WeighingTabList extends StatelessWidget {
               ),
             const SizedBox(height: 8),
             Button(
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(FluentIcons.cancel),
-                  SizedBox(width: 8),
-                  Text('Cancel Tab'),
+                  const Icon(FluentIcons.cancel),
+                  const SizedBox(width: 8),
+                  Text(l10n.cancelTab),
                 ],
               ),
               onPressed: () {
@@ -391,11 +397,11 @@ class WeighingTabList extends StatelessWidget {
             if (tab.hasData) ...[
               const SizedBox(height: 8),
               Button(
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(FluentIcons.delete),
-                    SizedBox(width: 8),
-                    Text('Close Tab'),
+                    const Icon(FluentIcons.delete),
+                    const SizedBox(width: 8),
+                    Text(l10n.closeTab),
                   ],
                 ),
                 onPressed: () {
@@ -408,7 +414,7 @@ class WeighingTabList extends StatelessWidget {
         ),
         actions: [
           Button(
-            child: const Text('Close'),
+            child: Text(l10n.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -417,10 +423,11 @@ class WeighingTabList extends StatelessWidget {
   }
 
   void _showPrintActions(BuildContext context, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: Text('Print Options - ${tab.tabTitle}'),
+        title: Text(l10n.printOptions(tab.tabTitle)),
         content: SizedBox(
           width: 400,
           child: WeighingTabPrintActionsWidget(
@@ -431,7 +438,7 @@ class WeighingTabList extends StatelessWidget {
         ),
         actions: [
           Button(
-            child: const Text('Close'),
+            child: Text(l10n.close),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -440,18 +447,19 @@ class WeighingTabList extends StatelessWidget {
   }
 
   void _cancelTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Cancel Tab'),
-        content: Text('Are you sure you want to cancel tab "${tab.tabTitle}"?'),
+        title: Text(l10n.cancelTab),
+        content: Text(l10n.areYouSureCancelTab(tab.tabTitle)),
         actions: [
           Button(
-            child: const Text('No'),
+            child: Text(l10n.no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Yes, Cancel'),
+            child: Text(l10n.yesCancel),
             onPressed: () async {
               Navigator.of(context).pop();
               // Use unified cancellation logic from TabsProvider
@@ -468,19 +476,20 @@ class WeighingTabList extends StatelessWidget {
   }
 
   void _closeTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Close Tab'),
+        title: Text(l10n.closeTab),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Close tab "${tab.tabTitle}"?'),
+            Text(l10n.closeTabConfirm(tab.tabTitle)),
             if (tab.hasUnsavedChanges)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Warning: This tab has unsaved changes.',
+                  l10n.warningUnsavedChanges,
                   style: TextStyle(color: Colors.orange),
                 ),
               ),
@@ -488,11 +497,11 @@ class WeighingTabList extends StatelessWidget {
         ),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Close'),
+            child: Text(l10n.close),
             onPressed: () {
               final tabIndex = tabsProvider.tabs.indexOf(tab);
               if (tabIndex != -1) {

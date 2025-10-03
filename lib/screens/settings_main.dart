@@ -1,8 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/scale_settings_screen.dart';
+import 'package:weighing_system/screens/user_management_screen.dart';
 
 import '../providers/weight_provider.dart';
 
@@ -18,18 +20,19 @@ class _SettingsViewState extends State<SettingsView> {
   final PageStorageBucket bucket = PageStorageBucket();
 
   List<NavigationPaneItem> buildPaneItems(BuildContext context, type) {
+    final l10n = AppLocalizations.of(context)!;
     List<NavigationPaneItem> items = [
       PaneItem(
         icon: const SizedBox.shrink(),
-        title: Text('إعدادات عامة'),
+        title: Text(l10n.generalSettings),
         body: GeneralSettings(),
       ),
     ];
     List<NavigationPaneItem> adminPanes = [
       PaneItem(
         icon: const SizedBox.shrink(),
-        title: Text('المستخدمون'),
-        body: Center(),
+        title: Text(l10n.users),
+        body: const UserManagementScreen(),
       )
     ];
 
@@ -60,9 +63,10 @@ class GeneralSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ScaffoldPage.scrollable(
-      header: const PageHeader(
-        title: Text('Settings'),
+      header: PageHeader(
+        title: Text(l10n.settings),
       ),
       children: [
         // Scale Connection Settings
@@ -77,7 +81,7 @@ class GeneralSettings extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Scale Connection',
+                          l10n.scaleConnection,
                           style: FluentTheme.of(context).typography.subtitle,
                         ),
                         const Spacer(),
@@ -90,7 +94,7 @@ class GeneralSettings extends StatelessWidget {
                               ),
                             );
                           },
-                          child: const Text('Advanced Settings'),
+                          child: Text(l10n.advancedSettings),
                         ),
                       ],
                     ),
@@ -108,16 +112,16 @@ class GeneralSettings extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           weightProvider.isConnected
-                              ? 'Connected to ${weightProvider.connectedPort}'
+                              ? l10n.connectedToPort(weightProvider.connectedPort ?? '')
                               : weightProvider.isScanning
-                                  ? 'Scanning for devices...'
-                                  : 'Not connected',
+                                  ? l10n.scanningForDevices
+                                  : l10n.notConnected,
                         ),
                         const Spacer(),
                         if (!weightProvider.isConnected)
                           FilledButton(
                             onPressed: () => weightProvider.reconnect(),
-                            child: const Text('Reconnect'),
+                            child: Text(l10n.reconnect),
                           ),
                       ],
                     ),
@@ -125,18 +129,18 @@ class GeneralSettings extends StatelessWidget {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          const Text('Current Weight: '),
+                          Text(l10n.currentWeightLabel),
                           Text(
-                            '${weightProvider.displayWeight} kg',
+                            '${weightProvider.displayWeight} ${l10n.kg}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                             ),
                           ),
                           const SizedBox(width: 16),
-                          Text('Port: ${weightProvider.selectedPort}'),
+                          Text('${l10n.port}${weightProvider.selectedPort}'),
                           const SizedBox(width: 16),
-                          Text('Baud: ${weightProvider.baudRate}'),
+                          Text('${l10n.baud}${weightProvider.baudRate}'),
                         ],
                       ),
                     ],

@@ -1,6 +1,7 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -20,22 +21,36 @@ class DatabaseHelper {
   }
 
   intialDb() async {
-    // Get application directory (same as app executable location)
-    // final appDir = Directory.current; // Unused - commented out
-    final dad = await getDatabasesPath();
-    final databaseDir = Directory(join(dad, 'database'));
+    try {
+      // Database in same folder as executable
+      final databaseDir = Directory(join(Directory.current.path, 'database'));
 
-    // Create database directory if it doesn't exist
-    if (!await databaseDir.exists()) {
-      await databaseDir.create(recursive: true);
+      // Create database directory if it doesn't exist
+      if (!await databaseDir.exists()) {
+        debugPrint('Creating database directory: ${databaseDir.path}');
+        await databaseDir.create(recursive: true);
+      }
+
+      String databasePath = join(databaseDir.path, 'database.db');
+
+      debugPrint('Database path: $databasePath');
+      debugPrint('Database exists: ${await File(databasePath).exists()}');
+
+      Database mydb = await openDatabase(
+        databasePath,
+        onCreate: _onCreate,
+        version: 1,
+        onUpgrade: _onUpgrade,
+      );
+
+      await mydb.execute('PRAGMA foreign_keys = ON');
+      debugPrint('Database initialized successfully');
+
+      return mydb;
+    } catch (e) {
+      debugPrint('Error initializing database: $e');
+      rethrow;
     }
-
-    String path = join(databaseDir.path, 'database.db');
-
-    Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 1, onUpgrade: _onUpgrade);
-    await mydb.execute('PRAGMA foreign_keys = ON');
-    return mydb;
   }
 
   Future<Database> get database async {
@@ -44,9 +59,13 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // Create clients table
-    await db.execute('''
-      CREATE TABLE clients (
+    debugPrint('Running onCreate - Database version: $version');
+
+    try {
+      // Create clients table
+      debugPrint('Creating clients table...');
+      await db.execute('''
+        CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
         name TEXT NOT NULL,
@@ -165,13 +184,13 @@ class DatabaseHelper {
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     ''');
-    //auth   1 for admin  0 for user
+    //auth - admin or normal
     await db.execute('''
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password TEXT,
-        type INTEGER NOT NULL
+        type TEXT NOT NULL
       )
     ''');
 
@@ -202,8 +221,8 @@ class DatabaseHelper {
 
     await db.execute('''
       INSERT INTO users (username, password, type) VALUES
-      ("Mohammed", "362646", "admin"),
-      ("Abo Hussien", "0", "user")
+      ('Mohammed', '362646', 'admin'),
+      ('Abo Hussien', '0', 'user')
     ''');
 
     // Create indexes for better performance
@@ -224,6 +243,13 @@ class DatabaseHelper {
         'CREATE INDEX idx_weighing_tabs_truck ON weighing_tabs (truck_plate)');
     await db.execute(
         'CREATE INDEX idx_weighing_tabs_status ON weighing_tabs (status)');
+
+      debugPrint('All tables and indexes created successfully');
+    } catch (e, stackTrace) {
+      debugPrint('ERROR in onCreate: $e');
+      debugPrint('Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {

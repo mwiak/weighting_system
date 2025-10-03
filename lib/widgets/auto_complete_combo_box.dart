@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';
@@ -433,13 +434,11 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     if (_controller.text.isEmpty) return _suggestions;
 
     final normalizedInput = normalizeArabic(_controller.text);
-    return _suggestions
-        .where((suggestion) {
-          final normalizedSuggestion = normalizeArabic(suggestion);
-          return normalizedSuggestion.contains(normalizedInput) ||
-                 suggestion.toLowerCase().contains(_controller.text.toLowerCase());
-        })
-        .toList();
+    return _suggestions.where((suggestion) {
+      final normalizedSuggestion = normalizeArabic(suggestion);
+      return normalizedSuggestion.contains(normalizedInput) ||
+          suggestion.toLowerCase().contains(_controller.text.toLowerCase());
+    }).toList();
   }
 
   @override
@@ -497,98 +496,6 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     );
   }
 
-  Future<void> _addNewEntry(String value) async {
-    try {
-      switch (widget.suggestionType) {
-        case AutoCompleteType.truckPlate:
-          await _showAddTruckPlateDialog(value);
-          break;
-        case AutoCompleteType.driver:
-          await _showAddDriverDialog(value);
-          break;
-        case AutoCompleteType.supplierClient:
-          await _showAddSupplierClientDialog(value);
-          break;
-        case AutoCompleteType.client:
-          await _showAddClientDialog(value);
-          break;
-        case AutoCompleteType.supplier:
-          await _showAddSupplierDialog(value);
-          break;
-        case AutoCompleteType.material:
-          await _showAddMaterialDialog(value);
-          break;
-      }
-
-      _hideOverlay();
-      await _loadAllSuggestions(); // Refresh suggestions
-    } catch (e) {
-      debugPrint('Error adding new entry: $e');
-    }
-  }
-
-  Future<void> _showAddSupplierClientDialog(String name) async {
-    if (!mounted) return;
-
-    final bool? isSupplier = await showDialog<bool>(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: Text('Add "$name"'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Is this a supplier or client?'),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Button(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: const Text('Client'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: const Text('Supplier'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-
-    if (!mounted) return;
-
-    // Add to appropriate provider
-    if (isSupplier == true) {
-      final supplier = Provider.of<SupplierProvider>(context, listen: false);
-      final newSupplier = Supplier(
-        name: name.trim(),
-        active: true,
-        createDate: DateTime.now().toIso8601String(),
-        writeDate: DateTime.now().toIso8601String(),
-      );
-      await supplier.addSupplier(newSupplier);
-    } else if (isSupplier == false) {
-      final client = Provider.of<ClientProvider>(context, listen: false);
-      await client.createClient(name: name.trim());
-    }
-  }
-
   Future<void> _showAddClientDialog(String name) async {
     if (!mounted) return;
 
@@ -621,100 +528,6 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
       writeDate: DateTime.now(),
     );
     await materialProvider.addMaterial(newMaterial);
-  }
-
-  Future<void> _showAddTruckPlateDialog(String plateNumber) async {
-    if (!mounted) return;
-
-    String? driverName;
-
-    await showDialog(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: Text('Add Truck Plate "$plateNumber"'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Please enter the driver name for this truck:'),
-            const SizedBox(height: 12),
-            TextFormBox(
-              placeholder: 'Driver name',
-              onChanged: (value) => driverName = value,
-            ),
-          ],
-        ),
-        actions: [
-          Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          FilledButton(
-            child: const Text('Add'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-
-    if (!mounted) return;
-
-    if (driverName != null && driverName!.trim().isNotEmpty) {
-      final driverPlateProvider =
-          Provider.of<DriverPlateProvider>(context, listen: false);
-      await driverPlateProvider.addDriverWithPlates(
-        driverName!.trim(),
-        [plateNumber.trim()],
-      );
-    }
-  }
-
-  Future<void> _showAddDriverDialog(String driverName) async {
-    if (!mounted) return;
-
-    String? plateNumber;
-
-    await showDialog(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: Text('Add Driver "$driverName"'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Please enter a truck plate for this driver:'),
-            const SizedBox(height: 12),
-            TextFormBox(
-              placeholder: 'Truck plate number',
-              onChanged: (value) => plateNumber = value,
-            ),
-          ],
-        ),
-        actions: [
-          Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          FilledButton(
-            child: const Text('Add'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-
-    if (!mounted) return;
-
-    if (plateNumber != null && plateNumber!.trim().isNotEmpty) {
-      final driverPlateProvider =
-          Provider.of<DriverPlateProvider>(context, listen: false);
-      await driverPlateProvider.addDriverWithPlates(
-        driverName.trim(),
-        [plateNumber!.trim()],
-      );
-    }
   }
 
   Future<void> _handleDriverVehicleRelationship(String value) async {

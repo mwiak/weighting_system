@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/print_template.dart';
 import '../models/weighing_tab.dart';
 import '../widgets/template_editor.dart';
@@ -136,26 +137,28 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return fluent.ScaffoldPage(
       header: fluent.PageHeader(
-        title: const Text('Print Template Management'),
+        title: Text(l10n.printTemplateManagement),
         commandBar: fluent.CommandBar(
           primaryItems: [
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.add),
-              label: const Text('New Template'),
+              label: Text(l10n.newTemplate),
               onPressed: _createNewTemplate,
             ),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.edit),
-              label: const Text('Edit'),
+              label: Text(l10n.edit),
               onPressed: _selectedTemplate != null
                   ? () => _editTemplate(_selectedTemplate!)
                   : null,
             ),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.delete),
-              label: const Text('Delete'),
+              label: Text(l10n.delete),
               onPressed: _selectedTemplate != null
                   ? () => _deleteTemplate(_selectedTemplate!)
                   : null,
@@ -163,20 +166,20 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
             const fluent.CommandBarSeparator(),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.test_case),
-              label: const Text('Test Print'),
+              label: Text(l10n.testPrint),
               onPressed: _selectedTemplate != null
                   ? () => _testPrint(_selectedTemplate!)
                   : null,
             ),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.print),
-              label: const Text('Print Alignment Grid'),
+              label: Text(l10n.printAlignmentGrid),
               onPressed: _printAlignmentGrid,
             ),
             const fluent.CommandBarSeparator(),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.save_as),
-              label: const Text('Export PDF'),
+              label: Text(l10n.exportPdf),
               onPressed: _selectedTemplate != null
                   ? () => _exportTemplateToPDF(_selectedTemplate!)
                   : null,
@@ -184,7 +187,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
             const fluent.CommandBarSeparator(),
             fluent.CommandBarButton(
               icon: const Icon(fluent.FluentIcons.save_as),
-              label: const Text('Export XPS'),
+              label: Text(l10n.exportXps),
               onPressed: _selectedTemplate != null
                   ? () => _exportTemplateToPDF(_selectedTemplate!)
                   : null,
@@ -212,6 +215,8 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   Widget _buildTemplateList() {
+    final l10n = AppLocalizations.of(context)!;
+
     return SizedBox(
       width: 300,
       child: Container(
@@ -229,7 +234,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
               padding: const EdgeInsets.all(12),
               color: fluent.FluentTheme.of(context).cardColor,
               child: fluent.TextBox(
-                placeholder: 'Search templates...',
+                placeholder: l10n.searchTemplates,
                 prefix: const Padding(
                   padding: EdgeInsets.only(left: 8),
                   child: Icon(fluent.FluentIcons.search),
@@ -272,9 +277,11 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   Widget _buildTemplatePreview() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_selectedTemplate == null) {
-      return const Center(
-        child: Text('Select a template to preview'),
+      return Center(
+        child: Text(l10n.selectTemplateToPreview),
       );
     }
 
@@ -292,7 +299,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Template Preview: ${_selectedTemplate!.name}',
+                    '${l10n.templatePreview}: ${_selectedTemplate!.name}',
                     style: fluent.FluentTheme.of(context).typography.bodyStrong,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -315,7 +322,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                 ),
                 const SizedBox(width: 4),
                 fluent.Button(
-                  child: const Text('Print'),
+                  child: Text(l10n.print),
                   onPressed: () => _quickPrint(_selectedTemplate!),
                 ),
               ],
@@ -503,6 +510,8 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   Widget _buildTemplateDetails() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_selectedTemplate == null) {
       return const SizedBox.shrink();
     }
@@ -522,25 +531,25 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Template Details',
+              l10n.templateDetails,
               style: fluent.FluentTheme.of(context).typography.subtitle,
             ),
             const SizedBox(height: 16),
-            _buildDetailRow('Name:', _selectedTemplate!.name),
-            _buildDetailRow('Description:', _selectedTemplate!.description),
-            _buildDetailRow('Paper Size:', _selectedTemplate!.paperSize),
-            _buildDetailRow('Orientation:', _selectedTemplate!.orientation),
-            _buildDetailRow('Fields:', '${_selectedTemplate!.fields.length}'),
+            _buildDetailRow(l10n.nameLabel, _selectedTemplate!.name),
+            _buildDetailRow(l10n.descriptionLabel, _selectedTemplate!.description),
+            _buildDetailRow(l10n.paperSizeLabel, _selectedTemplate!.paperSize),
+            _buildDetailRow(l10n.orientationLabel, _selectedTemplate!.orientation),
+            _buildDetailRow(l10n.fieldsLabel, '${_selectedTemplate!.fields.length}'),
             _buildDetailRow(
-                'Status:', _selectedTemplate!.isActive ? 'Active' : 'Inactive'),
+                l10n.statusLabel, _selectedTemplate!.isActive ? l10n.active : l10n.inactive),
             _buildDetailRow(
-                'Created:', _formatDate(_selectedTemplate!.createdAt)),
+                l10n.createdLabel, _formatDate(_selectedTemplate!.createdAt)),
             if (_selectedTemplate!.updatedAt != null)
               _buildDetailRow(
-                  'Updated:', _formatDate(_selectedTemplate!.updatedAt!)),
+                  l10n.updatedLabel, _formatDate(_selectedTemplate!.updatedAt!)),
             const SizedBox(height: 24),
             Text(
-              'Fields',
+              l10n.fields,
               style: fluent.FluentTheme.of(context).typography.bodyStrong,
             ),
             const SizedBox(height: 8),
@@ -569,14 +578,14 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                                       color: AppTheme.secondaryTextColor),
                                 ),
                                 Text(
-                                  'Font: ${field.fontSize}pt${field.bold ? ", Bold" : ""}',
+                                  '${l10n.fontLabel} ${field.fontSize}${l10n.pt}${field.bold ? ", ${l10n.bold}" : ""}',
                                   style: const TextStyle(
                                       fontSize: 12,
                                       color: AppTheme.secondaryTextColor),
                                 ),
                                 if (field.format != null)
                                   Text(
-                                    'Format: ${field.format}',
+                                    '${l10n.formatLabel} ${field.format}',
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.grey[600]),
                                   ),
@@ -586,10 +595,10 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                         );
                       },
                     )
-                  : const Center(
+                  : Center(
                       child: Text(
-                        'No fields in template',
-                        style: TextStyle(color: AppTheme.secondaryTextColor),
+                        l10n.noFieldsInTemplate,
+                        style: const TextStyle(color: AppTheme.secondaryTextColor),
                       ),
                     ),
             ),
@@ -624,6 +633,8 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   Widget _buildBackgroundImageWidget(PrintTemplate template) {
+    final l10n = AppLocalizations.of(context)!;
+
     try {
       final file = File(template.backgroundImagePath!);
       if (file.existsSync()) {
@@ -638,16 +649,16 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
       } else {
         return Container(
           color: Colors.grey.withOpacity(0.3),
-          child: const Center(
-            child: Text('Background image not found'),
+          child: Center(
+            child: Text(l10n.backgroundImageNotFound),
           ),
         );
       }
     } catch (e) {
       return Container(
         color: Colors.red.withOpacity(0.3),
-        child: const Center(
-          child: Text('Error loading background image'),
+        child: Center(
+          child: Text(l10n.errorLoadingBackgroundImage),
         ),
       );
     }
@@ -702,99 +713,113 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
   }
 
   void _deleteTemplate(PrintTemplate template) {
+    final l10n = AppLocalizations.of(context)!;
+
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Delete Template'),
-        content: Text('Are you sure you want to delete "${template.name}"?'),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          fluent.FilledButton(
-            style: fluent.ButtonStyle(
-              backgroundColor:
-                  fluent.WidgetStateProperty.all(AppTheme.errorColor),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: Text(l10n.deleteTemplate),
+          content: Text('${l10n.areYouSureDeleteTemplate} "${template.name}"?'),
+          actions: [
+            fluent.Button(
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
             ),
-            child: const Text('Delete'),
-            onPressed: () async {
-              Navigator.of(context).pop();
+            fluent.FilledButton(
+              style: fluent.ButtonStyle(
+                backgroundColor:
+                    fluent.WidgetStateProperty.all(AppTheme.errorColor),
+              ),
+              child: Text(l10n.delete),
+              onPressed: () async {
+                Navigator.of(context).pop();
 
-              try {
-                final directory = await getApplicationDocumentsDirectory();
-                final file = File(
-                    '${directory.path}/print_templates/${template.id}.json');
-                if (await file.exists()) {
-                  await file.delete();
+                try {
+                  final directory = await getApplicationDocumentsDirectory();
+                  final file = File(
+                      '${directory.path}/print_templates/${template.id}.json');
+                  if (await file.exists()) {
+                    await file.delete();
+                  }
+                  await _loadTemplates();
+                } catch (e) {
+                  final l10n = AppLocalizations.of(context)!;
+                  fluent.showDialog(
+                    context: context,
+                    builder: (context) {
+                      final l10n = AppLocalizations.of(context)!;
+                      return fluent.ContentDialog(
+                        title: Text(l10n.error),
+                        content: Text('${l10n.failedToDeleteTemplate}: $e'),
+                        actions: [
+                          fluent.Button(
+                            child: Text(l10n.ok),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 }
-                await _loadTemplates();
-              } catch (e) {
-                fluent.showDialog(
-                  context: context,
-                  builder: (context) => fluent.ContentDialog(
-                    title: const Text('Error'),
-                    content: Text('Failed to delete template: $e'),
-                    actions: [
-                      fluent.Button(
-                        child: const Text('OK'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      ),
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _testPrint(PrintTemplate template) async {
+    final l10n = AppLocalizations.of(context)!;
+
     // Show print options dialog
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Test Print Options'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Choose how to test print this template:'),
-            const SizedBox(height: 16),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: Text(l10n.testPrintOptions),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.chooseTestPrintMethod),
+              const SizedBox(height: 16),
+              fluent.Button(
+                child: Text(l10n.printWithXps),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performTestXpsPrint(template);
+                },
+              ),
+              const SizedBox(height: 16),
+              fluent.Button(
+                child: Text(l10n.silentPrintWindowsDirect),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performTestPrint(template, useDialog: false);
+                },
+              ),
+              const SizedBox(height: 8),
+              fluent.Button(
+                child: Text(l10n.printWithDialogPreview),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performTestPrint(template, useDialog: true);
+                },
+              ),
+            ],
+          ),
+          actions: [
             fluent.Button(
-              child: const Text('PRINT WITH XPS'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performTestXpsPrint(template);
-              },
-            ),
-            const SizedBox(height: 16),
-            fluent.Button(
-              child: const Text('Silent Print (Windows Direct)'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performTestPrint(template, useDialog: false);
-              },
-            ),
-            const SizedBox(height: 8),
-            fluent.Button(
-              child: const Text('Print with Dialog (Preview)'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performTestPrint(template, useDialog: true);
-              },
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
-        ),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -872,44 +897,47 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
       if (mounted) {
         fluent.showDialog(
           context: context,
-          builder: (context) => fluent.ContentDialog(
-            title: const Text('Silent Print Error'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Silent printing failed with the following error:'),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    border: Border.all(color: Colors.red.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: SelectableText(
-                    e.toString(),
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+            return fluent.ContentDialog(
+              title: const Text('Silent Print Error'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.silentPrintingFailed),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: SelectableText(
+                      e.toString(),
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Text('Possible solutions:'),
-                const Text('• Try "Print with Dialog" option'),
-                const Text('• Check if printer is connected and online'),
-                const Text('• Ensure printer drivers are installed'),
-                const Text('• Run application as Administrator'),
-              ],
-            ),
-            actions: [
-              fluent.Button(
-                child: const Text('OK'),
-                onPressed: () => Navigator.of(context).pop(),
+                  const SizedBox(height: 12),
+                  Text(l10n.possibleSolutions),
+                  const Text('• Try "Print with Dialog" option'),
+                  const Text('• Check if printer is connected and online'),
+                  const Text('• Ensure printer drivers are installed'),
+                  const Text('• Run application as Administrator'),
+                ],
               ),
-            ],
-          ),
+              actions: [
+                fluent.Button(
+                  child: Text(l10n.ok),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
         );
       }
     }
@@ -998,17 +1026,19 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
         // Show success message for silent printing
         fluent.showDialog(
           context: context,
-          builder: (context) => fluent.ContentDialog(
-            title: const Text('Print Success'),
-            content: const Text(
-                'Template printed successfully using Windows direct printing.'),
-            actions: [
-              fluent.Button(
-                child: const Text('OK'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+            return fluent.ContentDialog(
+              title: Text(l10n.printSuccess),
+              content: Text(l10n.templatePrintedSuccess),
+              actions: [
+                fluent.Button(
+                  child: Text(l10n.ok),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
         );
       }
     } catch (e) {
@@ -1016,44 +1046,47 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
       if (mounted) {
         fluent.showDialog(
           context: context,
-          builder: (context) => fluent.ContentDialog(
-            title: const Text('Silent Print Error'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Silent printing failed with the following error:'),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    border: Border.all(color: Colors.red.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: SelectableText(
-                    e.toString(),
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
+          builder: (context) {
+            final l10n = AppLocalizations.of(context)!;
+            return fluent.ContentDialog(
+              title: const Text('Silent Print Error'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.silentPrintingFailed),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: SelectableText(
+                      e.toString(),
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Text('Possible solutions:'),
-                const Text('• Try "Print with Dialog" option'),
-                const Text('• Check if printer is connected and online'),
-                const Text('• Ensure printer drivers are installed'),
-                const Text('• Run application as Administrator'),
-              ],
-            ),
-            actions: [
-              fluent.Button(
-                child: const Text('OK'),
-                onPressed: () => Navigator.of(context).pop(),
+                  const SizedBox(height: 12),
+                  Text(l10n.possibleSolutions),
+                  const Text('• Try "Print with Dialog" option'),
+                  const Text('• Check if printer is connected and online'),
+                  const Text('• Ensure printer drivers are installed'),
+                  const Text('• Run application as Administrator'),
+                ],
               ),
-            ],
-          ),
+              actions: [
+                fluent.Button(
+                  child: Text(l10n.ok),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
         );
       }
     }
@@ -1067,16 +1100,19 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     if (orders.isEmpty) {
       fluent.showDialog(
         context: context,
-        builder: (context) => fluent.ContentDialog(
-          title: const Text('No Orders'),
-          content: const Text('There are no active orders to print.'),
-          actions: [
-            fluent.Button(
-              child: const Text('OK'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        ),
+        builder: (context) {
+          final l10n = AppLocalizations.of(context)!;
+          return fluent.ContentDialog(
+            title: Text(l10n.error),
+            content: const Text('There are no active orders to print.'),
+            actions: [
+              fluent.Button(
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        },
       );
       return;
     }
@@ -1084,93 +1120,99 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     // Show order selection dialog
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Select Order to Print'),
-        content: SizedBox(
-          width: 400,
-          height: 300,
-          child: ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return fluent.ListTile(
-                title: Text('Order: ${order.orderNumber}'),
-                subtitle: Text(
-                    'Truck: ${order.truckPlate} | Net: ${order.netWeight} kg'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: const Text('Select Order to Print'),
+          content: SizedBox(
+            width: 400,
+            height: 300,
+            child: ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final order = orders[index];
+                return fluent.ListTile(
+                  title: Text('Order: ${order.orderNumber}'),
+                  subtitle: Text(
+                      'Truck: ${order.truckPlate} | Net: ${order.netWeight} kg'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
 
-                  // Show print options for quick print
-                  fluent.showDialog(
-                    context: context,
-                    builder: (quickPrintContext) => fluent.ContentDialog(
-                      title: const Text('Quick Print Options'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          fluent.Button(
-                            child: const Text('Silent Print (Windows Direct)'),
-                            onPressed: () async {
-                              Navigator.of(quickPrintContext).pop();
-                              try {
-                                // Get default printer for silent printing
-                                // DISABLED: final printers = await _printService.getAvailablePrinters();
-                                final printers = <String>[];
-                                final defaultPrinter =
-                                    printers.isNotEmpty ? printers.first : null;
+                    // Show print options for quick print
+                    fluent.showDialog(
+                      context: context,
+                      builder: (quickPrintContext) {
+                        final l10n = AppLocalizations.of(quickPrintContext)!;
+                        return fluent.ContentDialog(
+                          title: const Text('Quick Print Options'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              fluent.Button(
+                                child: const Text('Silent Print (Windows Direct)'),
+                                onPressed: () async {
+                                  Navigator.of(quickPrintContext).pop();
+                                  try {
+                                    // Get default printer for silent printing
+                                    // DISABLED: final printers = await _printService.getAvailablePrinters();
+                                    final printers = <String>[];
+                                    final defaultPrinter =
+                                        printers.isNotEmpty ? printers.first : null;
 
-                                // DISABLED: Template printing temporarily disabled
-                                throw Exception(
-                                    'Template printing is temporarily disabled');
-                                // Show success for silent printing
-                                _showPrintSuccess(
-                                    'Order ${order.orderNumber} printed successfully using Windows direct printing.');
-                              } catch (e) {
-                                debugPrint('Quick print silent error: $e');
-                                _showDetailedPrintError(
-                                    'Quick Print (Silent)', e.toString());
-                              }
-                            },
+                                    // DISABLED: Template printing temporarily disabled
+                                    throw Exception(
+                                        'Template printing is temporarily disabled');
+                                    // Show success for silent printing
+                                    _showPrintSuccess(
+                                        'Order ${order.orderNumber} printed successfully using Windows direct printing.');
+                                  } catch (e) {
+                                    debugPrint('Quick print silent error: $e');
+                                    _showDetailedPrintError(
+                                        'Quick Print (Silent)', e.toString());
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              fluent.Button(
+                                child: const Text('Print with Dialog'),
+                                onPressed: () async {
+                                  Navigator.of(quickPrintContext).pop();
+                                  try {
+                                    // DISABLED: Template printing temporarily disabled
+                                    throw Exception(
+                                        'Template printing is temporarily disabled');
+                                  } catch (e) {
+                                    debugPrint('Quick print dialog error: $e');
+                                    _showDetailedPrintError(
+                                        'Quick Print (Dialog)', e.toString());
+                                  }
+                                },
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 8),
-                          fluent.Button(
-                            child: const Text('Print with Dialog'),
-                            onPressed: () async {
-                              Navigator.of(quickPrintContext).pop();
-                              try {
-                                // DISABLED: Template printing temporarily disabled
-                                throw Exception(
-                                    'Template printing is temporarily disabled');
-                              } catch (e) {
-                                debugPrint('Quick print dialog error: $e');
-                                _showDetailedPrintError(
-                                    'Quick Print (Dialog)', e.toString());
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        fluent.Button(
-                          child: const Text('Cancel'),
-                          onPressed: () =>
-                              Navigator.of(quickPrintContext).pop(),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
+                          actions: [
+                            fluent.Button(
+                              child: Text(l10n.cancel),
+                              onPressed: () =>
+                                  Navigator.of(quickPrintContext).pop(),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+          actions: [
+            fluent.Button(
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -1179,6 +1221,7 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     fluent.showDialog(
       context: context,
       builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         String selectedSize = 'A3';
         String selectedOrientation = 'landscape';
 
@@ -1234,11 +1277,11 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
           ),
           actions: [
             fluent.Button(
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             fluent.FilledButton(
-              child: const Text('Print'),
+              child: Text(l10n.print),
               onPressed: () async {
                 Navigator.of(context).pop();
 
@@ -1248,54 +1291,57 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                 // Show print options for alignment grid
                 fluent.showDialog(
                   context: context,
-                  builder: (alignmentContext) => fluent.ContentDialog(
-                    title: const Text('Alignment Grid Print Options'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+                  builder: (alignmentContext) {
+                    final l10n = AppLocalizations.of(alignmentContext)!;
+                    return fluent.ContentDialog(
+                      title: const Text('Alignment Grid Print Options'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          fluent.Button(
+                            child: const Text('Silent Print (Windows Direct)'),
+                            onPressed: () async {
+                              Navigator.of(alignmentContext).pop();
+                              try {
+                                // Get default printer for silent printing
+                                // DISABLED: Template printing temporarily disabled
+                                throw Exception(
+                                    'Template printing is temporarily disabled');
+                                _showPrintSuccess(
+                                    'Alignment grid printed successfully using Windows direct printing.');
+                              } catch (e) {
+                                debugPrint('Alignment grid silent error: $e');
+                                _showDetailedPrintError(
+                                    'Alignment Grid (Silent)', e.toString());
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          fluent.Button(
+                            child: const Text('Print with Dialog'),
+                            onPressed: () async {
+                              Navigator.of(alignmentContext).pop();
+                              try {
+                                // DISABLED: Template printing temporarily disabled
+                                throw Exception(
+                                    'Template printing is temporarily disabled');
+                              } catch (e) {
+                                debugPrint('Alignment grid dialog error: $e');
+                                _showDetailedPrintError(
+                                    'Alignment Grid (Dialog)', e.toString());
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      actions: [
                         fluent.Button(
-                          child: const Text('Silent Print (Windows Direct)'),
-                          onPressed: () async {
-                            Navigator.of(alignmentContext).pop();
-                            try {
-                              // Get default printer for silent printing
-                              // DISABLED: Template printing temporarily disabled
-                              throw Exception(
-                                  'Template printing is temporarily disabled');
-                              _showPrintSuccess(
-                                  'Alignment grid printed successfully using Windows direct printing.');
-                            } catch (e) {
-                              debugPrint('Alignment grid silent error: $e');
-                              _showDetailedPrintError(
-                                  'Alignment Grid (Silent)', e.toString());
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        fluent.Button(
-                          child: const Text('Print with Dialog'),
-                          onPressed: () async {
-                            Navigator.of(alignmentContext).pop();
-                            try {
-                              // DISABLED: Template printing temporarily disabled
-                              throw Exception(
-                                  'Template printing is temporarily disabled');
-                            } catch (e) {
-                              debugPrint('Alignment grid dialog error: $e');
-                              _showDetailedPrintError(
-                                  'Alignment Grid (Dialog)', e.toString());
-                            }
-                          },
+                          child: Text(l10n.cancel),
+                          onPressed: () => Navigator.of(alignmentContext).pop(),
                         ),
                       ],
-                    ),
-                    actions: [
-                      fluent.Button(
-                        child: const Text('Cancel'),
-                        onPressed: () => Navigator.of(alignmentContext).pop(),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -1395,46 +1441,49 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     // Show data options dialog
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Export Template to PDF'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Choose the data source for the PDF export:'),
-            const SizedBox(height: 16),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: const Text('Export Template to PDF'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Choose the data source for the PDF export:'),
+              const SizedBox(height: 16),
+              fluent.Button(
+                child: const Text('Export with Sample Data'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performPDFExport(template, useSampleData: true);
+                },
+              ),
+              const SizedBox(height: 8),
+              fluent.Button(
+                child: const Text('Export with Real Order Data'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _selectOrderForExport(template);
+                },
+              ),
+              const SizedBox(height: 8),
+              fluent.Button(
+                child: const Text('Export Empty Template (Field Names Only)'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performPDFExport(template, useEmptyData: true);
+                },
+              ),
+            ],
+          ),
+          actions: [
             fluent.Button(
-              child: const Text('Export with Sample Data'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performPDFExport(template, useSampleData: true);
-              },
-            ),
-            const SizedBox(height: 8),
-            fluent.Button(
-              child: const Text('Export with Real Order Data'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _selectOrderForExport(template);
-              },
-            ),
-            const SizedBox(height: 8),
-            fluent.Button(
-              child: const Text('Export Empty Template (Field Names Only)'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performPDFExport(template, useEmptyData: true);
-              },
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
-        ),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1442,30 +1491,33 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     // Show data options dialog
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Export Template to PDF'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Choose the data source for the PDF export:'),
-            const SizedBox(height: 16),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: const Text('Export Template to PDF'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Choose the data source for the PDF export:'),
+              const SizedBox(height: 16),
+              fluent.Button(
+                child: const Text('Export with Sample Data'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performPDFExport(template, useSampleData: true);
+                },
+              ),
+            ],
+          ),
+          actions: [
             fluent.Button(
-              child: const Text('Export with Sample Data'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performPDFExport(template, useSampleData: true);
-              },
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
-        ),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1477,20 +1529,22 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     if (orders.isEmpty) {
       fluent.showDialog(
         context: context,
-        builder: (context) => fluent.ContentDialog(
-          title: const Text('No Orders Available'),
-          content: const Text(
-              'There are no active orders. Using sample data instead.'),
-          actions: [
-            fluent.Button(
-              child: const Text('OK'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _performPDFExport(template, useSampleData: true);
-              },
-            ),
-          ],
-        ),
+        builder: (context) {
+          return fluent.ContentDialog(
+            title: const Text('No Orders Available'),
+            content: const Text(
+                'There are no active orders. Using sample data instead.'),
+            actions: [
+              fluent.Button(
+                child: const Text('OK'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await _performPDFExport(template, useSampleData: true);
+                },
+              ),
+            ],
+          );
+        },
       );
       return;
     }
@@ -1498,34 +1552,37 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
     // Show order selection dialog
     fluent.showDialog(
       context: context,
-      builder: (context) => fluent.ContentDialog(
-        title: const Text('Select Order for PDF Export'),
-        content: SizedBox(
-          width: 400,
-          height: 300,
-          child: ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return fluent.ListTile(
-                title: Text('Order: ${order.orderNumber}'),
-                subtitle: Text(
-                    'Truck: ${order.truckPlate} | Net: ${order.netWeight} kg'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  await _performPDFExport(template);
-                },
-              );
-            },
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return fluent.ContentDialog(
+          title: const Text('Select Order for PDF Export'),
+          content: SizedBox(
+            width: 400,
+            height: 300,
+            child: ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final order = orders[index];
+                return fluent.ListTile(
+                  title: Text('Order: ${order.orderNumber}'),
+                  subtitle: Text(
+                      'Truck: ${order.truckPlate} | Net: ${order.netWeight} kg'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    await _performPDFExport(template);
+                  },
+                );
+              },
+            ),
           ),
-        ),
-        actions: [
-          fluent.Button(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+          actions: [
+            fluent.Button(
+              child: Text(l10n.cancel),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 

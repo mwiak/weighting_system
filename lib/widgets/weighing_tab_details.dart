@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/tabs_provider.dart';
 import '../models/weighing_tab.dart';
 
@@ -8,6 +9,8 @@ class WeighingTabDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer<TabsProvider>(
       builder: (context, tabsProvider, child) {
         WeighingTab? currentTab = tabsProvider.currentTab;
@@ -24,7 +27,7 @@ class WeighingTabDetails extends StatelessWidget {
                     const Icon(FluentIcons.info, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Tab Details',
+                      l10n.tabDetails,
                       style: FluentTheme.of(context).typography.subtitle,
                     ),
                   ],
@@ -46,36 +49,43 @@ class WeighingTabDetails extends StatelessWidget {
   }
 
   Widget _buildNoSelectionState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            FluentIcons.info,
-            size: 48,
-            color: Colors.grey,
+    return Builder(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                FluentIcons.info,
+                size: 48,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.noTabSelectedMessage,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.selectTabToView,
+                style: const TextStyle(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          SizedBox(height: 16),
-          Text(
-            'No Tab Selected',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Select a tab to view details',
-            style: TextStyle(color: Colors.grey),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 
   Widget _buildTabDetails(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +119,7 @@ class WeighingTabDetails extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        _getStatusDisplay(tab),
+                        _getStatusDisplay(tab, l10n),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -128,9 +138,9 @@ class WeighingTabDetails extends StatelessWidget {
                           color: Colors.orange,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
-                          'UNSAVED',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.unsaved.toUpperCase(),
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -147,35 +157,38 @@ class WeighingTabDetails extends StatelessWidget {
 
           // Vehicle Information
           _buildSection(
-            'Vehicle Information',
+            l10n.vehicleInformation,
             FluentIcons.bus,
             [
-              _buildDetailRow('Truck Plate', tab.truckPlate.isNotEmpty ? tab.truckPlate : 'Not specified'),
-              _buildDetailRow('Driver Name', tab.driverName.isNotEmpty ? tab.driverName : 'Not specified'),
+              _buildDetailRow(l10n.truckPlateLabel, tab.truckPlate.isNotEmpty ? tab.truckPlate : l10n.notSpecified, l10n),
+              _buildDetailRow(l10n.driverName, tab.driverName.isNotEmpty ? tab.driverName : l10n.notSpecified, l10n),
             ],
           ),
           const SizedBox(height: 20),
 
           // Weight Information
           _buildSection(
-            'Weight Information',
+            l10n.weightInformation,
             FluentIcons.scale_volume,
             [
               _buildDetailRow(
-                  'Gross Weight',
+                  l10n.grossWeight,
                   tab.grossWeight > 0
                       ? '${tab.grossWeight.toStringAsFixed(0)} kg'
-                      : 'Not recorded'),
+                      : l10n.notRecorded,
+                  l10n),
               _buildDetailRow(
-                  'Empty Weight',
+                  l10n.emptyWeight,
                   tab.emptyWeight > 0
                       ? '${tab.emptyWeight.toStringAsFixed(0)} kg'
-                      : 'Not recorded'),
+                      : l10n.notRecorded,
+                  l10n),
               _buildDetailRow(
-                  'Net Weight',
+                  l10n.netWeight,
                   tab.netWeight > 0
                       ? '${tab.netWeight.toStringAsFixed(0)} kg'
-                      : 'Not calculated',
+                      : l10n.notCalculated,
+                  l10n,
                   isHighlighted: tab.netWeight > 0),
             ],
           ),
@@ -183,26 +196,26 @@ class WeighingTabDetails extends StatelessWidget {
 
           // Business Information
           _buildSection(
-            'Business Information',
+            l10n.businessInformation,
             FluentIcons.people,
             [
-              _buildDetailRow('Client/Supplier',
-                (tab.client.isNotEmpty ? tab.client : tab.supplier.isNotEmpty ? tab.supplier : 'Not specified')),
-              _buildDetailRow('Material',
-                tab.material.isNotEmpty ? tab.material : 'Not specified'),
-              _buildDetailRow('Payment Status', tab.isPaid ? 'Paid' : 'Unpaid'),
-              _buildDetailRow('Show Price on Print', tab.showPriceOnPrint ? 'Yes' : 'No'),
+              _buildDetailRow(l10n.clientSupplier,
+                (tab.client.isNotEmpty ? tab.client : tab.supplier.isNotEmpty ? tab.supplier : l10n.notSpecified), l10n),
+              _buildDetailRow(l10n.material,
+                tab.material.isNotEmpty ? tab.material : l10n.notSpecified, l10n),
+              _buildDetailRow(l10n.paymentStatus, tab.isPaid ? l10n.paid : l10n.unpaid, l10n),
+              _buildDetailRow(l10n.showPriceOnPrint, tab.showPriceOnPrint ? l10n.yes : l10n.no, l10n),
             ],
           ),
           const SizedBox(height: 20),
 
           // Timing Information
           _buildSection(
-            'Timing Information',
+            l10n.timingInformation,
             FluentIcons.clock,
             [
-              _buildDetailRow('Created At', _formatDateTime(tab.createdAt)),
-              _buildDetailRow('Last Updated', _formatDateTime(tab.updatedAt)),
+              _buildDetailRow(l10n.createdAt, _formatDateTime(tab.createdAt, l10n), l10n),
+              _buildDetailRow(l10n.lastUpdated, _formatDateTime(tab.updatedAt, l10n), l10n),
               // Operation type removed from schema
             ],
           ),
@@ -239,7 +252,7 @@ class WeighingTabDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isHighlighted = false}) {
+  Widget _buildDetailRow(String label, String value, AppLocalizations l10n, {bool isHighlighted = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -272,12 +285,14 @@ class WeighingTabDetails extends StatelessWidget {
   }
 
   Widget _buildActionsSection(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Actions',
-          style: TextStyle(
+        Text(
+          l10n.actions,
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -289,12 +304,12 @@ class WeighingTabDetails extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: () => _startWeighing(context, tab),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(FluentIcons.add),
-                  SizedBox(width: 8),
-                  Text('Start Weighing'),
+                  const Icon(FluentIcons.add),
+                  const SizedBox(width: 8),
+                  Text(l10n.startWeighing),
                 ],
               ),
             ),
@@ -304,12 +319,12 @@ class WeighingTabDetails extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: () => _continueWeighing(context, tab),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(FluentIcons.scale_volume),
-                  SizedBox(width: 8),
-                  Text('Continue Weighing'),
+                  const Icon(FluentIcons.scale_volume),
+                  const SizedBox(width: 8),
+                  Text(l10n.continueWeighing),
                 ],
               ),
             ),
@@ -319,12 +334,12 @@ class WeighingTabDetails extends StatelessWidget {
             width: double.infinity,
             child: FilledButton(
               onPressed: () => _completeTab(context, tab, tabsProvider),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(FluentIcons.accept),
-                  SizedBox(width: 8),
-                  Text('Complete Tab'),
+                  const Icon(FluentIcons.accept),
+                  const SizedBox(width: 8),
+                  Text(l10n.completeTab),
                 ],
               ),
             ),
@@ -339,12 +354,12 @@ class WeighingTabDetails extends StatelessWidget {
             Expanded(
               child: Button(
                 onPressed: tab.hasData ? () => _printTab(context, tab) : null,
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(FluentIcons.print),
-                    SizedBox(width: 8),
-                    Text('Print'),
+                    const Icon(FluentIcons.print),
+                    const SizedBox(width: 8),
+                    Text(l10n.print),
                   ],
                 ),
               ),
@@ -353,12 +368,12 @@ class WeighingTabDetails extends StatelessWidget {
             Expanded(
               child: Button(
                 onPressed: () => _editTab(context, tab),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(FluentIcons.edit),
-                    SizedBox(width: 8),
-                    Text('Edit'),
+                    const Icon(FluentIcons.edit),
+                    const SizedBox(width: 8),
+                    Text(l10n.edit),
                   ],
                 ),
               ),
@@ -373,12 +388,12 @@ class WeighingTabDetails extends StatelessWidget {
               Expanded(
                 child: Button(
                   onPressed: () => _resetTab(context, tab, tabsProvider),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(FluentIcons.refresh),
-                      SizedBox(width: 8),
-                      Text('Reset'),
+                      const Icon(FluentIcons.refresh),
+                      const SizedBox(width: 8),
+                      Text(l10n.reset),
                     ],
                   ),
                 ),
@@ -387,12 +402,12 @@ class WeighingTabDetails extends StatelessWidget {
               Expanded(
                 child: Button(
                   onPressed: () => _cancelTab(context, tab, tabsProvider),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(FluentIcons.cancel),
-                      SizedBox(width: 8),
-                      Text('Cancel'),
+                      const Icon(FluentIcons.cancel),
+                      const SizedBox(width: 8),
+                      Text(l10n.cancel),
                     ],
                   ),
                 ),
@@ -414,48 +429,51 @@ class WeighingTabDetails extends StatelessWidget {
 
   // _getOperationColor method removed - operation type no longer used
 
-  String _getStatusDisplay(WeighingTab tab) {
-    if (!tab.hasData) return 'Empty';
-    if (tab.isInProgress) return 'In Progress';
-    if (tab.isComplete) return 'Ready to Complete';
-    if (tab.isCompleted) return 'Completed';
-    if (tab.isCancelled) return 'Cancelled';
+  String _getStatusDisplay(WeighingTab tab, AppLocalizations l10n) {
+    if (!tab.hasData) return l10n.empty;
+    if (tab.isInProgress) return l10n.inProgress;
+    if (tab.isComplete) return l10n.readyToComplete;
+    if (tab.isCompleted) return l10n.completed;
+    if (tab.isCancelled) return l10n.cancelled;
     return tab.status.toUpperCase();
   }
 
-  String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return 'Not set';
+  String _formatDateTime(DateTime? dateTime, AppLocalizations l10n) {
+    if (dateTime == null) return l10n.notSet;
     return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
   void _startWeighing(BuildContext context, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     _showInfoBar(
-        context, 'Switch to the weighing tab to start recording weights', InfoBarSeverity.info);
+        context, l10n.switchToWeighingTab, InfoBarSeverity.info);
   }
 
   void _continueWeighing(BuildContext context, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     _showInfoBar(
-        context, 'Switch to the weighing tab to continue recording weights', InfoBarSeverity.info);
+        context, l10n.switchToWeighingTabContinue, InfoBarSeverity.info);
   }
 
   void _completeTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Complete Tab'),
-        content: Text('Mark tab "${tab.tabTitle}" as completed?'),
+        title: Text(l10n.completeTab),
+        content: Text(l10n.completeTabConfirm(tab.tabTitle)),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Complete'),
+            child: Text(l10n.complete),
             onPressed: () {
               tab.completeTab();
               tabsProvider.saveTab(tab);
               Navigator.of(context).pop();
-              _showInfoBar(context, 'Tab completed successfully',
+              _showInfoBar(context, l10n.tabCompletedSuccess,
                   InfoBarSeverity.success);
             },
           ),
@@ -465,33 +483,36 @@ class WeighingTabDetails extends StatelessWidget {
   }
 
   void _editTab(BuildContext context, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     _showInfoBar(
-        context, 'Tab editing functionality coming soon', InfoBarSeverity.info);
+        context, l10n.tabEditingComingSoon, InfoBarSeverity.info);
   }
 
   void _printTab(BuildContext context, WeighingTab tab) {
+    final l10n = AppLocalizations.of(context)!;
     _showInfoBar(
-        context, 'Print functionality coming soon', InfoBarSeverity.info);
+        context, l10n.printFunctionalityComingSoon, InfoBarSeverity.info);
   }
 
   void _resetTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Reset Tab'),
-        content: Text('Reset all data in tab "${tab.tabTitle}"? This action cannot be undone.'),
+        title: Text(l10n.resetTab),
+        content: Text(l10n.resetTabConfirm(tab.tabTitle)),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Reset'),
+            child: Text(l10n.reset),
             onPressed: () {
               tab.reset();
               tabsProvider.saveTab(tab);
               Navigator.of(context).pop();
-              _showInfoBar(context, 'Tab reset successfully',
+              _showInfoBar(context, l10n.tabResetSuccess,
                   InfoBarSeverity.warning);
             },
           ),
@@ -501,26 +522,27 @@ class WeighingTabDetails extends StatelessWidget {
   }
 
   void _cancelTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Cancel Tab'),
-        content: Text('Cancel tab "${tab.tabTitle}"?'),
+        title: Text(l10n.cancelTab),
+        content: Text(l10n.cancelTabConfirm(tab.tabTitle)),
         actions: [
           Button(
-            child: const Text('No'),
+            child: Text(l10n.no),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Yes, Cancel'),
+            child: Text(l10n.yesCancelTab),
             onPressed: () async {
               Navigator.of(context).pop();
               // Use unified cancellation logic from TabsProvider
               final success = await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
               if (success) {
-                _showInfoBar(context, 'Tab cancelled', InfoBarSeverity.warning);
+                _showInfoBar(context, l10n.tabCancelledMessage, InfoBarSeverity.warning);
               } else {
-                _showInfoBar(context, 'Failed to cancel tab', InfoBarSeverity.error);
+                _showInfoBar(context, l10n.failedToCancelTab, InfoBarSeverity.error);
               }
             },
           ),

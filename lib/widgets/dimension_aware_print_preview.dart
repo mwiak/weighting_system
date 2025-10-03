@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:flutter/foundation.dart'; // Unused
 import '../models/page_dimensions.dart';
 import '../models/windows_printer.dart';
@@ -125,13 +126,13 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
         : widget.pdfSize;
 
     if (pageSize == null) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(FluentIcons.document, size: 48, color: Color(0xFF9E9E9E)),
-            SizedBox(height: 8),
-            Text('No document to preview'),
+            const Icon(FluentIcons.document, size: 48, color: Color(0xFF9E9E9E)),
+            const SizedBox(height: 8),
+            Text(AppLocalizations.of(context)!.noDocumentToPreview),
           ],
         ),
       );
@@ -200,7 +201,7 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
                 const SizedBox(width: 8),
                 Button(
                   onPressed: () => _setZoom(1.0),
-                  child: const Text('Fit'),
+                  child: Text(AppLocalizations.of(context)!.fit),
                 ),
               ],
             ),
@@ -211,13 +212,13 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
             ToggleButton(
               checked: widget.showRulers,
               onChanged: (checked) => setState(() {}),
-              child: const Text('Rulers'),
+              child: Text(AppLocalizations.of(context)!.rulers),
             ),
             const SizedBox(width: 4),
             ToggleButton(
               checked: widget.showMargins,
               onChanged: (checked) => setState(() {}),
-              child: const Text('Margins'),
+              child: Text(AppLocalizations.of(context)!.margins),
             ),
           ],
         ),
@@ -299,13 +300,13 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
       width: double.infinity,
       height: double.infinity,
       color: Colors.white,
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(FluentIcons.document, size: 48, color: Color(0xFFD32F2F)),
-            SizedBox(height: 8),
-            Text('PDF Preview'),
+            const Icon(FluentIcons.document, size: 48, color: Color(0xFFD32F2F)),
+            const SizedBox(height: 8),
+            Text(AppLocalizations.of(context)!.pdfPreview),
           ],
         ),
       ),

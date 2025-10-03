@@ -1489,8 +1489,1423 @@
     "description": "PDF save success message"
   },
 
-  "couldNotFindTemplate": "Could not find default template",
-  "@couldNotFindTemplate": {
-    "description": "Template not found error message"
+  "chooseUser": "Choose User",
+  "@chooseUser": {
+    "description": "Login screen title"
+  },
+
+  "loginFailed": "Login Failed",
+  "@loginFailed": {
+    "description": "Login failed dialog title"
+  },
+
+  "loggingInAs": "Logging in as: {username}",
+  "@loggingInAs": {
+    "description": "Selected user indicator",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+
+  "enterYourPassword": "Enter your password",
+  "@enterYourPassword": {
+    "description": "Password field placeholder"
+  },
+
+  "continue_": "Continue",
+  "@continue_": {
+    "description": "Continue button text"
+  },
+
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+
+  "pleaseEnterPassword": "Please enter your password",
+  "@pleaseEnterPassword": {
+    "description": "Password validation error"
+  },
+
+  "incorrectPassword": "Incorrect password. Please try again.",
+  "@incorrectPassword": {
+    "description": "Incorrect password error"
+  },
+
+  "userNotFound": "User not found.",
+  "@userNotFound": {
+    "description": "User not found error"
+  },
+
+  "generalSettings": "General Settings",
+  "@generalSettings": {
+    "description": "General settings menu item"
+  },
+
+  "users": "Users",
+  "@users": {
+    "description": "Users menu item"
+  },
+
+  "scaleConnection": "Scale Connection",
+  "@scaleConnection": {
+    "description": "Scale connection section title"
+  },
+
+  "advancedSettings": "Advanced Settings",
+  "@advancedSettings": {
+    "description": "Advanced settings button"
+  },
+
+  "connectedToPort": "Connected to {port}",
+  "@connectedToPort": {
+    "description": "Connected status message",
+    "placeholders": {
+      "port": {
+        "type": "String"
+      }
+    }
+  },
+
+  "scanningForDevices": "Scanning for devices...",
+  "@scanningForDevices": {
+    "description": "Scanning status message"
+  },
+
+  "notConnected": "Not connected",
+  "@notConnected": {
+    "description": "Not connected status"
+  },
+
+  "reconnect": "Reconnect",
+  "@reconnect": {
+    "description": "Reconnect button"
+  },
+
+  "currentWeightLabel": "Current Weight: ",
+  "@currentWeightLabel": {
+    "description": "Current weight label prefix"
+  },
+
+  "port": "Port: ",
+  "@port": {
+    "description": "Port label prefix"
+  },
+
+  "baud": "Baud: ",
+  "@baud": {
+    "description": "Baud rate label prefix"
+  },
+
+  "userManagement": "User Management",
+  "@userManagement": {
+    "description": "User management page title"
+  },
+
+  "addUser": "Add User",
+  "@addUser": {
+    "description": "Add user button"
+  },
+
+  "noUsersFound": "No users found",
+  "@noUsersFound": {
+    "description": "No users message"
+  },
+
+  "username": "Username",
+  "@username": {
+    "description": "Username label"
+  },
+
+  "admin": "Admin",
+  "@admin": {
+    "description": "Admin user type"
+  },
+
+  "user": "User",
+  "@user": {
+    "description": "Normal user type"
+  },
+
+  "confirmDelete": "Confirm Delete",
+  "@confirmDelete": {
+    "description": "Delete confirmation dialog title"
+  },
+
+  "deleteUserConfirm": "Are you sure you want to delete user \"{username}\"?\\n\\nThis action cannot be undone.",
+  "@deleteUserConfirm": {
+    "description": "Delete user confirmation message",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "materialManagement": "Material Management",
+  "@materialManagement": {
+    "description": "Material management page title"
+  },
+
+  "newMaterial": "New Material",
+  "@newMaterial": {
+    "description": "New material button"
+  },
+
+  "totalMaterials": "Total Materials",
+  "@totalMaterials": {
+    "description": "Total materials statistics"
+  },
+
+  "withPrice": "With Price",
+  "@withPrice": {
+    "description": "Materials with price statistics"
+  },
+
+  "pricingOverview": "Pricing Overview",
+  "@pricingOverview": {
+    "description": "Pricing section title"
+  },
+
+  "averagePrice": "Average Price",
+  "@averagePrice": {
+    "description": "Average price label"
+  },
+
+  "mostExpensive": "Most Expensive",
+  "@mostExpensive": {
+    "description": "Most expensive label"
+  },
+
+  "searchMaterials": "Search materials...",
+  "@searchMaterials": {
+    "description": "Search materials placeholder"
+  },
+
+  "clearFiltersButton": "Clear Filters",
+  "@clearFiltersButton": {
+    "description": "Clear filters button"
+  },
+
+  "noMaterialsFound": "No materials found",
+  "@noMaterialsFound": {
+    "description": "No materials message"
+  },
+
+  "createFirstMaterial": "Create your first material to get started",
+  "@createFirstMaterial": {
+    "description": "Create first material instruction"
+  },
+
+  "createMaterial": "Create Material",
+  "@createMaterial": {
+    "description": "Create material button"
+  },
+
+  "code": "Code",
+  "@code": {
+    "description": "Material code label"
+  },
+
+  "noPrice": "No price",
+  "@noPrice": {
+    "description": "No price set message"
+  },
+
+  "deleteMaterial": "Delete Material",
+  "@deleteMaterial": {
+    "description": "Delete material dialog title"
+  },
+
+  "deleteMaterialConfirm": "Are you sure you want to delete \"{name}\"?",
+  "@deleteMaterialConfirm": {
+    "description": "Delete material confirmation",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "exportedMaterials": "Exported {count} materials",
+  "@exportedMaterials": {
+    "description": "Export success message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "driversAndPlateNumbers": "Drivers & Plate Numbers",
+  "@driversAndPlateNumbers": {
+    "description": "Drivers and plate numbers page title"
+  },
+
+  "addPlateNumber": "Add Plate Number",
+  "@addPlateNumber": {
+    "description": "Add plate number button"
+  },
+
+  "editDriver": "Edit Driver",
+  "@editDriver": {
+    "description": "Edit driver dialog title"
+  },
+
+  "plateNumbers": "Plate Numbers",
+  "@plateNumbers": {
+    "description": "Plate numbers field label"
+  },
+
+  "enterPlateNumberHint": "Enter plate number",
+  "@enterPlateNumberHint": {
+    "description": "Plate number field hint"
+  },
+
+  "plates": "Plates: ",
+  "@plates": {
+    "description": "Plates label prefix"
+  },
+
+  "phonePrefix": "Phone: ",
+  "@phonePrefix": {
+    "description": "Phone label prefix"
+  },
+
+  "cityPrefix": "City: ",
+  "@cityPrefix": {
+    "description": "City label prefix"
+  },
+
+  "noTabSelected": "No tab selected",
+  "@noTabSelected": {
+    "description": "No tab selected message"
+  },
+
+  "searchLabel": "Search",
+  "@searchLabel": {
+    "description": "Search expander label"
+  },
+
+  "actionsColumn": "Actions",
+  "@actionsColumn": {
+    "description": "Actions table column"
+  },
+
+  "usernameRequired": "Username is required",
+  "@usernameRequired": {
+    "description": "Username validation error"
+  },
+
+  "passwordRequired": "Password is required",
+  "@passwordRequired": {
+    "description": "Password validation error"
+  },
+
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Password mismatch error"
+  },
+
+  "validationError": "Validation Error",
+  "@validationError": {
+    "description": "Validation error dialog title"
+  },
+
+  "editUser": "Edit User",
+  "@editUser": {
+    "description": "Edit user dialog title"
+  },
+
+  "addNewUser": "Add New User",
+  "@addNewUser": {
+    "description": "Add user dialog title"
+  },
+
+  "enterUsername": "Enter username",
+  "@enterUsername": {
+    "description": "Username field placeholder"
+  },
+
+  "userType": "User Type",
+  "@userType": {
+    "description": "User type label"
+  },
+
+  "normalUser": "Normal User",
+  "@normalUser": {
+    "description": "Normal user option"
+  },
+
+  "enterPassword": "Enter password",
+  "@enterPassword": {
+    "description": "Password field placeholder"
+  },
+
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password label"
+  },
+
+  "reEnterPassword": "Re-enter password",
+  "@reEnterPassword": {
+    "description": "Confirm password placeholder"
+  },
+
+  "passwordChangeHint": "To change password, use the \"Change Password\" button",
+  "@passwordChangeHint": {
+    "description": "Password change hint"
+  },
+
+  "update": "Update",
+  "@update": {
+    "description": "Update button"
+  },
+
+  "create": "Create",
+  "@create": {
+    "description": "Create button"
+  },
+
+  "changePasswordFor": "Change Password for {username}",
+  "@changePasswordFor": {
+    "description": "Change password dialog title",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "newPassword": "New Password",
+  "@newPassword": {
+    "description": "New password label"
+  },
+
+  "enterNewPassword": "Enter new password",
+  "@enterNewPassword": {
+    "description": "New password placeholder"
+  },
+
+  "confirmNewPassword": "Confirm New Password",
+  "@confirmNewPassword": {
+    "description": "Confirm new password label"
+  },
+
+  "reEnterNewPassword": "Re-enter new password",
+  "@reEnterNewPassword": {
+    "description": "Confirm new password placeholder"
+  },
+
+  "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Change password button"
+  },
+
+  "tabDetails": "Tab Details",
+  "@tabDetails": {
+    "description": "Tab details card header"
+  },
+
+  "noTabSelectedMessage": "No Tab Selected",
+  "@noTabSelectedMessage": {
+    "description": "No tab selected title"
+  },
+
+  "selectTabToView": "Select a tab to view details",
+  "@selectTabToView": {
+    "description": "Select tab instruction"
+  },
+
+  "unsaved": "UNSAVED",
+  "@unsaved": {
+    "description": "Unsaved status badge"
+  },
+
+  "vehicleInformation": "Vehicle Information",
+  "@vehicleInformation": {
+    "description": "Vehicle information section"
+  },
+
+  "truckPlateLabel": "Truck Plate",
+  "@truckPlateLabel": {
+    "description": "Truck plate label"
+  },
+
+  "notSpecified": "Not specified",
+  "@notSpecified": {
+    "description": "Not specified placeholder"
+  },
+
+  "weightInformation": "Weight Information",
+  "@weightInformation": {
+    "description": "Weight information section"
+  },
+
+  "notRecorded": "Not recorded",
+  "@notRecorded": {
+    "description": "Not recorded placeholder"
+  },
+
+  "notCalculated": "Not calculated",
+  "@notCalculated": {
+    "description": "Not calculated placeholder"
+  },
+
+  "businessInformation": "Business Information",
+  "@businessInformation": {
+    "description": "Business information section"
+  },
+
+  "clientSupplier": "Client/Supplier",
+  "@clientSupplier": {
+    "description": "Client/Supplier label"
+  },
+
+  "paymentStatus": "Payment Status",
+  "@paymentStatus": {
+    "description": "Payment status label"
+  },
+
+  "unpaid": "Unpaid",
+  "@unpaid": {
+    "description": "Unpaid status"
+  },
+
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes answer"
+  },
+
+  "timingInformation": "Timing Information",
+  "@timingInformation": {
+    "description": "Timing information section"
+  },
+
+  "createdAt": "Created At",
+  "@createdAt": {
+    "description": "Created at label"
+  },
+
+  "lastUpdated": "Last Updated",
+  "@lastUpdated": {
+    "description": "Last updated label"
+  },
+
+  "startWeighing": "Start Weighing",
+  "@startWeighing": {
+    "description": "Start weighing button"
+  },
+
+  "continueWeighing": "Continue Weighing",
+  "@continueWeighing": {
+    "description": "Continue weighing button"
+  },
+
+  "completeTab": "Complete Tab",
+  "@completeTab": {
+    "description": "Complete tab button"
+  },
+
+  "reset": "Reset",
+  "@reset": {
+    "description": "Reset button"
+  },
+
+  "completeTabConfirm": "Mark tab \"{tabTitle}\" as completed?",
+  "@completeTabConfirm": {
+    "description": "Complete tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tabCompletedSuccess": "Tab completed successfully",
+  "@tabCompletedSuccess": {
+    "description": "Tab completed success message"
+  },
+
+  "tabEditingComingSoon": "Tab editing functionality coming soon",
+  "@tabEditingComingSoon": {
+    "description": "Edit coming soon message"
+  },
+
+  "printFunctionalityComingSoon": "Print functionality coming soon",
+  "@printFunctionalityComingSoon": {
+    "description": "Print coming soon message"
+  },
+
+  "resetTab": "Reset Tab",
+  "@resetTab": {
+    "description": "Reset tab dialog title"
+  },
+
+  "resetTabConfirm": "Reset all data in tab \"{tabTitle}\"? This action cannot be undone.",
+  "@resetTabConfirm": {
+    "description": "Reset tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tabResetSuccess": "Tab reset successfully",
+  "@tabResetSuccess": {
+    "description": "Tab reset success message"
+  },
+
+  "cancelTab": "Cancel Tab",
+  "@cancelTab": {
+    "description": "Cancel tab dialog title"
+  },
+
+  "cancelTabConfirm": "Cancel tab \"{tabTitle}\"?",
+  "@cancelTabConfirm": {
+    "description": "Cancel tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "yesCancelTab": "Yes, Cancel",
+  "@yesCancelTab": {
+    "description": "Yes cancel tab button"
+  },
+
+  "tabCancelledMessage": "Tab cancelled",
+  "@tabCancelledMessage": {
+    "description": "Tab cancelled info message"
+  },
+
+  "failedToCancelTab": "Failed to cancel tab",
+  "@failedToCancelTab": {
+    "description": "Failed to cancel error"
+  },
+
+  "readyToComplete": "Ready to Complete",
+  "@readyToComplete": {
+    "description": "Ready to complete status"
+  },
+
+  "notSet": "Not set",
+  "@notSet": {
+    "description": "Not set placeholder"
+  },
+
+  "switchToWeighingTab": "Switch to the weighing tab to start recording weights",
+  "@switchToWeighingTab": {
+    "description": "Switch tab instruction"
+  },
+
+  "switchToWeighingTabContinue": "Switch to the weighing tab to continue recording weights",
+  "@switchToWeighingTabContinue": {
+    "description": "Switch tab continue instruction"
+  },
+
+  "printFailed": "Print failed: {error}",
+  "@printFailed": {
+    "description": "Print failed error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "savePdfFailed": "Save PDF failed: {error}",
+  "@savePdfFailed": {
+    "description": "Save PDF failed error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "lastUpdatedLabel": "Last Updated",
+  "@lastUpdatedLabel": {
+    "description": "Last updated prefix"
+  },
+
+  "paidLabel": "Paid",
+  "@paidLabel": {
+    "description": "Paid label"
+  },
+
+  "showPriceOnPrintLabel": "Show Price on Print",
+  "@showPriceOnPrintLabel": {
+    "description": "Show price label"
+  },
+
+  "additionalInfo": "Additional Information",
+  "@additionalInfo": {
+    "description": "Additional info section"
+  },
+
+  "unsavedChangesLabel": "Unsaved Changes",
+  "@unsavedChangesLabel": {
+    "description": "Unsaved changes label"
+  },
+
+  "completedLabel": "Completed",
+  "@completedLabel": {
+    "description": "Completed label"
+  },
+
+  "databaseId": "Database ID",
+  "@databaseId": {
+    "description": "Database ID label"
+  },
+
+  "unsavedLabel": "Unsaved",
+  "@unsavedLabel": {
+    "description": "Unsaved label"
+  },
+
+  "notAvailable": "Not available",
+  "@notAvailable": {
+    "description": "Not available label"
+  },
+
+  "na": "N/A",
+  "@na": {
+    "description": "N/A abbreviation"
+  },
+
+  "loadingOutgoing": "Loading (Outgoing)",
+  "@loadingOutgoing": {
+    "description": "Loading operation type with direction"
+  },
+
+  "unloadingIncoming": "Unloading (Incoming)",
+  "@unloadingIncoming": {
+    "description": "Unloading operation type with direction"
+  },
+
+  "totalTabs": "Total Tabs",
+  "@totalTabs": {
+    "description": "Total tabs statistics"
+  },
+
+  "activeTabs": "Active Tabs",
+  "@activeTabs": {
+    "description": "Active tabs statistics"
+  },
+
+  "topDriversByWeight": "Top Drivers by Weight",
+  "@topDriversByWeight": {
+    "description": "Top drivers chart title"
+  },
+
+  "maximumTabsCount": "You can have a maximum of {count} operations open at once. Please close some tabs before creating new ones.",
+  "@maximumTabsCount": {
+    "description": "Maximum tabs message with count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "synchronization": "Synchronization",
+  "@synchronization": {
+    "description": "Synchronization page title"
+  },
+
+  "syncStatus": "Sync Status",
+  "@syncStatus": {
+    "description": "Sync status section title"
+  },
+
+  "pendingItems": "Pending items",
+  "@pendingItems": {
+    "description": "Pending items label"
+  },
+
+  "syncNow": "Sync Now",
+  "@syncNow": {
+    "description": "Sync now button"
+  },
+
+  "clearFailed": "Clear Failed",
+  "@clearFailed": {
+    "description": "Clear failed button"
+  },
+
+  "scaleConnectionSettings": "Scale Connection Settings",
+  "@scaleConnectionSettings": {
+    "description": "Scale connection settings title"
+  },
+
+  "connectionStatus": "Connection Status",
+  "@connectionStatus": {
+    "description": "Connection status label"
+  },
+
+  "connectedTo": "Connected to",
+  "@connectedTo": {
+    "description": "Connected to prefix"
+  },
+
+  "tryToConnect": "Try to Connect",
+  "@tryToConnect": {
+    "description": "Try to connect button"
+  },
+
+  "portConfiguration": "Port Configuration",
+  "@portConfiguration": {
+    "description": "Port configuration section"
+  },
+
+  "comPort": "COM Port",
+  "@comPort": {
+    "description": "COM port label"
+  },
+
+  "autoDetect": "Auto-detect",
+  "@autoDetect": {
+    "description": "Auto-detect button"
+  },
+
+  "baudRate": "Baud Rate",
+  "@baudRate": {
+    "description": "Baud rate label"
+  },
+
+  "dataBits": "Data Bits",
+  "@dataBits": {
+    "description": "Data bits label"
+  },
+
+  "stopBits": "Stop Bits",
+  "@stopBits": {
+    "description": "Stop bits label"
+  },
+
+  "parity": "Parity",
+  "@parity": {
+    "description": "Parity label"
+  },
+
+  "scaleInformation": "Scale Information",
+  "@scaleInformation": {
+    "description": "Scale information section"
+  },
+
+  "protocol": "Protocol",
+  "@protocol": {
+    "description": "Protocol label"
+  },
+
+  "serialComReadOnly": "Serial COM - Read Only",
+  "@serialComReadOnly": {
+    "description": "Serial COM protocol description"
+  },
+
+  "expectedFormat": "Expected Format",
+  "@expectedFormat": {
+    "description": "Expected format label"
+  },
+
+  "weightFormatExample": "(±)(6 digits)(KG)",
+  "@weightFormatExample": {
+    "description": "Weight format example"
+  },
+
+  "readingInterval": "Reading Interval",
+  "@readingInterval": {
+    "description": "Reading interval label"
+  },
+
+  "readingInterval100ms": "100ms",
+  "@readingInterval100ms": {
+    "description": "Reading interval value"
+  },
+
+  "connectionRetry": "Connection Retry",
+  "@connectionRetry": {
+    "description": "Connection retry label"
+  },
+
+  "connectionRetryInterval": "Every 40ms",
+  "@connectionRetryInterval": {
+    "description": "Connection retry interval"
+  },
+
+  "kgUnit": "kg",
+  "@kgUnit": {
+    "description": "Kilogram unit"
+  },
+
+  "disconnectedFromScale": "Disconnected from scale",
+  "@disconnectedFromScale": {
+    "description": "Disconnected status message"
+  },
+
+  "disconnect": "Disconnect",
+  "@disconnect": {
+    "description": "Disconnect button"
+  },
+
+  "attemptingToReconnect": "Attempting to reconnect...",
+  "@attemptingToReconnect": {
+    "description": "Reconnecting status message"
+  },
+
+  "printConfiguration": "Print Configuration",
+  "@printConfiguration": {
+    "description": "Print configuration title"
+  },
+
+  "managePrintTemplates": "Manage Print Templates",
+  "@managePrintTemplates": {
+    "description": "Manage print templates button"
+  },
+
+  "printTemplateSystem": "Print Template System",
+  "@printTemplateSystem": {
+    "description": "Print template system title"
+  },
+
+  "configureTemplatesDescription": "Configure print templates for your pre-printed A3 forms:",
+  "@configureTemplatesDescription": {
+    "description": "Template configuration description"
+  },
+
+  "createCustomTemplates": "Create custom templates",
+  "@createCustomTemplates": {
+    "description": "Create custom templates feature"
+  },
+
+  "dragDropFieldPositioning": "Drag & drop field positioning",
+  "@dragDropFieldPositioning": {
+    "description": "Drag drop feature"
+  },
+
+  "configureFontsFormatting": "Configure fonts and formatting",
+  "@configureFontsFormatting": {
+    "description": "Configure fonts feature"
+  },
+
+  "importExportTemplates": "Import/Export templates",
+  "@importExportTemplates": {
+    "description": "Import export feature"
+  },
+
+  "testPrintAlignment": "Test print alignment",
+  "@testPrintAlignment": {
+    "description": "Test print feature"
+  },
+
+  "odooSettingsSavedSuccess": "Odoo settings saved successfully!",
+  "@odooSettingsSavedSuccess": {
+    "description": "Settings saved success message"
+  },
+
+  "failedToSaveSettings": "Failed to save settings",
+  "@failedToSaveSettings": {
+    "description": "Failed to save error message"
+  },
+
+  "connectionFailedWithError": "Connection failed",
+  "@connectionFailedWithError": {
+    "description": "Connection failed with error"
+  },
+
+  "odooSettingsDescription": "Configure connection settings for Odoo ERP integration",
+  "@odooSettingsDescription": {
+    "description": "Odoo settings description"
+  },
+
+  "odooUrlPlaceholder": "https://your-odoo-instance.com",
+  "@odooUrlPlaceholder": {
+    "description": "Odoo URL placeholder"
+  },
+
+  "odooUrlRequired": "Odoo URL is required",
+  "@odooUrlRequired": {
+    "description": "Odoo URL required error"
+  },
+
+  "pleaseEnterValidUrl": "Please enter a valid URL",
+  "@pleaseEnterValidUrl": {
+    "description": "Valid URL error"
+  },
+
+  "databaseName": "Database Name",
+  "@databaseName": {
+    "description": "Database name label"
+  },
+
+  "databaseNamePlaceholder": "your-database-name",
+  "@databaseNamePlaceholder": {
+    "description": "Database name placeholder"
+  },
+
+  "databaseNameRequired": "Database name is required",
+  "@databaseNameRequired": {
+    "description": "Database name required error"
+  },
+
+  "adminPlaceholder": "admin",
+  "@adminPlaceholder": {
+    "description": "Admin username placeholder"
+  },
+
+  "passwordPlaceholder": "••••••••",
+  "@passwordPlaceholder": {
+    "description": "Password placeholder"
+  },
+
+  "testing": "Testing...",
+  "@testing": {
+    "description": "Testing status"
+  },
+
+  "connectionInformation": "Connection Information",
+  "@connectionInformation": {
+    "description": "Connection information section"
+  },
+
+  "connectionRequirements": "Connection Requirements:",
+  "@connectionRequirements": {
+    "description": "Connection requirements title"
+  },
+
+  "odooRequirement1": "• Ensure your Odoo instance is accessible",
+  "@odooRequirement1": {
+    "description": "Odoo requirement 1"
+  },
+
+  "odooRequirement2": "• Verify the database name is correct",
+  "@odooRequirement2": {
+    "description": "Odoo requirement 2"
+  },
+
+  "odooRequirement3": "• Use a user with proper access rights",
+  "@odooRequirement3": {
+    "description": "Odoo requirement 3"
+  },
+
+  "odooRequirement4": "• Check firewall and network connectivity",
+  "@odooRequirement4": {
+    "description": "Odoo requirement 4"
+  },
+
+  "supportedOperations": "Supported Operations:",
+  "@supportedOperations": {
+    "description": "Supported operations title"
+  },
+
+  "odooOperation1": "• Sync clients and suppliers as res.partner",
+  "@odooOperation1": {
+    "description": "Odoo operation 1"
+  },
+
+  "odooOperation2": "• Sync materials as product.product",
+  "@odooOperation2": {
+    "description": "Odoo operation 2"
+  },
+
+  "odooOperation3": "• Create sales orders for loading operations",
+  "@odooOperation3": {
+    "description": "Odoo operation 3"
+  },
+
+  "odooOperation4": "• Create purchase orders for unloading operations",
+  "@odooOperation4": {
+    "description": "Odoo operation 4"
+  },
+
+  "newTemplate": "New Template",
+  "@newTemplate": {
+    "description": "New template button"
+  },
+
+  "testPrint": "Test Print",
+  "@testPrint": {
+    "description": "Test print button"
+  },
+
+  "printAlignmentGrid": "Print Alignment Grid",
+  "@printAlignmentGrid": {
+    "description": "Print alignment grid button"
+  },
+
+  "exportXps": "Export XPS",
+  "@exportXps": {
+    "description": "Export XPS button"
+  },
+
+  "searchTemplates": "Search templates...",
+  "@searchTemplates": {
+    "description": "Search templates placeholder"
+  },
+
+  "selectTemplateToPreview": "Select a template to preview",
+  "@selectTemplateToPreview": {
+    "description": "Select template message"
+  },
+
+  "templatePreview": "Template Preview",
+  "@templatePreview": {
+    "description": "Template preview title"
+  },
+
+  "printTemplateManagement": "Print Template Management",
+  "@printTemplateManagement": {
+    "description": "Print template management title"
+  },
+
+  "templateDetails": "Template Details",
+  "@templateDetails": {
+    "description": "Template details section"
+  },
+
+  "nameLabel": "Name:",
+  "@nameLabel": {
+    "description": "Name label with colon"
+  },
+
+  "descriptionLabel": "Description:",
+  "@descriptionLabel": {
+    "description": "Description label with colon"
+  },
+
+  "paperSizeLabel": "Paper Size:",
+  "@paperSizeLabel": {
+    "description": "Paper size label with colon"
+  },
+
+  "orientationLabel": "Orientation:",
+  "@orientationLabel": {
+    "description": "Orientation label with colon"
+  },
+
+  "fieldsLabel": "Fields:",
+  "@fieldsLabel": {
+    "description": "Fields label with colon"
+  },
+
+  "statusLabel": "Status:",
+  "@statusLabel": {
+    "description": "Status label with colon"
+  },
+
+  "createdLabel": "Created:",
+  "@createdLabel": {
+    "description": "Created label with colon"
+  },
+
+  "updatedLabel": "Updated:",
+  "@updatedLabel": {
+    "description": "Updated label with colon"
+  },
+
+  "fields": "Fields",
+  "@fields": {
+    "description": "Fields section"
+  },
+
+  "fontLabel": "Font:",
+  "@fontLabel": {
+    "description": "Font label with colon"
+  },
+
+  "pt": "pt",
+  "@pt": {
+    "description": "Point abbreviation"
+  },
+
+  "bold": "Bold",
+  "@bold": {
+    "description": "Bold text style"
+  },
+
+  "formatLabel": "Format:",
+  "@formatLabel": {
+    "description": "Format label with colon"
+  },
+
+  "noFieldsInTemplate": "No fields in template",
+  "@noFieldsInTemplate": {
+    "description": "No fields message"
+  },
+
+  "backgroundImageNotFound": "Background image not found",
+  "@backgroundImageNotFound": {
+    "description": "Background image not found error"
+  },
+
+  "errorLoadingBackgroundImage": "Error loading background image",
+  "@errorLoadingBackgroundImage": {
+    "description": "Error loading image error"
+  },
+
+  "deleteTemplate": "Delete Template",
+  "@deleteTemplate": {
+    "description": "Delete template dialog title"
+  },
+
+  "areYouSureDeleteTemplate": "Are you sure you want to delete",
+  "@areYouSureDeleteTemplate": {
+    "description": "Delete template confirmation"
+  },
+
+  "failedToDeleteTemplate": "Failed to delete template",
+  "@failedToDeleteTemplate": {
+    "description": "Failed to delete error"
+  },
+
+  "testPrintOptions": "Test Print Options",
+  "@testPrintOptions": {
+    "description": "Test print options title"
+  },
+
+  "chooseTestPrintMethod": "Choose how to test print this template:",
+  "@chooseTestPrintMethod": {
+    "description": "Choose test print method"
+  },
+
+  "printWithXps": "PRINT WITH XPS",
+  "@printWithXps": {
+    "description": "Print with XPS option"
+  },
+
+  "silentPrintWindowsDirect": "Silent Print (Windows Direct)",
+  "@silentPrintWindowsDirect": {
+    "description": "Silent print option"
+  },
+
+  "printWithDialogPreview": "Print with Dialog (Preview)",
+  "@printWithDialogPreview": {
+    "description": "Print with dialog option"
+  },
+
+  "silentPrintingFailed": "Silent printing failed with the following error:",
+  "@silentPrintingFailed": {
+    "description": "Silent printing failed error"
+  },
+
+  "possibleSolutions": "Possible solutions:",
+  "@possibleSolutions": {
+    "description": "Possible solutions title"
+  },
+
+  "printSuccess": "Print Success",
+  "@printSuccess": {
+    "description": "Print success title"
+  },
+
+  "templatePrintedSuccess": "Template printed successfully",
+  "@templatePrintedSuccess": {
+    "description": "Template printed success message"
+  },
+
+  "addItem": "Add \"{name}\"",
+  "@addItem": {
+    "description": "Add item dialog title",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+
+  "isThisSupplierOrClient": "Is this a supplier or client?",
+  "@isThisSupplierOrClient": {
+    "description": "Supplier or client question"
+  },
+
+  "addTruckPlate": "Add Truck Plate \"{plateNumber}\"",
+  "@addTruckPlate": {
+    "description": "Add truck plate dialog title",
+    "placeholders": {
+      "plateNumber": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseEnterDriverName": "Please enter the driver name for this truck:",
+  "@pleaseEnterDriverName": {
+    "description": "Enter driver name prompt"
+  },
+
+  "addDriverName": "Add Driver \"{driverName}\"",
+  "@addDriverName": {
+    "description": "Add driver dialog title",
+    "placeholders": {
+      "driverName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseEnterTruckPlate": "Please enter a truck plate for this driver:",
+  "@pleaseEnterTruckPlate": {
+    "description": "Enter truck plate prompt"
+  },
+
+  "start": "Start",
+  "@start": {
+    "description": "Start button"
+  },
+
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button"
+  },
+
+  "completeTabTitle": "Complete Tab",
+  "@completeTabTitle": {
+    "description": "Complete tab dialog title"
+  },
+
+  "markTabAsCompleted": "Mark tab \"{tabTitle}\" as completed?",
+  "@markTabAsCompleted": {
+    "description": "Complete tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tabTitle": "Tab {tabTitle}",
+  "@tabTitle": {
+    "description": "Tab title with name",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "switchToTab": "Switch to Tab",
+  "@switchToTab": {
+    "description": "Switch to tab option"
+  },
+
+  "printActions": "Print Actions",
+  "@printActions": {
+    "description": "Print actions option"
+  },
+
+  "printOptions": "Print Options - {tabTitle}",
+  "@printOptions": {
+    "description": "Print options dialog title",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "areYouSureCancelTab": "Are you sure you want to cancel tab \"{tabTitle}\"?",
+  "@areYouSureCancelTab": {
+    "description": "Cancel tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "closeTabConfirm": "Close tab \"{tabTitle}\"?",
+  "@closeTabConfirm": {
+    "description": "Close tab confirmation",
+    "placeholders": {
+      "tabTitle": {
+        "type": "String"
+      }
+    }
+  },
+
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button"
+  },
+
+  "noDocumentToPreview": "No document to preview",
+  "@noDocumentToPreview": {
+    "description": "No document message"
+  },
+
+  "fit": "Fit",
+  "@fit": {
+    "description": "Fit zoom button"
+  },
+
+  "rulers": "Rulers",
+  "@rulers": {
+    "description": "Rulers toggle"
+  },
+
+  "margins": "Margins",
+  "@margins": {
+    "description": "Margins toggle"
+  },
+
+  "remove": "Remove",
+  "@remove": {
+    "description": "Remove button"
+  },
+
+  "paperSizeA4": "A4",
+  "@paperSizeA4": {
+    "description": "A4 paper size"
+  },
+
+  "paperSizeA5": "A5",
+  "@paperSizeA5": {
+    "description": "A5 paper size"
+  },
+
+  "paperSizeLetter": "Letter",
+  "@paperSizeLetter": {
+    "description": "Letter paper size"
+  },
+
+  "paperSizeCustom": "Custom",
+  "@paperSizeCustom": {
+    "description": "Custom paper size"
+  },
+
+  "warningUnsavedChanges": "Warning: This tab has unsaved changes.",
+  "@warningUnsavedChanges": {
+    "description": "Warning message for unsaved changes"
+  },
+
+  "pdfPreview": "PDF Preview",
+  "@pdfPreview": {
+    "description": "PDF preview label"
+  },
+
+  "saving": "Saving...",
+  "@saving": {
+    "description": "Saving status message"
+  },
+
+  "perKg": "/kg",
+  "@perKg": {
+    "description": "Per kilogram suffix"
+  },
+
+  "currencySymbol": "$",
+  "@currencySymbol": {
+    "description": "Currency symbol"
   }
 }

@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/supplier_provider.dart';
 import '../models/supplier.dart';
 
@@ -116,7 +117,7 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
       actions: [
         Button(
           onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
         ),
         FilledButton(
           onPressed: _isSubmitting ? null : _handleSubmit,
@@ -204,7 +205,7 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
     displayInfoBar(
       context,
       builder: (context, close) => InfoBar(
-        title: const Text('Error'),
+        title: Text(AppLocalizations.of(context)!.error),
         content: Text(message),
         severity: InfoBarSeverity.error,
         action: IconButton(

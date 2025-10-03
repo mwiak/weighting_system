@@ -571,5 +571,404 @@
 
   "printSuccessful": "تمت الطباعة بنجاح",
 
-  "pdfSaved": "تم حفظ PDF بنجاح"
+  "pdfSaved": "تم حفظ PDF بنجاح",
+
+  "chooseUser": "اختر مستخدم",
+
+  "loginFailed": "فشل تسجيل الدخول",
+
+  "loggingInAs": "جاري تسجيل الدخول كـ: {username}",
+
+  "password": "كلمة المرور",
+
+  "enterYourPassword": "أدخل كلمة المرور",
+
+  "continue_": "متابعة",
+
+  "back": "رجوع",
+
+  "pleaseEnterPassword": "الرجاء إدخال كلمة المرور",
+
+  "incorrectPassword": "كلمة مرور غير صحيحة. الرجاء المحاولة مرة أخرى.",
+
+  "userNotFound": "المستخدم غير موجود.",
+
+  "generalSettings": "إعدادات عامة",
+
+  "users": "المستخدمون",
+
+  "scaleConnection": "اتصال الميزان",
+
+  "advancedSettings": "إعدادات متقدمة",
+
+  "connectedToPort": "متصل بالمنفذ {port}",
+
+  "scanningForDevices": "جاري البحث عن الأجهزة...",
+
+  "notConnected": "غير متصل",
+
+  "reconnect": "إعادة الاتصال",
+
+  "currentWeightLabel": "الوزن الحالي: ",
+
+  "port": "المنفذ: ",
+
+  "baud": "سرعة الباود: ",
+
+  "userManagement": "إدارة المستخدمين",
+
+  "addUser": "إضافة مستخدم",
+
+  "noUsersFound": "لا يوجد مستخدمين",
+
+  "username": "اسم المستخدم",
+
+  "admin": "مسؤول",
+
+  "user": "مستخدم",
+
+  "confirmDelete": "تأكيد الحذف",
+
+  "deleteUserConfirm": "هل أنت متأكد من حذف المستخدم \"{username}\"؟\\n\\nهذا الإجراء لا يمكن التراجع عنه.",
+
+  "materialManagement": "إدارة المواد",
+
+  "newMaterial": "مادة جديدة",
+
+  "totalMaterials": "إجمالي المواد",
+
+  "withPrice": "مع السعر",
+
+  "pricingOverview": "نظرة عامة على الأسعار",
+
+  "averagePrice": "متوسط السعر",
+
+  "mostExpensive": "الأغلى",
+
+  "searchMaterials": "البحث في المواد...",
+
+  "clearFiltersButton": "مسح المرشحات",
+
+  "noMaterialsFound": "لم يتم العثور على مواد",
+
+  "createFirstMaterial": "أنشئ أول مادة للبدء",
+
+  "createMaterial": "إنشاء مادة",
+
+  "code": "الرمز",
+
+  "noPrice": "لا يوجد سعر",
+
+  "deleteMaterial": "حذف المادة",
+
+  "deleteMaterialConfirm": "هل أنت متأكد من حذف \"{name}\"؟",
+
+  "exportedMaterials": "تم تصدير {count} مادة",
+
+  "driversAndPlateNumbers": "السائقين وأرقام اللوحات",
+
+  "addPlateNumber": "إضافة رقم لوحة",
+
+  "editDriver": "تعديل السائق",
+
+  "plateNumbers": "أرقام اللوحات",
+
+  "enterPlateNumberHint": "أدخل رقم اللوحة",
+
+  "plates": "اللوحات: ",
+
+  "phonePrefix": "الهاتف: ",
+
+  "cityPrefix": "المدينة: ",
+
+  "noTabSelected": "لم يتم اختيار تبويب",
+
+  "searchLabel": "بحث",
+
+  "actionsColumn": "الإجراءات",
+
+  "usernameRequired": "اسم المستخدم مطلوب",
+
+  "passwordRequired": "كلمة المرور مطلوبة",
+
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+
+  "validationError": "خطأ في التحقق",
+
+  "editUser": "تعديل المستخدم",
+
+  "addNewUser": "إضافة مستخدم جديد",
+
+  "enterUsername": "أدخل اسم المستخدم",
+
+  "userType": "نوع المستخدم",
+
+  "normalUser": "مستخدم عادي",
+
+  "enterPassword": "أدخل كلمة المرور",
+
+  "confirmPassword": "تأكيد كلمة المرور",
+
+  "reEnterPassword": "أعد إدخال كلمة المرور",
+
+  "passwordChangeHint": "لتغيير كلمة المرور، استخدم زر \"تغيير كلمة المرور\"",
+
+  "update": "تحديث",
+
+  "create": "إنشاء",
+
+  "changePasswordFor": "تغيير كلمة المرور لـ {username}",
+
+  "newPassword": "كلمة المرور الجديدة",
+
+  "enterNewPassword": "أدخل كلمة المرور الجديدة",
+
+  "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+
+  "reEnterNewPassword": "أعد إدخال كلمة المرور الجديدة",
+
+  "changePassword": "تغيير كلمة المرور",
+
+  "tabDetails": "تفاصيل التبويب",
+
+  "noTabSelectedMessage": "لم يتم اختيار تبويب",
+
+  "selectTabToView": "اختر تبويب لعرض التفاصيل",
+
+  "unsaved": "غير محفوظ",
+
+  "vehicleInformation": "معلومات المركبة",
+
+  "truckPlateLabel": "لوحة الشاحنة",
+
+  "notSpecified": "غير محدد",
+
+  "weightInformation": "معلومات الوزن",
+
+  "notRecorded": "غير مسجل",
+
+  "notCalculated": "غير محسوب",
+
+  "businessInformation": "معلومات العمل",
+
+  "clientSupplier": "العميل/المورد",
+
+  "paymentStatus": "حالة الدفع",
+
+  "unpaid": "غير مدفوع",
+
+  "yes": "نعم",
+
+  "timingInformation": "معلومات التوقيت",
+
+  "createdAt": "تم الإنشاء في",
+
+  "lastUpdated": "آخر تحديث",
+
+  "startWeighing": "بدء الوزن",
+
+  "continueWeighing": "متابعة الوزن",
+
+  "completeTab": "إكمال التبويب",
+
+  "reset": "إعادة تعيين",
+
+  "completeTabConfirm": "وضع علامة مكتمل على التبويب \"{tabTitle}\"؟",
+
+  "tabCompletedSuccess": "تم إكمال التبويب بنجاح",
+
+  "tabEditingComingSoon": "وظيفة تحرير التبويب قريباً",
+
+  "printFunctionalityComingSoon": "وظيفة الطباعة قريباً",
+
+  "resetTab": "إعادة تعيين التبويب",
+
+  "resetTabConfirm": "إعادة تعيين جميع البيانات في التبويب \"{tabTitle}\"؟ هذا الإجراء لا يمكن التراجع عنه.",
+
+  "tabResetSuccess": "تم إعادة تعيين التبويب بنجاح",
+
+  "cancelTab": "إلغاء التبويب",
+
+  "cancelTabConfirm": "إلغاء التبويب \"{tabTitle}\"؟",
+
+  "yesCancelTab": "نعم، إلغاء",
+
+  "tabCancelledMessage": "تم إلغاء التبويب",
+
+  "failedToCancelTab": "فشل إلغاء التبويب",
+
+  "readyToComplete": "جاهز للإكمال",
+
+  "notSet": "غير معين",
+
+  "switchToWeighingTab": "انتقل إلى تبويب الوزن لبدء تسجيل الأوزان",
+
+  "switchToWeighingTabContinue": "انتقل إلى تبويب الوزن لمتابعة تسجيل الأوزان",
+
+  "printFailed": "فشلت الطباعة: {error}",
+
+  "savePdfFailed": "فشل حفظ PDF: {error}",
+
+  "lastUpdatedLabel": "آخر تحديث",
+
+  "paidLabel": "مدفوع",
+
+  "showPriceOnPrintLabel": "إظهار السعر في الطباعة",
+
+  "additionalInfo": "معلومات إضافية",
+
+  "unsavedChangesLabel": "تغييرات غير محفوظة",
+
+  "completedLabel": "مكتمل",
+
+  "databaseId": "رقم قاعدة البيانات",
+
+  "unsavedLabel": "غير محفوظ",
+
+  "notAvailable": "غير متوفر",
+
+  "na": "غير متاح",
+
+  "loadingOutgoing": "تحميل (صادر)",
+
+  "unloadingIncoming": "تفريغ (وارد)",
+
+  "totalTabs": "إجمالي التبويبات",
+
+  "activeTabs": "التبويبات النشطة",
+
+  "topDriversByWeight": "أفضل السائقين حسب الوزن",
+
+  "maximumTabsCount": "يمكنك فتح {count} عملية كحد أقصى في وقت واحد. الرجاء إغلاق بعض التبويبات قبل إنشاء جديدة.",
+
+  "synchronization": "المزامنة",
+  "syncStatus": "حالة المزامنة",
+  "pendingItems": "العناصر المعلقة",
+  "syncNow": "مزامنة الآن",
+  "clearFailed": "مسح الفاشلة",
+  "scaleConnectionSettings": "إعدادات اتصال الميزان",
+  "connectionStatus": "حالة الاتصال",
+  "connectedTo": "متصل بـ",
+  "tryToConnect": "حاول الاتصال",
+  "portConfiguration": "تكوين المنفذ",
+  "comPort": "منفذ COM",
+  "autoDetect": "كشف تلقائي",
+  "baudRate": "معدل الباود",
+  "dataBits": "بتات البيانات",
+  "stopBits": "بتات الإيقاف",
+  "parity": "التكافؤ",
+  "scaleInformation": "معلومات الميزان",
+  "protocol": "البروتوكول",
+  "serialComReadOnly": "COM التسلسلي - للقراءة فقط",
+  "expectedFormat": "التنسيق المتوقع",
+  "weightFormatExample": "(±)(6 أرقام)(KG)",
+  "readingInterval": "فترة القراءة",
+  "readingInterval100ms": "100 مللي ثانية",
+  "connectionRetry": "إعادة محاولة الاتصال",
+  "connectionRetryInterval": "كل 40 مللي ثانية",
+  "kgUnit": "كجم",
+  "disconnectedFromScale": "غير متصل بالميزان",
+  "disconnect": "قطع الاتصال",
+  "attemptingToReconnect": "محاولة إعادة الاتصال...",
+  "printConfiguration": "تكوين الطباعة",
+  "managePrintTemplates": "إدارة قوالب الطباعة",
+  "printTemplateSystem": "نظام قوالب الطباعة",
+  "configureTemplatesDescription": "تكوين قوالب الطباعة للنماذج A3 المطبوعة مسبقًا:",
+  "createCustomTemplates": "إنشاء قوالب مخصصة",
+  "dragDropFieldPositioning": "سحب وإفلات موضع الحقل",
+  "configureFontsFormatting": "تكوين الخطوط والتنسيق",
+  "importExportTemplates": "استيراد/تصدير القوالب",
+  "testPrintAlignment": "اختبار محاذاة الطباعة",
+  "odooSettingsSavedSuccess": "تم حفظ إعدادات Odoo بنجاح!",
+  "failedToSaveSettings": "فشل حفظ الإعدادات",
+  "connectionFailedWithError": "فشل الاتصال",
+  "odooSettingsDescription": "تكوين إعدادات الاتصال لتكامل Odoo ERP",
+  "odooUrlPlaceholder": "https://your-odoo-instance.com",
+  "odooUrlRequired": "رابط Odoo مطلوب",
+  "pleaseEnterValidUrl": "الرجاء إدخال رابط صالح",
+  "databaseName": "اسم قاعدة البيانات",
+  "databaseNamePlaceholder": "اسم-قاعدة-البيانات",
+  "databaseNameRequired": "اسم قاعدة البيانات مطلوب",
+  "adminPlaceholder": "مسؤول",
+  "passwordPlaceholder": "••••••••",
+  "testing": "جاري الاختبار...",
+  "connectionInformation": "معلومات الاتصال",
+  "connectionRequirements": "متطلبات الاتصال:",
+  "odooRequirement1": "• تأكد من إمكانية الوصول إلى نظام Odoo الخاص بك",
+  "odooRequirement2": "• تحقق من صحة اسم قاعدة البيانات",
+  "odooRequirement3": "• استخدم مستخدمًا لديه صلاحيات الوصول المناسبة",
+  "odooRequirement4": "• تحقق من جدار الحماية واتصال الشبكة",
+  "supportedOperations": "العمليات المدعومة:",
+  "odooOperation1": "• مزامنة العملاء والموردين كـ res.partner",
+  "odooOperation2": "• مزامنة المواد كـ product.product",
+  "odooOperation3": "• إنشاء أوامر المبيعات لعمليات التحميل",
+  "odooOperation4": "• إنشاء أوامر الشراء لعمليات التفريغ",
+  "newTemplate": "قالب جديد",
+  "testPrint": "طباعة تجريبية",
+  "printAlignmentGrid": "طباعة شبكة المحاذاة",
+  "exportXps": "تصدير XPS",
+  "searchTemplates": "البحث في القوالب...",
+  "selectTemplateToPreview": "حدد قالبًا للمعاينة",
+  "templatePreview": "معاينة القالب",
+  "printTemplateManagement": "إدارة قوالب الطباعة",
+  "templateDetails": "تفاصيل القالب",
+  "nameLabel": "الاسم:",
+  "descriptionLabel": "الوصف:",
+  "paperSizeLabel": "حجم الورق:",
+  "orientationLabel": "الاتجاه:",
+  "fieldsLabel": "الحقول:",
+  "statusLabel": "الحالة:",
+  "createdLabel": "تم الإنشاء:",
+  "updatedLabel": "تم التحديث:",
+  "fields": "الحقول",
+  "fontLabel": "الخط:",
+  "pt": "نقطة",
+  "bold": "عريض",
+  "formatLabel": "التنسيق:",
+  "noFieldsInTemplate": "لا توجد حقول في القالب",
+  "backgroundImageNotFound": "لم يتم العثور على صورة الخلفية",
+  "errorLoadingBackgroundImage": "خطأ في تحميل صورة الخلفية",
+  "deleteTemplate": "حذف القالب",
+  "areYouSureDeleteTemplate": "هل أنت متأكد من حذف",
+  "failedToDeleteTemplate": "فشل حذف القالب",
+  "testPrintOptions": "خيارات الطباعة التجريبية",
+  "chooseTestPrintMethod": "اختر كيفية طباعة هذا القالب:",
+  "printWithXps": "طباعة بـ XPS",
+  "silentPrintWindowsDirect": "طباعة صامتة (Windows مباشر)",
+  "printWithDialogPreview": "طباعة مع نافذة (معاينة)",
+  "silentPrintingFailed": "فشلت الطباعة الصامتة بالخطأ التالي:",
+  "possibleSolutions": "الحلول الممكنة:",
+  "printSuccess": "نجاح الطباعة",
+  "templatePrintedSuccess": "تمت طباعة القالب بنجاح",
+  "addItem": "إضافة \"{name}\"",
+  "isThisSupplierOrClient": "هل هذا مورد أم عميل؟",
+  "addTruckPlate": "إضافة لوحة شاحنة \"{plateNumber}\"",
+  "pleaseEnterDriverName": "الرجاء إدخال اسم السائق لهذه الشاحنة:",
+  "addDriverName": "إضافة سائق \"{driverName}\"",
+  "pleaseEnterTruckPlate": "الرجاء إدخال لوحة شاحنة لهذا السائق:",
+  "start": "بدء",
+  "continueButton": "متابعة",
+  "completeTabTitle": "إكمال التبويب",
+  "markTabAsCompleted": "وضع علامة مكتمل على التبويب \"{tabTitle}\"؟",
+  "tabTitle": "التبويب {tabTitle}",
+  "switchToTab": "التبديل إلى التبويب",
+  "printActions": "إجراءات الطباعة",
+  "printOptions": "خيارات الطباعة - {tabTitle}",
+  "areYouSureCancelTab": "هل أنت متأكد من إلغاء التبويب \"{tabTitle}\"؟",
+  "closeTabConfirm": "إغلاق التبويب \"{tabTitle}\"؟",
+  "signIn": "تسجيل الدخول",
+  "noDocumentToPreview": "لا يوجد مستند للمعاينة",
+  "fit": "ملائمة",
+  "rulers": "المساطر",
+  "margins": "الهوامش",
+  "remove": "إزالة",
+  "paperSizeA4": "A4",
+  "paperSizeA5": "A5",
+  "paperSizeLetter": "Letter",
+  "paperSizeCustom": "مخصص",
+  "warningUnsavedChanges": "تحذير: يحتوي هذا التبويب على تغييرات غير محفوظة.",
+  "pdfPreview": "معاينة PDF",
+  "saving": "جاري الحفظ...",
+  "perKg": "/كجم",
+  "currencySymbol": "$"
 }

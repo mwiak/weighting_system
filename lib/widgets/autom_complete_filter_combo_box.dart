@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';
@@ -254,7 +255,7 @@ class _AutoCompleteFilterComboBoxState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
                         width: double.infinity,
-                        color: states.isHovering
+                        color: states.isHovered
                             ? FluentTheme.of(context)
                                 .accentColor
                                 .withOpacity(0.1)
@@ -282,6 +283,7 @@ class _AutoCompleteFilterComboBoxState
               child: HoverButton(
                 onPressed: () => widget.controller?.text = _controller.text,
                 builder: (context, states) {
+                  final l10n = AppLocalizations.of(context)!;
                   return Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -294,7 +296,7 @@ class _AutoCompleteFilterComboBoxState
                         const Icon(FluentIcons.add),
                         const SizedBox(width: 8),
                         Text(
-                          'Add "${_controller.text}"',
+                          l10n.addItem(_controller.text),
                           style: FluentTheme.of(context).typography.body,
                         ),
                       ],
@@ -438,13 +440,11 @@ class _AutoCompleteFilterComboBoxState
     if (_controller.text.isEmpty) return _suggestions;
 
     final normalizedInput = normalizeArabic(_controller.text);
-    return _suggestions
-        .where((suggestion) {
-          final normalizedSuggestion = normalizeArabic(suggestion);
-          return normalizedSuggestion.contains(normalizedInput) ||
-                 suggestion.toLowerCase().contains(_controller.text.toLowerCase());
-        })
-        .toList();
+    return _suggestions.where((suggestion) {
+      final normalizedSuggestion = normalizeArabic(suggestion);
+      return normalizedSuggestion.contains(normalizedInput) ||
+          suggestion.toLowerCase().contains(_controller.text.toLowerCase());
+    }).toList();
   }
 
   @override
@@ -460,7 +460,8 @@ class _AutoCompleteFilterComboBoxState
               'AutoCompleteFilterComboBox: TextFormBox onChanged called with: $value');
           _onTextChanged(value);
           // Show overlay if we have suggestions and focus, or if user is typing
-          if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) || value.isNotEmpty) {
+          if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) ||
+              value.isNotEmpty) {
             _showOverlay();
           } else {
             _hideOverlay();
@@ -562,31 +563,32 @@ class _AutoCompleteFilterComboBoxState
 
   Future<void> _showAddTruckPlateDialog(String plateNumber) async {
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
 
     String? driverName;
 
     await showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: Text('Add Truck Plate "$plateNumber"'),
+        title: Text(l10n.addTruckPlate(plateNumber)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Please enter the driver name for this truck:'),
+            Text(l10n.pleaseEnterDriverName),
             const SizedBox(height: 12),
             TextFormBox(
-              placeholder: 'Driver name',
+              placeholder: l10n.driverName,
               onChanged: (value) => driverName = value,
             ),
           ],
         ),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Add'),
+            child: Text(l10n.add),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -609,31 +611,32 @@ class _AutoCompleteFilterComboBoxState
 
   Future<void> _showAddDriverDialog(String driverName) async {
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
 
     String? plateNumber;
 
     await showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: Text('Add Driver "$driverName"'),
+        title: Text(l10n.addDriverName(driverName)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Please enter a truck plate for this driver:'),
+            Text(l10n.pleaseEnterTruckPlate),
             const SizedBox(height: 12),
             TextFormBox(
-              placeholder: 'Truck plate number',
+              placeholder: l10n.plateNumber,
               onChanged: (value) => plateNumber = value,
             ),
           ],
         ),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Add'),
+            child: Text(l10n.add),
             onPressed: () {
               Navigator.of(context).pop();
             },

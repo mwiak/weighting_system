@@ -112,11 +112,11 @@ class WeighingTabPrintActionsWidget extends StatelessWidget {
             const SizedBox(height: 4),
             ComboBox<String>(
               value: printProvider.selectedPaperSize,
-              items: const [
-                ComboBoxItem(value: 'A4', child: Text('A4')),
-                ComboBoxItem(value: 'A5', child: Text('A5')),
-                ComboBoxItem(value: 'Letter', child: Text('Letter')),
-                ComboBoxItem(value: 'Custom', child: Text('Custom')),
+              items: [
+                ComboBoxItem(value: 'A4', child: Text(l10n.paperSizeA4)),
+                ComboBoxItem(value: 'A5', child: Text(l10n.paperSizeA5)),
+                ComboBoxItem(value: 'Letter', child: Text(l10n.paperSizeLetter)),
+                ComboBoxItem(value: 'Custom', child: Text(l10n.paperSizeCustom)),
               ],
               onChanged: (value) => printProvider.setPaperSize(value ?? 'A4'),
             ),

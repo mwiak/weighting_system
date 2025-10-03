@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-// import 'package:weighing_system/gen_l10n/app_localizations.dart'; // Commented out - localization not available
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/driver_plate_provider.dart';
 import '../models/driver.dart';
 import '../widgets/custom_info_label.dart';
@@ -31,7 +31,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context)!; // Commented out - localization not available
+    final l10n = AppLocalizations.of(context)!;
 
     return ScaffoldPage.scrollable(
       header: PageHeader(
@@ -39,14 +39,14 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
           children: [
             const Icon(FluentIcons.contact),
             const SizedBox(width: 12),
-            Text('Drivers & Plate Numbers'),
+            Text(l10n.driversAndPlateNumbers),
           ],
         ),
         commandBar: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.refresh),
-              label: const Text('Refresh'),
+              label: Text(l10n.refresh),
               onPressed: _loadData,
             ),
           ],
@@ -59,6 +59,8 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   }
 
   Widget _buildDriversSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer<DriverPlateProvider>(
       builder: (context, driverPlateProvider, child) {
         return Padding(
@@ -70,7 +72,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                 children: [
                   Expanded(
                     child: TextBox(
-                      placeholder: 'Search drivers...',
+                      placeholder: l10n.searchDrivers,
                       onChanged: (query) => {}, // TODO: Implement search
                       prefix: const Icon(FluentIcons.search),
                     ),
@@ -83,7 +85,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                       children: [
                         const Icon(FluentIcons.add, size: 16),
                         const SizedBox(width: 4),
-                        Text('Add Driver'),
+                        Text(l10n.addDriver),
                       ],
                     ),
                   ),
@@ -94,7 +96,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
               // Error Display
               if (driverPlateProvider.error != null) ...[
                 InfoBar(
-                  title: Text('Error'),
+                  title: Text(l10n.error),
                   content: Text(driverPlateProvider.error!),
                   severity: InfoBarSeverity.error,
                 ),
@@ -103,7 +105,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
 
               // Loading State
               if (driverPlateProvider.isLoading)
-                const Center(
+                Center(
                   child: Padding(
                     padding: EdgeInsets.all(32),
                     child: ProgressRing(),
@@ -117,7 +119,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                       const Icon(FluentIcons.contact, size: 48),
                       const SizedBox(height: 16),
                       Text(
-                        'No drivers found. Add your first driver to get started.',
+                        l10n.noDriversFoundAdd,
                         style: FluentTheme.of(context).typography.body,
                       ),
                     ],
@@ -136,6 +138,8 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   }
 
   Widget _buildDriversList(BuildContext context, List<Driver> drivers) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ListView.builder(
       itemCount: drivers.length,
       itemBuilder: (context, index) {
@@ -151,11 +155,11 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (driver.plateNumbers.isNotEmpty)
-                  Text('Plates: ${driver.plateNumbers.join(", ")}'),
+                  Text('${l10n.plates}: ${driver.plateNumbers.join(", ")}'),
                 if (driver.primaryContact?.isNotEmpty == true)
-                  Text('Phone: ${driver.primaryContact}'),
+                  Text('${l10n.phonePrefix}: ${driver.primaryContact}'),
                 if (driver.city?.isNotEmpty == true)
-                  Text('City: ${driver.city}'),
+                  Text('${l10n.cityPrefix}: ${driver.city}'),
               ],
             ),
             leading: CircleAvatar(
@@ -179,9 +183,9 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                       color: Colors.grey,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'Inactive',
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                    child: Text(
+                      l10n.inactive,
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
                 const SizedBox(width: 8),
@@ -211,6 +215,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   }
 
   void _showDriverDialog(BuildContext context, Driver? existingDriver) {
+    final l10n = AppLocalizations.of(context)!;
     final nameController =
         TextEditingController(text: existingDriver?.name ?? '');
     final phoneController =
@@ -227,7 +232,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => ContentDialog(
-          title: Text(existingDriver == null ? 'Add Driver' : 'Edit Driver'),
+          title: Text(existingDriver == null ? l10n.addDriver : l10n.editDriver),
           content: SizedBox(
             width: 500,
             child: SingleChildScrollView(
@@ -235,16 +240,16 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CustomInfoLabel(
-                    label: 'Name',
+                    label: l10n.name,
                     isRequired: true,
                     child: TextBox(
                       controller: nameController,
-                      placeholder: 'Enter driver name',
+                      placeholder: l10n.enterDriverName,
                     ),
                   ),
                   const SizedBox(height: 16),
                   CustomInfoLabel(
-                    label: 'Plate Numbers',
+                    label: l10n.plateNumbers,
                     isRequired: true,
                     child: Column(
                       children: [
@@ -257,7 +262,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                                   child: TextBox(
                                     controller: TextEditingController(
                                         text: plateNumbers[i]),
-                                    placeholder: 'Enter plate number',
+                                    placeholder: l10n.enterPlateNumberHint,
                                     onChanged: (value) =>
                                         plateNumbers[i] = value,
                                   ),
@@ -279,7 +284,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                             children: [
                               const Icon(FluentIcons.add, size: 16),
                               const SizedBox(width: 4),
-                              const Text('Add Plate Number'),
+                              Text(l10n.addPlateNumber),
                             ],
                           ),
                         ),
@@ -291,20 +296,20 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                     children: [
                       Expanded(
                         child: CustomInfoLabel(
-                          label: 'Phone',
+                          label: l10n.phone,
                           child: TextBox(
                             controller: phoneController,
-                            placeholder: 'Phone number',
+                            placeholder: l10n.phoneNumber,
                           ),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: CustomInfoLabel(
-                          label: 'Mobile',
+                          label: l10n.mobile,
                           child: TextBox(
                             controller: mobileController,
-                            placeholder: 'Mobile number',
+                            placeholder: l10n.mobileNumber,
                           ),
                         ),
                       ),
@@ -312,10 +317,10 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                   ),
                   const SizedBox(height: 16),
                   CustomInfoLabel(
-                    label: 'City',
+                    label: l10n.city,
                     child: TextBox(
                       controller: cityController,
-                      placeholder: 'Enter city',
+                      placeholder: l10n.enterCity,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -327,7 +332,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
                             setState(() => isActive = value ?? true),
                       ),
                       const SizedBox(width: 8),
-                      const Text('Active'),
+                      Text(l10n.active),
                     ],
                   ),
                 ],
@@ -336,11 +341,11 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
           ),
           actions: [
             Button(
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             FilledButton(
-              child: const Text('Save'),
+              child: Text(l10n.save),
               onPressed: () => _saveDriver(
                 context,
                 existingDriver,
@@ -396,18 +401,20 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   }
 
   void _showDeleteDriverConfirmation(BuildContext context, Driver driver) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('Delete Driver'),
-        content: Text('Are you sure you want to delete ${driver.name}?'),
+        title: Text(l10n.deleteDriver),
+        content: Text('${l10n.deleteDriverConfirm} ${driver.name}?'),
         actions: [
           Button(
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
             onPressed: () async {
               Navigator.of(context).pop();
               if (driver.id != null) {
