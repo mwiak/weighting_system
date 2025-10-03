@@ -1,0 +1,960 @@
+{
+  "@@locale": "tr",
+
+  "appTitle": "Tartı Sistemi",
+
+  "weighingOperations": "Tartım İşlemleri",
+
+  "clients": "Müşteriler",
+
+  "suppliers": "Tedarikçiler",
+
+  "drivers": "Sürücüler",
+
+  "trucks": "Kamyonlar",
+
+  "materials": "Malzemeler",
+
+  "reports": "Raporlar",
+
+  "settings": "Ayarlar",
+
+  "operationsHistory": "İşlem Geçmişi",
+
+  "currentWeight": "Mevcut Ağırlık",
+
+  "grossWeight": "Brüt Ağırlık",
+
+  "tareWeight": "Dara Ağırlığı",
+
+  "netWeight": "Net Ağırlık",
+
+  "orderNumber": "Sipariş Numarası",
+
+  "truckPlate": "Kamyon Plakası",
+
+  "driverName": "Sürücü Adı",
+
+  "operationType": "İşlem Tipi",
+
+  "loading": "Yükleme",
+
+  "unloading": "Boşaltma",
+
+  "client": "Müşteri",
+
+  "supplier": "Tedarikçi",
+
+  "material": "Malzeme",
+
+  "price": "Fiyat",
+
+  "totalAmount": "Toplam Tutar",
+
+  "save": "Kaydet",
+
+  "cancel": "İptal",
+
+  "edit": "Düzenle",
+
+  "delete": "Sil",
+
+  "add": "Ekle",
+
+  "name": "İsim",
+
+  "email": "E-posta",
+
+  "phone": "Telefon",
+
+  "mobile": "Cep Telefonu",
+
+  "city": "Şehir",
+
+  "licenseNumber": "Ehliyet Numarası",
+
+  "plateNumber": "Plaka Numarası",
+
+  "model": "Model",
+
+  "capacity": "Kapasite",
+
+  "active": "Aktif",
+
+  "status": "Durum",
+
+  "notes": "Notlar",
+
+  "weighInTime": "Giriş Tartım Zamanı",
+
+  "weighOutTime": "Çıkış Tartım Zamanı",
+
+  "createDate": "Oluşturma Tarihi",
+
+  "odooSettings": "Odoo Ayarları",
+
+  "odooUrl": "Odoo URL",
+
+  "odooDatabase": "Veritabanı Adı",
+
+  "odooUsername": "Kullanıcı Adı",
+
+  "odooPassword": "Şifre",
+
+  "testConnection": "Bağlantıyı Test Et",
+
+  "connectionSuccessful": "Bağlantı başarılı!",
+
+  "connectionFailed": "Bağlantı başarısız!",
+
+  "kg": "kg",
+
+  "tons": "ton",
+
+  "driversAndTrucks": "Sürücüler ve Kamyonlar",
+
+  "addDriver": "Sürücü Ekle",
+
+  "addTruck": "Kamyon Ekle",
+
+  "showPriceOnPrint": "Yazdırmada Fiyat Göster",
+
+  "newTab": "Yeni Sekme",
+
+  "closeTab": "Sekmeyi Kapat",
+
+  "unitPrice": "Birim Fiyat",
+
+  "pricePerKg": "Kg Başına Fiyat",
+
+  "noItemsFound": "Öğe bulunamadı",
+
+  "loading_data": "Yükleniyor...",
+
+  "confirm": "Onayla",
+
+  "close": "Kapat",
+
+  "search": "Ara",
+
+  "selectClient": "Müşteri Seç",
+
+  "selectSupplier": "Tedarikçi Seç",
+
+  "selectMaterial": "Malzeme Seç",
+
+  "addClient": "Müşteri Ekle",
+
+  "addSupplier": "Tedarikçi Ekle",
+
+  "addMaterial": "Malzeme Ekle",
+
+  "editClient": "Müşteriyi Düzenle",
+
+  "editSupplier": "Tedarikçiyi Düzenle",
+
+  "editMaterial": "Malzemeyi Düzenle",
+
+  "required": "Gerekli",
+
+  "refresh": "Yenile",
+
+  "searchDrivers": "Sürücülerde ara...",
+
+  "searchTrucks": "Kamyonlarda ara...",
+
+  "error": "Hata",
+
+  "noDriversFound": "Sürücü bulunamadı",
+
+  "noDriversFoundAdd": "Sürücü bulunamadı. Başlamak için ilk sürücünüzü ekleyin.",
+
+  "noTrucksFound": "Kamyon bulunamadı",
+
+  "noTrucksFoundAdd": "Kamyon bulunamadı. Başlamak için ilk kamyonunuzu ekleyin.",
+
+  "license": "Ehliyet",
+
+  "inactive": "Pasif",
+
+  "enterDriverName": "Sürücü adını girin",
+
+  "enterLicenseNumber": "Ehliyet numarasını girin",
+
+  "phoneNumber": "Telefon numarası",
+
+  "mobileNumber": "Cep telefonu numarası",
+
+  "enterCity": "Şehir girin",
+
+  "enterPlateNumber": "Plaka numarasını girin",
+
+  "enterTruckModel": "Kamyon modelini girin",
+
+  "capacityKg": "Kapasite (kg)",
+
+  "enterCapacityKg": "Kapasiteyi kg cinsinden girin",
+
+  "assignedDriver": "Atanan Sürücü",
+
+  "noDriverAssigned": "Atanmış sürücü yok",
+
+  "driverNotAssigned": "Sürücü: Atanmamış",
+
+  "deleteDriver": "Sürücüyü Sil",
+
+  "deleteDriverConfirm": "Bu sürücüyü silmek istediğinizden emin misiniz?",
+
+  "deleteTruck": "Kamyonu Sil",
+
+  "deleteTruckConfirm": "Bu kamyonu silmek istediğinizden emin misiniz?",
+
+  "resetScale": "Teraziyi Sıfırla",
+
+  "maximumTabsReached": "Maksimum Sekme Sayısına Ulaşıldı",
+
+  "maximumTabsMessage": "Aynı anda maksimum {count} işlem açabilirsiniz",
+
+  "ok": "Tamam",
+
+  "tabUnsavedChanges": "Bu sekmede kaydedilmemiş değişiklikler var",
+
+  "unsavedChanges": "Kaydedilmemiş Değişiklikler",
+
+  "unsavedChangesMessage": "Kaydedilmemiş değişiklikler kaybolacak",
+
+  "closeAnyway": "Yine de Kapat",
+
+  "print": "Yazdır",
+
+  "printing": "Yazdırılıyor",
+
+  "cancelOperation": "İşlemi İptal Et",
+
+  "cancelOperationConfirm": "Bu işlemi iptal etmek istediğinizden emin misiniz?",
+
+  "no": "Hayır",
+
+  "yesCancel": "Evet, İptal Et",
+
+  "reportsAndAnalytics": "Raporlar ve Analitik",
+
+  "exportPdf": "PDF Olarak Aktar",
+
+  "exportCsv": "CSV Olarak Aktar",
+
+  "reportTypes": "Rapor Türleri",
+
+  "dashboard": "Gösterge Paneli",
+
+  "ordersReport": "Sipariş Raporu",
+
+  "revenueReport": "Gelir Raporu",
+
+  "clientReport": "Müşteri Raporu",
+
+  "materialReport": "Malzeme Raporu",
+
+  "filters": "Filtreler",
+
+  "startDate": "Başlangıç Tarihi",
+
+  "endDate": "Bitiş Tarihi",
+
+  "quickRange": "Hızlı Aralık",
+
+  "last7Days": "Son 7 Gün",
+
+  "last30Days": "Son 30 Gün",
+
+  "last90Days": "Son 90 Gün",
+
+  "thisYear": "Bu Yıl",
+
+  "loadingDots": "Yükleniyor...",
+
+  "applyFilters": "Filtreleri Uygula",
+
+  "clear": "Temizle",
+
+  "clientFilter": "Müşteri Filtresi",
+
+  "allClients": "Tüm Müşteriler",
+
+  "statusFilter": "Durum Filtresi",
+
+  "allStatuses": "Tüm Durumlar",
+
+  "completed": "Tamamlandı",
+
+  "cancelled": "İptal Edildi",
+
+  "groupBy": "Grupla",
+
+  "daily": "Günlük",
+
+  "weekly": "Haftalık",
+
+  "monthly": "Aylık",
+
+  "generatingReport": "Rapor oluşturuluyor",
+
+  "unknownError": "Bilinmeyen hata",
+
+  "selectReportType": "Rapor türü seçin",
+
+  "noDashboardData": "Gösterge paneli verisi yok",
+
+  "totalOrders": "Toplam Siparişler",
+
+  "totalWeight": "Toplam Ağırlık",
+
+  "totalRevenue": "Toplam Gelir",
+
+  "activeOrders": "Aktif Siparişler",
+
+  "ordersByStatus": "Duruma Göre Siparişler",
+
+  "topClientsByRevenue": "Gelire Göre En İyi Müşteriler",
+
+  "unknown": "Bilinmeyen",
+
+  "noReportData": "Rapor verisi yok",
+
+  "generated": "Oluşturuldu",
+
+  "records": "kayıt",
+
+  "showingFirst": "İlk {count} / {total} kayıt gösteriliyor",
+
+  "exportSuccessful": "Aktarma Başarılı",
+
+  "pdfSavedTo": "PDF kaydedildi: {path}",
+
+  "csvSavedTo": "CSV kaydedildi: {path}",
+
+  "printTemplates": "Yazdırma Şablonları",
+
+  "noActiveTabs": "Aktif Sekme Yok",
+
+  "clickNewTabToStart": "Yeni tartım işlemi başlatmak için \"Yeni Sekme\"ye tıklayın",
+
+  "reconnectToScale": "Teraziye Yeniden Bağlan",
+
+  "selectPrinter": "Yazıcı Seç",
+
+  "saveAsPdf": "PDF Olarak Kaydet",
+
+  "silentPrint": "Sessiz Yazdır",
+
+  "exportWithTemplate": "Şablonla Aktar",
+
+  "selectTemplate": "Şablon Seç",
+
+  "noTemplatesAvailable": "Şablon Yok",
+
+  "noTemplatesMessage": "Şablon yok. Varsayılan şablon oluşturmak ister misiniz?",
+
+  "createDefault": "Varsayılan Oluştur",
+
+  "exportOptions": "Aktarma Seçenekleri",
+
+  "printWithTemplate": "Şablonla Yazdır",
+
+  "printDirectlyUsingTemplate": "Şablonu kullanarak doğrudan yazdır",
+
+  "saveTemplateExportAsPdf": "Şablon aktarımını PDF olarak kaydet",
+
+  "printWeighingTicket": "Tartım Fişi Yazdır",
+
+  "printReceipt": "Makbuz Yazdır",
+
+  "connected": "Bağlı",
+
+  "disconnected": "Bağlantı Kesildi",
+
+  "replugDevice": "Cihazı Yeniden Takın",
+
+  "unknownError": "Bilinmeyen Hata",
+
+  "reconnecting": "Yeniden Bağlanıyor",
+
+  "noDevicesAvailable": "Kullanılabilir Cihaz Yok",
+
+  "scanning": "Taranıyor",
+
+  "connecting": "Bağlanıyor",
+
+  "loadingOperationsHistory": "Yükleme İşlemleri Geçmişi",
+
+  "filterByMaterial": "Malzemeye göre filtrele...",
+
+  "filterByDriver": "Sürücüye göre filtrele...",
+
+  "filterByPlate": "Plakaya göre filtrele...",
+
+  "filterBySupplier": "Tedarikçiye göre filtrele...",
+
+  "filterByClient": "Müşteriye göre filtrele...",
+
+  "dateTime": "Tarih/Saat",
+
+  "netWeightKg": "Net Ağırlık (kg)",
+
+  "operationsFound": "İşlem Geçmişi ({count} sonuç)",
+
+  "loadingOperations": "İşlemler yükleniyor...",
+
+  "noOperationsFound": "Seçili kriterlere uygun işlem bulunamadı.",
+
+  "statusCompleted": "Tamamlandı",
+
+  "statusIncomplete": "Tamamlanmamış",
+
+  "statusInProgress": "Devam Ediyor",
+
+  "statusCancelled": "İptal Edildi",
+
+  "statusEmpty": "Boş",
+
+  "clearFilters": "Temizle",
+
+  "clientManagement": "Müşteri Yönetimi",
+
+  "supplierManagement": "Tedarikçi Yönetimi",
+
+  "newClient": "Yeni Müşteri",
+
+  "newSupplier": "Yeni Tedarikçi",
+
+  "import": "İçe Aktar",
+
+  "export": "Dışa Aktar",
+
+  "totalClients": "Toplam Müşteriler",
+
+  "activeClients": "Aktif Müşteriler",
+
+  "totalSuppliers": "Toplam Tedarikçiler",
+
+  "activeSuppliers": "Aktif Tedarikçiler",
+
+  "companies": "Şirketler",
+
+  "individuals": "Bireyler",
+
+  "searchClients": "Müşterilerde ara...",
+
+  "searchSuppliers": "Tedarikçilerde ara...",
+
+  "activeOnly": "Sadece aktif",
+
+  "contact": "İletişim",
+
+  "address": "Adres",
+
+  "type": "Tür",
+
+  "actions": "İşlemler",
+
+  "company": "Şirket",
+
+  "individual": "Birey",
+
+  "noContactInfo": "İletişim bilgisi yok",
+
+  "noClientsFound": "Müşteri bulunamadı",
+
+  "createFirstClient": "Başlamak için ilk müşterinizi oluşturun",
+
+  "createClient": "Müşteri Oluştur",
+
+  "noSuppliersFound": "Tedarikçi bulunamadı",
+
+  "createFirstSupplier": "Başlamak için ilk tedarikçinizi oluşturun",
+
+  "createSupplier": "Tedarikçi Oluştur",
+
+  "deleteClient": "Müşteriyi Sil",
+
+  "deleteClientConfirm": "\"{name}\" silmek istediğinizden emin misiniz?",
+
+  "deleteSupplier": "Tedarikçiyi Sil",
+
+  "deleteSupplierConfirm": "\"{name}\" silmek istediğinizden emin misiniz?",
+
+  "importFunctionalityComingSoon": "İçe aktarma özelliği yakında",
+
+  "exportedClients": "{count} müşteri aktarıldı",
+
+  "exportedSuppliers": "{count} tedarikçi aktarıldı",
+
+  "vat": "KDV",
+
+  "weightInformation": "Ağırlık Bilgileri",
+
+  "emptyWeight": "Boş Ağırlık",
+
+  "emptyWeightKg": "Boş Ağırlık (kg)",
+
+  "grossWeightKg": "Brüt Ağırlık (kg)",
+
+  "netWeightKg": "Net Ağırlık (kg)",
+
+  "businessInformation": "İş Bilgileri",
+
+  "truckPlateRequired": "Kamyon Plakası *",
+
+  "enterTruckPlate": "Kamyon plakasını girin...",
+
+  "enterDriverName": "Sürücü adını girin...",
+
+  "customerLoadingOperation": "Müşteri (Yükleme İşlemi)",
+
+  "selectCustomer": "Müşteri Seçin...",
+
+  "supplierUnloadingOperation": "Tedarikçi (Boşaltma İşlemi)",
+
+  "materialRequired": "Malzeme *",
+
+  "paid": "Ödendi",
+
+  "complete": "Tamamla",
+
+  "incomplete": "Tamamlanmamış",
+
+  "savePDF": "PDF Kaydet",
+
+  "inProgress": "Devam Ediyor",
+
+  "empty": "Boş",
+
+  "statusLabel": "Durum: {status}",
+
+  "tabNotFound": "Sekme bulunamadı",
+
+  "couldNotFindTemplate": "Şablon bulunamadı",
+
+  "scaleMustBeConnected": "Ağırlık alınmadan önce terazi bağlanmalıdır",
+
+  "cannotCaptureWhileEditing": "Alan düzenlenirken ağırlık alınamaz",
+
+  "printingOperation": "{operation} yazdırılıyor...",
+
+  "tabCancelled": "Sekme iptal edildi",
+
+  "tabCompletedAndMoved": "Sekme tamamlandı ve geçmişe taşındı",
+
+  "unableToCompleteTab": "Sekme tamamlanamıyor. Lütfen tüm gerekli alanları doldurun.",
+
+  "orderDetails": "Sipariş Detayları",
+
+  "basicInformation": "Temel Bilgiler",
+
+  "vehicleInformation": "Araç Bilgileri",
+
+  "businessPartners": "İş Ortakları",
+
+  "weightMeasurements": "Ağırlık Ölçümleri",
+
+  "financialInformation": "Mali Bilgiler",
+
+  "printSuccessful": "Yazdırma Başarılı",
+
+  "pdfSaved": "PDF Başarıyla Kaydedildi",
+
+  "chooseUser": "Kullanıcı Seç",
+
+  "loginFailed": "Giriş Başarısız",
+
+  "loggingInAs": "Giriş yapılıyor: {username}",
+
+  "password": "Şifre",
+
+  "enterYourPassword": "Şifrenizi girin",
+
+  "continue_": "Devam",
+
+  "back": "Geri",
+
+  "pleaseEnterPassword": "Lütfen şifrenizi girin",
+
+  "incorrectPassword": "Hatalı şifre. Lütfen tekrar deneyin.",
+
+  "userNotFound": "Kullanıcı bulunamadı.",
+
+  "generalSettings": "Genel Ayarlar",
+
+  "users": "Kullanıcılar",
+
+  "scaleConnection": "Terazi Bağlantısı",
+
+  "advancedSettings": "Gelişmiş Ayarlar",
+
+  "connectedToPort": "{port} portuna bağlı",
+
+  "scanningForDevices": "Cihazlar aranıyor...",
+
+  "notConnected": "Bağlı değil",
+
+  "reconnect": "Yeniden Bağlan",
+
+  "currentWeightLabel": "Mevcut Ağırlık: ",
+
+  "port": "Port: ",
+
+  "baud": "Baud: ",
+
+  "userManagement": "Kullanıcı Yönetimi",
+
+  "addUser": "Kullanıcı Ekle",
+
+  "noUsersFound": "Kullanıcı bulunamadı",
+
+  "username": "Kullanıcı Adı",
+
+  "admin": "Yönetici",
+
+  "user": "Kullanıcı",
+
+  "confirmDelete": "Silmeyi Onayla",
+
+  "deleteUserConfirm": "\"{username}\" kullanıcısını silmek istediğinizden emin misiniz?\\n\\nBu işlem geri alınamaz.",
+
+  "materialManagement": "Malzeme Yönetimi",
+
+  "newMaterial": "Yeni Malzeme",
+
+  "totalMaterials": "Toplam Malzemeler",
+
+  "withPrice": "Fiyatlı",
+
+  "pricingOverview": "Fiyatlandırma Özeti",
+
+  "averagePrice": "Ortalama Fiyat",
+
+  "mostExpensive": "En Pahalı",
+
+  "searchMaterials": "Malzemelerde ara...",
+
+  "clearFiltersButton": "Filtreleri Temizle",
+
+  "noMaterialsFound": "Malzeme bulunamadı",
+
+  "createFirstMaterial": "Başlamak için ilk malzemenizi oluşturun",
+
+  "createMaterial": "Malzeme Oluştur",
+
+  "code": "Kod",
+
+  "noPrice": "Fiyat yok",
+
+  "deleteMaterial": "Malzemeyi Sil",
+
+  "deleteMaterialConfirm": "\"{name}\" silmek istediğinizden emin misiniz?",
+
+  "exportedMaterials": "{count} malzeme aktarıldı",
+
+  "driversAndPlateNumbers": "Sürücüler ve Plaka Numaraları",
+
+  "addPlateNumber": "Plaka Numarası Ekle",
+
+  "editDriver": "Sürücüyü Düzenle",
+
+  "plateNumbers": "Plaka Numaraları",
+
+  "enterPlateNumberHint": "Plaka numarasını girin",
+
+  "plates": "Plakalar: ",
+
+  "phonePrefix": "Telefon: ",
+
+  "cityPrefix": "Şehir: ",
+
+  "noTabSelected": "Sekme seçilmedi",
+
+  "searchLabel": "Ara",
+
+  "actionsColumn": "İşlemler",
+
+  "usernameRequired": "Kullanıcı adı gerekli",
+
+  "passwordRequired": "Şifre gerekli",
+
+  "passwordsDoNotMatch": "Şifreler eşleşmiyor",
+
+  "validationError": "Doğrulama Hatası",
+
+  "editUser": "Kullanıcıyı Düzenle",
+
+  "addNewUser": "Yeni Kullanıcı Ekle",
+
+  "enterUsername": "Kullanıcı adını girin",
+
+  "userType": "Kullanıcı Türü",
+
+  "normalUser": "Normal Kullanıcı",
+
+  "enterPassword": "Şifre girin",
+
+  "confirmPassword": "Şifreyi Onayla",
+
+  "reEnterPassword": "Şifreyi tekrar girin",
+
+  "passwordChangeHint": "Şifreyi değiştirmek için \"Şifre Değiştir\" düğmesini kullanın",
+
+  "update": "Güncelle",
+
+  "create": "Oluştur",
+
+  "changePasswordFor": "{username} için şifre değiştir",
+
+  "newPassword": "Yeni Şifre",
+
+  "enterNewPassword": "Yeni şifre girin",
+
+  "confirmNewPassword": "Yeni Şifreyi Onayla",
+
+  "reEnterNewPassword": "Yeni şifreyi tekrar girin",
+
+  "changePassword": "Şifre Değiştir",
+
+  "tabDetails": "Sekme Detayları",
+
+  "noTabSelectedMessage": "Sekme Seçilmedi",
+
+  "selectTabToView": "Detayları görüntülemek için bir sekme seçin",
+
+  "unsaved": "KAYDEDİLMEMİŞ",
+
+  "vehicleInformation": "Araç Bilgileri",
+
+  "truckPlateLabel": "Kamyon Plakası",
+
+  "notSpecified": "Belirtilmemiş",
+
+  "notRecorded": "Kaydedilmemiş",
+
+  "notCalculated": "Hesaplanmamış",
+
+  "clientSupplier": "Müşteri/Tedarikçi",
+
+  "paymentStatus": "Ödeme Durumu",
+
+  "unpaid": "Ödenmemiş",
+
+  "yes": "Evet",
+
+  "timingInformation": "Zamanlama Bilgileri",
+
+  "createdAt": "Oluşturulma",
+
+  "lastUpdated": "Son Güncelleme",
+
+  "startWeighing": "Tartımı Başlat",
+
+  "continueWeighing": "Tartıma Devam Et",
+
+  "completeTab": "Sekmeyi Tamamla",
+
+  "reset": "Sıfırla",
+
+  "completeTabConfirm": "\"{tabTitle}\" sekmesini tamamlandı olarak işaretle?",
+
+  "tabCompletedSuccess": "Sekme başarıyla tamamlandı",
+
+  "tabEditingComingSoon": "Sekme düzenleme özelliği yakında",
+
+  "printFunctionalityComingSoon": "Yazdırma özelliği yakında",
+
+  "resetTab": "Sekmeyi Sıfırla",
+
+  "resetTabConfirm": "\"{tabTitle}\" sekmesindeki tüm veriler sıfırlansın mı? Bu işlem geri alınamaz.",
+
+  "tabResetSuccess": "Sekme başarıyla sıfırlandı",
+
+  "cancelTab": "Sekmeyi İptal Et",
+
+  "cancelTabConfirm": "\"{tabTitle}\" sekmesi iptal edilsin mi?",
+
+  "yesCancelTab": "Evet, İptal Et",
+
+  "tabCancelledMessage": "Sekme iptal edildi",
+
+  "failedToCancelTab": "Sekme iptal edilemedi",
+
+  "readyToComplete": "Tamamlanmaya Hazır",
+
+  "notSet": "Ayarlanmamış",
+
+  "switchToWeighingTab": "Ağırlıkları kaydetmeye başlamak için tartım sekmesine geçin",
+
+  "switchToWeighingTabContinue": "Ağırlıkları kaydetmeye devam etmek için tartım sekmesine geçin",
+
+  "printFailed": "Yazdırma başarısız: {error}",
+
+  "savePdfFailed": "PDF kaydetme başarısız: {error}",
+
+  "lastUpdatedLabel": "Son Güncelleme",
+
+  "paidLabel": "Ödendi",
+
+  "showPriceOnPrintLabel": "Yazdırmada Fiyat Göster",
+
+  "additionalInfo": "Ek Bilgiler",
+
+  "unsavedChangesLabel": "Kaydedilmemiş Değişiklikler",
+
+  "completedLabel": "Tamamlandı",
+
+  "databaseId": "Veritabanı Kimliği",
+
+  "unsavedLabel": "Kaydedilmemiş",
+
+  "notAvailable": "Mevcut değil",
+
+  "na": "Yok",
+
+  "loadingOutgoing": "Yükleme (Giden)",
+
+  "unloadingIncoming": "Boşaltma (Gelen)",
+
+  "totalTabs": "Toplam Sekmeler",
+
+  "activeTabs": "Aktif Sekmeler",
+
+  "topDriversByWeight": "Ağırlığa Göre En İyi Sürücüler",
+
+  "maximumTabsCount": "Aynı anda maksimum {count} işlem açabilirsiniz. Yenilerini oluşturmadan önce bazı sekmeleri kapatın.",
+
+  "synchronization": "Senkronizasyon",
+  "syncStatus": "Senkronizasyon Durumu",
+  "pendingItems": "Bekleyen öğeler",
+  "syncNow": "Şimdi Senkronize Et",
+  "clearFailed": "Başarısızları Temizle",
+  "scaleConnectionSettings": "Terazi Bağlantı Ayarları",
+  "connectionStatus": "Bağlantı Durumu",
+  "connectedTo": "Bağlı",
+  "tryToConnect": "Bağlanmayı Dene",
+  "portConfiguration": "Port Yapılandırması",
+  "comPort": "COM Portu",
+  "autoDetect": "Otomatik Algıla",
+  "baudRate": "Baud Hızı",
+  "dataBits": "Veri Bitleri",
+  "stopBits": "Dur Bitleri",
+  "parity": "Eşlik",
+  "scaleInformation": "Terazi Bilgisi",
+  "protocol": "Protokol",
+  "serialComReadOnly": "Seri COM - Salt Okunur",
+  "expectedFormat": "Beklenen Format",
+  "weightFormatExample": "(±)(6 rakam)(KG)",
+  "readingInterval": "Okuma Aralığı",
+  "readingInterval100ms": "100ms",
+  "connectionRetry": "Bağlantı Yeniden Denemesi",
+  "connectionRetryInterval": "Her 40ms",
+  "kgUnit": "kg",
+  "disconnectedFromScale": "Teraziden bağlantı kesildi",
+  "disconnect": "Bağlantıyı Kes",
+  "attemptingToReconnect": "Yeniden bağlanmaya çalışılıyor...",
+  "printConfiguration": "Yazdırma Yapılandırması",
+  "managePrintTemplates": "Yazdırma Şablonlarını Yönet",
+  "printTemplateSystem": "Yazdırma Şablonu Sistemi",
+  "configureTemplatesDescription": "Önceden yazdırılmış A3 formlarınız için yazdırma şablonlarını yapılandırın:",
+  "createCustomTemplates": "Özel şablonlar oluşturun",
+  "dragDropFieldPositioning": "Sürükle bırak alan konumlandırma",
+  "configureFontsFormatting": "Yazı tiplerini ve biçimlendirmeyi yapılandırın",
+  "importExportTemplates": "Şablonları İçe/Dışa Aktar",
+  "testPrintAlignment": "Yazdırma hizalamasını test edin",
+  "odooSettingsSavedSuccess": "Odoo ayarları başarıyla kaydedildi!",
+  "failedToSaveSettings": "Ayarlar kaydedilemedi",
+  "connectionFailedWithError": "Bağlantı başarısız",
+  "odooSettingsDescription": "Odoo ERP entegrasyonu için bağlantı ayarlarını yapılandırın",
+  "odooUrlPlaceholder": "https://your-odoo-instance.com",
+  "odooUrlRequired": "Odoo URL'si gerekli",
+  "pleaseEnterValidUrl": "Lütfen geçerli bir URL girin",
+  "databaseName": "Veritabanı Adı",
+  "databaseNamePlaceholder": "veritabanı-adınız",
+  "databaseNameRequired": "Veritabanı adı gerekli",
+  "adminPlaceholder": "yönetici",
+  "passwordPlaceholder": "••••••••",
+  "testing": "Test ediliyor...",
+  "connectionInformation": "Bağlantı Bilgisi",
+  "connectionRequirements": "Bağlantı Gereksinimleri:",
+  "odooRequirement1": "• Odoo örneğinizin erişilebilir olduğundan emin olun",
+  "odooRequirement2": "• Veritabanı adının doğru olduğunu doğrulayın",
+  "odooRequirement3": "• Uygun erişim haklarına sahip bir kullanıcı kullanın",
+  "odooRequirement4": "• Güvenlik duvarını ve ağ bağlantısını kontrol edin",
+  "supportedOperations": "Desteklenen İşlemler:",
+  "odooOperation1": "• Müşterileri ve tedarikçileri res.partner olarak senkronize edin",
+  "odooOperation2": "• Malzemeleri product.product olarak senkronize edin",
+  "odooOperation3": "• Yükleme işlemleri için satış siparişleri oluşturun",
+  "odooOperation4": "• Boşaltma işlemleri için satın alma siparişleri oluşturun",
+  "newTemplate": "Yeni Şablon",
+  "testPrint": "Test Yazdır",
+  "printAlignmentGrid": "Hizalama Izgarasını Yazdır",
+  "exportXps": "XPS Olarak Dışa Aktar",
+  "searchTemplates": "Şablonlarda ara...",
+  "selectTemplateToPreview": "Önizlemek için bir şablon seçin",
+  "templatePreview": "Şablon Önizlemesi",
+  "printTemplateManagement": "Yazdırma Şablonu Yönetimi",
+  "templateDetails": "Şablon Detayları",
+  "nameLabel": "Ad:",
+  "descriptionLabel": "Açıklama:",
+  "paperSizeLabel": "Kağıt Boyutu:",
+  "orientationLabel": "Yönlendirme:",
+  "fieldsLabel": "Alanlar:",
+  "statusLabel": "Durum:",
+  "createdLabel": "Oluşturuldu:",
+  "updatedLabel": "Güncellendi:",
+  "fields": "Alanlar",
+  "fontLabel": "Yazı Tipi:",
+  "pt": "pt",
+  "bold": "Kalın",
+  "formatLabel": "Format:",
+  "noFieldsInTemplate": "Şablonda alan yok",
+  "backgroundImageNotFound": "Arka plan resmi bulunamadı",
+  "errorLoadingBackgroundImage": "Arka plan resmi yüklenirken hata",
+  "deleteTemplate": "Şablonu Sil",
+  "areYouSureDeleteTemplate": "Silmek istediğinizden emin misiniz",
+  "failedToDeleteTemplate": "Şablon silinemedi",
+  "testPrintOptions": "Test Yazdırma Seçenekleri",
+  "chooseTestPrintMethod": "Bu şablonu test yazdırma yöntemini seçin:",
+  "printWithXps": "XPS İLE YAZDIR",
+  "silentPrintWindowsDirect": "Sessiz Yazdırma (Windows Doğrudan)",
+  "printWithDialogPreview": "Diyalog ile Yazdır (Önizleme)",
+  "silentPrintingFailed": "Sessiz yazdırma aşağıdaki hatayla başarısız oldu:",
+  "possibleSolutions": "Olası çözümler:",
+  "printSuccess": "Yazdırma Başarılı",
+  "templatePrintedSuccess": "Şablon başarıyla yazdırıldı",
+  "addItem": "\"{name}\" Ekle",
+  "isThisSupplierOrClient": "Bu bir tedarikçi mi müşteri mi?",
+  "addTruckPlate": "Kamyon Plakası Ekle \"{plateNumber}\"",
+  "pleaseEnterDriverName": "Lütfen bu kamyon için sürücü adını girin:",
+  "addDriverName": "Sürücü Ekle \"{driverName}\"",
+  "pleaseEnterTruckPlate": "Lütfen bu sürücü için bir kamyon plakası girin:",
+  "start": "Başlat",
+  "continueButton": "Devam Et",
+  "completeTabTitle": "Sekmeyi Tamamla",
+  "markTabAsCompleted": "\"{tabTitle}\" sekmesi tamamlandı olarak işaretlensin mi?",
+  "tabTitle": "Sekme {tabTitle}",
+  "switchToTab": "Sekmeye Geç",
+  "printActions": "Yazdırma İşlemleri",
+  "printOptions": "Yazdırma Seçenekleri - {tabTitle}",
+  "areYouSureCancelTab": "\"{tabTitle}\" sekmesini iptal etmek istediğinizden emin misiniz?",
+  "closeTabConfirm": "\"{tabTitle}\" sekmesi kapatılsın mı?",
+  "signIn": "Oturum Aç",
+  "noDocumentToPreview": "Önizlenecek belge yok",
+  "fit": "Sığdır",
+  "rulers": "Cetveller",
+  "margins": "Kenar Boşlukları",
+  "remove": "Kaldır",
+  "paperSizeA4": "A4",
+  "paperSizeA5": "A5",
+  "paperSizeLetter": "Letter",
+  "paperSizeCustom": "Özel",
+  "warningUnsavedChanges": "Uyarı: Bu sekmede kaydedilmemiş değişiklikler var.",
+  "pdfPreview": "PDF Önizleme",
+  "saving": "Kaydediliyor...",
+  "perKg": "/kg",
+  "currencySymbol": "$"
+}
