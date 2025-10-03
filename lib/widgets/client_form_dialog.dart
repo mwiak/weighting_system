@@ -47,8 +47,9 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ContentDialog(
-      title: Text(widget.isEditing ? 'Edit Client' : 'Create New Client'),
+      title: Text(widget.isEditing ? l10n.editClientTitle : l10n.createNewClient),
       content: SizedBox(
         width: 400,
         height: 350,
@@ -60,13 +61,13 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
               children: [
                 // Name
                 InfoLabel(
-                  label: 'Name *',
+                  label: l10n.nameRequired,
                   child: TextFormBox(
                     controller: _nameController,
-                    placeholder: 'Client name',
+                    placeholder: l10n.clientNamePlaceholder,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Name is required';
+                        return l10n.nameIsRequired;
                       }
                       return null;
                     },
@@ -79,20 +80,20 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
                   children: [
                     Expanded(
                       child: InfoLabel(
-                        label: 'Phone',
+                        label: l10n.phoneLabel,
                         child: TextFormBox(
                           controller: _phoneController,
-                          placeholder: '+1 (555) 123-4567',
+                          placeholder: l10n.phonePlaceholder,
                         ),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: InfoLabel(
-                        label: 'Mobile',
+                        label: l10n.mobileLabel,
                         child: TextFormBox(
                           controller: _mobileController,
-                          placeholder: '+1 (555) 987-6543',
+                          placeholder: l10n.mobilePlaceholder,
                         ),
                       ),
                     ),
@@ -102,10 +103,10 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
 
                 // City
                 InfoLabel(
-                  label: 'City',
+                  label: l10n.cityLabel,
                   child: TextFormBox(
                     controller: _cityController,
-                    placeholder: 'City',
+                    placeholder: l10n.cityPlaceholder,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -127,7 +128,7 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
                   width: 16,
                   child: ProgressRing(strokeWidth: 2),
                 )
-              : Text(widget.isEditing ? 'Update' : 'Create'),
+              : Text(widget.isEditing ? l10n.updateButton : l10n.createButton),
         ),
       ],
     );
@@ -142,6 +143,7 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
 
     try {
       final clientProvider = context.read<ClientProvider>();
+      final l10n = AppLocalizations.of(context)!;
 
       if (widget.isEditing) {
         // Update existing client
@@ -149,32 +151,50 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
         if (client == null) return;
         final updatedClient = client.copyWith(
           name: _nameController.text.trim(),
-          phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          mobile: _mobileController.text.trim().isEmpty ? null : _mobileController.text.trim(),
-          city: _cityController.text.trim().isEmpty ? null : _cityController.text.trim(),
+          phone: _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text.trim(),
+          mobile: _mobileController.text.trim().isEmpty
+              ? null
+              : _mobileController.text.trim(),
+          city: _cityController.text.trim().isEmpty
+              ? null
+              : _cityController.text.trim(),
         );
 
         final success = await clientProvider.updateClient(updatedClient);
         if (success) {
           if (mounted) Navigator.of(context).pop();
-          if (mounted) _showSuccessMessage(context, 'Client updated successfully');
+          if (mounted)
+            _showSuccessMessage(context, l10n.clientUpdatedSuccessfully);
         } else {
-          if (mounted) _showErrorMessage(context, clientProvider.lastError ?? 'Failed to update client');
+          if (mounted)
+            _showErrorMessage(
+                context, clientProvider.lastError ?? l10n.failedToUpdateClient);
         }
       } else {
         // Create new client
         final client = await clientProvider.createClient(
           name: _nameController.text.trim(),
-          phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          mobile: _mobileController.text.trim().isEmpty ? null : _mobileController.text.trim(),
-          city: _cityController.text.trim().isEmpty ? null : _cityController.text.trim(),
+          phone: _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text.trim(),
+          mobile: _mobileController.text.trim().isEmpty
+              ? null
+              : _mobileController.text.trim(),
+          city: _cityController.text.trim().isEmpty
+              ? null
+              : _cityController.text.trim(),
         );
 
         if (client != null) {
           if (mounted) Navigator.of(context).pop();
-          if (mounted) _showSuccessMessage(context, 'Client created successfully');
+          if (mounted)
+            _showSuccessMessage(context, l10n.clientCreatedSuccessfully);
         } else {
-          if (mounted) _showErrorMessage(context, clientProvider.lastError ?? 'Failed to create client');
+          if (mounted)
+            _showErrorMessage(
+                context, clientProvider.lastError ?? l10n.failedToCreateClient);
         }
       }
     } finally {

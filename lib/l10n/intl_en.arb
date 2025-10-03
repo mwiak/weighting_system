@@ -2907,5 +2907,180 @@
   "currencySymbol": "$",
   "@currencySymbol": {
     "description": "Currency symbol"
+  },
+
+  "switchUser": "Switch User",
+  "@switchUser": {
+    "description": "Switch user panel title"
+  },
+
+  "noOtherUsersAvailable": "No other users available",
+  "@noOtherUsersAvailable": {
+    "description": "No other users message"
+  },
+
+  "editClientTitle": "Edit Client",
+  "@editClientTitle": {
+    "description": "Edit client dialog title"
+  },
+
+  "createNewClient": "Create New Client",
+  "@createNewClient": {
+    "description": "Create new client dialog title"
+  },
+
+  "nameRequired": "Name *",
+  "@nameRequired": {
+    "description": "Name field with required indicator"
+  },
+
+  "clientNamePlaceholder": "Client name",
+  "@clientNamePlaceholder": {
+    "description": "Client name placeholder"
+  },
+
+  "nameIsRequired": "Name is required",
+  "@nameIsRequired": {
+    "description": "Name validation error"
+  },
+
+  "phoneLabel": "Phone",
+  "@phoneLabel": {
+    "description": "Phone field label"
+  },
+
+  "phonePlaceholder": "+1 (555) 123-4567",
+  "@phonePlaceholder": {
+    "description": "Phone placeholder"
+  },
+
+  "mobileLabel": "Mobile",
+  "@mobileLabel": {
+    "description": "Mobile field label"
+  },
+
+  "mobilePlaceholder": "+1 (555) 987-6543",
+  "@mobilePlaceholder": {
+    "description": "Mobile placeholder"
+  },
+
+  "cityLabel": "City",
+  "@cityLabel": {
+    "description": "City field label"
+  },
+
+  "cityPlaceholder": "City",
+  "@cityPlaceholder": {
+    "description": "City placeholder"
+  },
+
+  "updateButton": "Update",
+  "@updateButton": {
+    "description": "Update button text"
+  },
+
+  "createButton": "Create",
+  "@createButton": {
+    "description": "Create button text"
+  },
+
+  "clientUpdatedSuccessfully": "Client updated successfully",
+  "@clientUpdatedSuccessfully": {
+    "description": "Client update success message"
+  },
+
+  "failedToUpdateClient": "Failed to update client",
+  "@failedToUpdateClient": {
+    "description": "Client update error message"
+  },
+
+  "clientCreatedSuccessfully": "Client created successfully",
+  "@clientCreatedSuccessfully": {
+    "description": "Client creation success message"
+  },
+
+  "failedToCreateClient": "Failed to create client",
+  "@failedToCreateClient": {
+    "description": "Client creation error message"
+  },
+
+  "editSupplierTitle": "Edit Supplier",
+  "@editSupplierTitle": {
+    "description": "Edit supplier dialog title"
+  },
+
+  "createNewSupplier": "Create New Supplier",
+  "@createNewSupplier": {
+    "description": "Create new supplier dialog title"
+  },
+
+  "supplierNamePlaceholder": "Supplier name",
+  "@supplierNamePlaceholder": {
+    "description": "Supplier name placeholder"
+  },
+
+  "supplierUpdatedSuccessfully": "Supplier updated successfully",
+  "@supplierUpdatedSuccessfully": {
+    "description": "Supplier update success message"
+  },
+
+  "failedToUpdateSupplier": "Failed to update supplier",
+  "@failedToUpdateSupplier": {
+    "description": "Supplier update error message"
+  },
+
+  "supplierCreatedSuccessfully": "Supplier created successfully",
+  "@supplierCreatedSuccessfully": {
+    "description": "Supplier creation success message"
+  },
+
+  "failedToCreateSupplier": "Failed to create supplier",
+  "@failedToCreateSupplier": {
+    "description": "Supplier creation error message"
+  },
+
+  "activeOperationsExist": "Active operations exist",
+  "@activeOperationsExist": {
+    "description": "Active operations exist message"
+  },
+
+  "newOperation": "New Operation",
+  "@newOperation": {
+    "description": "New operation button text"
+  },
+
+  "switchToUser": "Switch to {username}",
+  "@switchToUser": {
+    "description": "Switch to user dialog title",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "enterPasswordToContinue": "Enter password to continue",
+  "@enterPasswordToContinue": {
+    "description": "Enter password subtitle"
+  },
+
+  "passwordIsRequired": "Password is required",
+  "@passwordIsRequired": {
+    "description": "Password validation error"
+  },
+
+  "invalidPassword": "Invalid password",
+  "@invalidPassword": {
+    "description": "Invalid password error"
+  },
+
+  "loginFailedError": "Login failed: {error}",
+  "@loginFailedError": {
+    "description": "Login failed with error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   }
 }

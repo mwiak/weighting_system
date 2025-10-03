@@ -111,6 +111,11 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _avatarColor,
+                border: Border.all(
+                    width: 5,
+                    color: user.type == UserRanks.admin
+                        ? Colors.yellow
+                        : Colors.transparent),
                 boxShadow: isHovered || isPressed
                     ? [
                         BoxShadow(
@@ -233,7 +238,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Switch User',
+                      AppLocalizations.of(context)!.switchUser,
                       style: theme.typography.bodyStrong,
                     ),
                   ],
@@ -268,7 +273,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'No other users available',
+                        AppLocalizations.of(context)!.noOtherUsersAvailable,
                         style: theme.typography.body?.copyWith(
                           color: theme.inactiveColor,
                         ),
@@ -439,8 +444,9 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
   }
 
   Future<void> _handleLogin() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_passwordController.text.isEmpty) {
-      setState(() => _errorMessage = 'Password is required');
+      setState(() => _errorMessage = l10n.passwordIsRequired);
       _shake();
       return;
     }
@@ -460,12 +466,13 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
       );
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         // Check if user changed successfully
         if (userProvider.activeUser?.username == widget.username) {
           Navigator.of(context).pop();
         } else {
           setState(() {
-            _errorMessage = 'Invalid password';
+            _errorMessage = l10n.invalidPassword;
             _isLoading = false;
           });
           _shake();
@@ -473,8 +480,9 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         setState(() {
-          _errorMessage = 'Login failed: ${e.toString()}';
+          _errorMessage = l10n.loginFailedError(e.toString());
           _isLoading = false;
         });
         _shake();
@@ -485,6 +493,7 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return ContentDialog(
       constraints: const BoxConstraints(maxWidth: 400),
@@ -514,12 +523,12 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Switch to ${widget.username}',
+                  l10n.switchToUser(widget.username),
                   style: theme.typography.subtitle,
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Enter password to continue',
+                  l10n.enterPasswordToContinue,
                   style: theme.typography.caption?.copyWith(
                     color: theme.inactiveColor,
                   ),
@@ -550,12 +559,12 @@ class _SwitchUserDialogState extends State<SwitchUserDialog>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InfoLabel(
-                  label: 'Password',
+                  label: l10n.password,
                   child: TextBox(
                     controller: _passwordController,
                     focusNode: _passwordFocus,
                     obscureText: _hidePassword,
-                    placeholder: 'Enter your password',
+                    placeholder: l10n.enterYourPassword,
                     suffix: IconButton(
                       icon: Icon(
                         _hidePassword ? FluentIcons.lock : FluentIcons.unlock,

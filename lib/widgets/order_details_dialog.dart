@@ -25,10 +25,6 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
   final TemplatePrintService _printService = TemplatePrintService();
   final CustomTemplateService _templateService = CustomTemplateService();
 
-  String? _clientName;
-  String? _supplierName;
-  String? _materialName;
-
   @override
   void initState() {
     super.initState();
@@ -197,18 +193,14 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                       l10n.lastUpdated,
                                       _formatDateTime(
                                           widget.operation.updatedAt)),
-                                  if (widget.operation.scaleEmptyWeightAt !=
-                                      null)
-                                    _buildDetailRow(
-                                        l10n.weighInTime,
-                                        _formatDateTime(widget
-                                            .operation.scaleEmptyWeightAt)),
-                                  if (widget.operation.scaleGrossWeightAt !=
-                                      null)
-                                    _buildDetailRow(
-                                        l10n.weighOutTime,
-                                        _formatDateTime(widget
-                                            .operation.scaleGrossWeightAt)),
+                                  _buildDetailRow(
+                                      l10n.weighInTime,
+                                      _formatDateTime(
+                                          widget.operation.scaleEmptyWeightAt)),
+                                  _buildDetailRow(
+                                      l10n.weighOutTime,
+                                      _formatDateTime(
+                                          widget.operation.scaleGrossWeightAt)),
                                 ],
                               ),
                               const SizedBox(height: 16),
@@ -264,8 +256,11 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                       '${widget.operation.kilo_price.toStringAsFixed(2)}'),
                                   _buildDetailRow(l10n.totalAmount,
                                       '${widget.operation.total_price.toStringAsFixed(2)}'),
-                                  _buildDetailRow(l10n.paid,
-                                      widget.operation.isPaid ? l10n.yes : l10n.no),
+                                  _buildDetailRow(
+                                      l10n.paid,
+                                      widget.operation.isPaid
+                                          ? l10n.yes
+                                          : l10n.no),
                                   _buildDetailRow(
                                       l10n.showPriceOnPrint,
                                       widget.operation.showPriceOnPrint
@@ -387,9 +382,25 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
   }
 
   String _formatStatus(String status) {
-    return status
-        .split('-')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
+    final l10n = AppLocalizations.of(context)!;
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return l10n.statusCompleted;
+      case 'in-progress':
+      case 'inprogress':
+        return l10n.statusInProgress;
+      case 'incomplete':
+        return l10n.statusIncomplete;
+      case 'cancelled':
+        return l10n.statusCancelled;
+      case 'empty':
+        return l10n.statusEmpty;
+      default:
+        // Fallback: capitalize each word
+        return status
+            .split('-')
+            .map((word) => word[0].toUpperCase() + word.substring(1))
+            .join(' ');
+    }
   }
 }

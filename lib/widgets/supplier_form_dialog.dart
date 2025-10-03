@@ -47,8 +47,9 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ContentDialog(
-      title: Text(widget.isEditing ? 'Edit Supplier' : 'Create New Supplier'),
+      title: Text(widget.isEditing ? l10n.editSupplierTitle : l10n.createNewSupplier),
       content: SizedBox(
         width: 400,
         height: 350,
@@ -60,13 +61,13 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
               children: [
                 // Name
                 InfoLabel(
-                  label: 'Name *',
+                  label: l10n.nameRequired,
                   child: TextFormBox(
                     controller: _nameController,
-                    placeholder: 'Supplier name',
+                    placeholder: l10n.supplierNamePlaceholder,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Name is required';
+                        return l10n.nameIsRequired;
                       }
                       return null;
                     },
@@ -79,20 +80,20 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
                   children: [
                     Expanded(
                       child: InfoLabel(
-                        label: 'Phone',
+                        label: l10n.phoneLabel,
                         child: TextFormBox(
                           controller: _phoneController,
-                          placeholder: '+1 (555) 123-4567',
+                          placeholder: l10n.phonePlaceholder,
                         ),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: InfoLabel(
-                        label: 'Mobile',
+                        label: l10n.mobileLabel,
                         child: TextFormBox(
                           controller: _mobileController,
-                          placeholder: '+1 (555) 987-6543',
+                          placeholder: l10n.mobilePlaceholder,
                         ),
                       ),
                     ),
@@ -102,10 +103,10 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
 
                 // City
                 InfoLabel(
-                  label: 'City',
+                  label: l10n.cityLabel,
                   child: TextFormBox(
                     controller: _cityController,
-                    placeholder: 'City',
+                    placeholder: l10n.cityPlaceholder,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -127,7 +128,7 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
                   width: 16,
                   child: ProgressRing(strokeWidth: 2),
                 )
-              : Text(widget.isEditing ? 'Update' : 'Create'),
+              : Text(widget.isEditing ? l10n.updateButton : l10n.createButton),
         ),
       ],
     );
@@ -142,6 +143,7 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
 
     try {
       final supplierProvider = context.read<SupplierProvider>();
+      final l10n = AppLocalizations.of(context)!;
 
       if (widget.isEditing) {
         // Update existing supplier
@@ -149,25 +151,40 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
         if (supplier == null) return;
         final updatedSupplier = supplier.copyWith(
           name: _nameController.text.trim(),
-          phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          mobile: _mobileController.text.trim().isEmpty ? null : _mobileController.text.trim(),
-          city: _cityController.text.trim().isEmpty ? null : _cityController.text.trim(),
+          phone: _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text.trim(),
+          mobile: _mobileController.text.trim().isEmpty
+              ? null
+              : _mobileController.text.trim(),
+          city: _cityController.text.trim().isEmpty
+              ? null
+              : _cityController.text.trim(),
         );
 
         final success = await supplierProvider.updateSupplier(updatedSupplier);
         if (success) {
           if (mounted) Navigator.of(context).pop();
-          if (mounted) _showSuccessMessage(context, 'Supplier updated successfully');
+          if (mounted)
+            _showSuccessMessage(context, l10n.supplierUpdatedSuccessfully);
         } else {
-          if (mounted) _showErrorMessage(context, supplierProvider.lastError ?? 'Failed to update supplier');
+          if (mounted)
+            _showErrorMessage(context,
+                supplierProvider.lastError ?? l10n.failedToUpdateSupplier);
         }
       } else {
         // Create new supplier
         final supplier = Supplier(
           name: _nameController.text.trim(),
-          phone: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
-          mobile: _mobileController.text.trim().isEmpty ? null : _mobileController.text.trim(),
-          city: _cityController.text.trim().isEmpty ? null : _cityController.text.trim(),
+          phone: _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text.trim(),
+          mobile: _mobileController.text.trim().isEmpty
+              ? null
+              : _mobileController.text.trim(),
+          city: _cityController.text.trim().isEmpty
+              ? null
+              : _cityController.text.trim(),
           createDate: DateTime.now().toIso8601String(),
           writeDate: DateTime.now().toIso8601String(),
         );
@@ -175,9 +192,12 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
         final createdSupplier = await supplierProvider.addSupplier(supplier);
         if (createdSupplier != null) {
           if (mounted) Navigator.of(context).pop();
-          if (mounted) _showSuccessMessage(context, 'Supplier created successfully');
+          if (mounted)
+            _showSuccessMessage(context, l10n.supplierCreatedSuccessfully);
         } else {
-          if (mounted) _showErrorMessage(context, supplierProvider.lastError ?? 'Failed to create supplier');
+          if (mounted)
+            _showErrorMessage(context,
+                supplierProvider.lastError ?? l10n.failedToCreateSupplier);
         }
       }
     } finally {

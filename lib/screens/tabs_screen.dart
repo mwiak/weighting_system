@@ -142,7 +142,8 @@ class _TabsScreenState extends State<TabsScreen> {
                     ? _buildEmptyState(context)
                     : provider.currentTabIndex >= 0
                         ? SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             child: WeighingTabContent(
                               key: ValueKey(
                                   'tab_content_${provider.currentTabIndex}'),
@@ -150,7 +151,8 @@ class _TabsScreenState extends State<TabsScreen> {
                             ),
                           )
                         : Center(
-                            child: Text('No tab selected')), // Keep as fallback
+                            child:
+                                Text(l10n.activeOperationsExist)), // Keep as fallback
               ),
             ],
           ),
@@ -243,7 +245,7 @@ class _TabsScreenState extends State<TabsScreen> {
                 children: [
                   const Icon(FluentIcons.add, size: 16),
                   const SizedBox(width: 8),
-                  const Text('New Tab'),
+                  Text(l10n.newOperation),
                 ],
               ),
             ),

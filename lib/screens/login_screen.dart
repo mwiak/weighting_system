@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  FocusNode passwordNode = FocusNode();
 
   void attemptLogin(UserProvider provider) {}
 
@@ -220,6 +221,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget showPasswordPanel() {
+    passwordNode.requestFocus();
     final l10n = AppLocalizations.of(context)!;
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
@@ -266,6 +268,7 @@ class _LoginScreenState extends State<LoginScreen>
                           child: InfoLabel(
                             label: l10n.password,
                             child: TextBox(
+                              focusNode: passwordNode,
                               textDirection: TextDirection.ltr,
                               placeholder: l10n.enterYourPassword,
                               suffix: IconButton(

@@ -376,10 +376,6 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                           flex: 1,
                           child: Text(l10n.status,
                               style: TextStyle(fontWeight: FontWeight.w600))),
-                      Expanded(
-                          flex: 1,
-                          child: Text('Actions',
-                              style: TextStyle(fontWeight: FontWeight.w600))),
                     ],
                   ),
                 ),
@@ -422,8 +418,16 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                               children: [
                                 Expanded(
                                     flex: 1,
-                                    child: Text(
-                                        '${operation['id'] ?? operation['tab_id'] ?? ''}')),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: FilledButton(
+                                        onPressed: () {
+                                          _showOrderDetails(operation);
+                                        },
+                                        child: Text(
+                                            '${operation['id'] ?? operation['tab_id'] ?? ''}'),
+                                      ),
+                                    )),
                                 Expanded(
                                     flex: 1,
                                     child: Text(_formatDateTime(
@@ -469,15 +473,6 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                                               operation['status']),
                                         ),
                                         textAlign: TextAlign.center,
-                                      ),
-                                    )),
-                                Expanded(
-                                    flex: 1,
-                                    child: Center(
-                                      child: Button(
-                                        onPressed: () =>
-                                            _showOrderDetails(operation),
-                                        child: const Icon(FluentIcons.info),
                                       ),
                                     )),
                               ],
