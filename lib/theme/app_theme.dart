@@ -11,6 +11,11 @@ class AppTheme {
   static const Color successColor = Color(0xFF27AE60); // Success Green
 
   static const double summaryBoxSized = 60;
+
+  //headersOperations
+  static const double operationsHeaderItemWidthNormal = 90;
+  static const TextStyle headerStyle =
+      TextStyle(fontWeight: FontWeight.w600, fontSize: 11.8);
   // Background colors
   static const Color backgroundColor =
       Color(0xFFFAFAFA); // Light gray background

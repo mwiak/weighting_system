@@ -7,6 +7,18 @@ String dateToArabicDatetime(DateTime input) {
   return formatter.format(input);
 }
 
+String dateToArabicDatetimeOperationEntry(DateTime input) {
+  final formatter = DateFormat('EEEE\ndd/ MM / yyyy\nhh:mm a', 'ar');
+
+  return formatter.format(input);
+}
+
+String dateToArabicDatetimeExcel(DateTime input) {
+  final formatter = DateFormat('EEEE_dd/ MM / yyyy_hh:mm a', 'ar');
+
+  return formatter.format(input);
+}
+
 String dateToArabicDatetimeShort(DateTime input) {
   final formatter = DateFormat('yyyy/MM/dd-hh:mm a', 'ar');
 

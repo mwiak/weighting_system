@@ -10,22 +10,12 @@ import 'package:weighing_system/screens/summaries_screen.dart';
 import 'package:weighing_system/screens/template_management_screen.dart';
 import 'package:weighing_system/screens/weighting_operations_view.dart';
 import 'package:weighing_system/widgets/current_user_panel.dart';
-import '../providers/weight_provider.dart';
 import '../providers/sync_provider.dart';
-import '../providers/print_provider.dart';
-import '../providers/report_provider.dart';
-import '../providers/client_provider.dart';
-import '../providers/app_settings_provider.dart';
 import '../widgets/weight_display_card.dart';
-import '../widgets/weighing_tab_list.dart';
-import '../widgets/connection_status_bar.dart';
-import '../widgets/weighing_tab_details.dart';
 import 'client_management_screen.dart';
 import 'material_management_screen.dart';
 import 'tabs_screen.dart';
 import 'drivers_trucks_screen.dart';
-import 'odoo_settings_screen.dart';
-import 'scale_settings_screen.dart';
 
 class MainDashboard extends StatefulWidget {
   const MainDashboard({super.key});
@@ -42,12 +32,6 @@ class _MainDashboardState extends State<MainDashboard> {
     UserRanks type =
         Provider.of<UserProvider>(context, listen: true).activeUser!.type;
     List<PaneItem> adminPanes = [
-      PaneItem(
-        key: const ValueKey('/reports'),
-        icon: const Icon(FluentIcons.chart_series),
-        title: Text(l10n.reports),
-        body: const ReportsView(),
-      ),
       PaneItem(
         key: const ValueKey('/summaries'),
         icon: const Icon(FluentIcons.data_flow),

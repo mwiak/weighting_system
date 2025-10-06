@@ -29,9 +29,9 @@
   
   "netWeight": "الوزن الصافي",
   
-  "orderNumber": "رقم الطلب",
+  "orderNumber": "الرقم التسلسلي",
   
-  "truckPlate": "لوحة الشاحنة",
+  "truckPlate": "رقم السيارة",
   
   "driverName": "اسم السائق",
   
@@ -505,11 +505,11 @@
 
   "emptyWeight": "وزن الفارغ",
 
-  "emptyWeightKg": "وزن الفارغ (كيلو)",
+  "emptyWeightKg": "وزن الفارغ",
 
-  "grossWeightKg": "الوزن الإجمالي (كيلو)",
+  "grossWeightKg": "الوزن الإجمالي",
 
-  "netWeightKg": "الوزن الصافي (كيلو)",
+  "netWeightKg": "الوزن الصافي",
 
   "businessInformation": "معلومات العمل",
 

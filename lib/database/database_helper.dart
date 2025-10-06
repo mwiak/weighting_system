@@ -195,6 +195,14 @@ class DatabaseHelper {
       )
     ''');
 
+      await db.execute('''
+      CREATE TABLE prefs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        setting TEXT NOT NULL UNIQUE,
+        data TEXT
+      )
+    ''');
+
       // Create app_settings table
       await db.execute('''
       CREATE TABLE app_settings (
@@ -265,6 +273,11 @@ class DatabaseHelper {
       return await db.insert(table, data,
           conflictAlgorithm: ConflictAlgorithm.abort);
     }
+    if (table == 'prefs') {
+      return await db.insert(table, data,
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+
     return await db.insert(table, data,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }

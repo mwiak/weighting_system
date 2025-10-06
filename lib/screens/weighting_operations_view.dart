@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:weighing_system/widgets/autom_complete_filter_combo_box.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_entry.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
 import 'package:weighing_system/widgets/order_details_dialog.dart';
 import '../providers/report_provider.dart';
 import '../models/weighing_tab.dart';
@@ -356,81 +358,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       topRight: Radius.circular(8),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                          flex: 1,
-                          child: SizedBox(
-                            width: 20,
-                            child: Text(l10n.orderNumber,
-                                style: TextStyle(fontWeight: FontWeight.w600)),
-                          )),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                            width: 20,
-                            child: Text(l10n.dateTime,
-                                style: TextStyle(fontWeight: FontWeight.w600))),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.truckPlate,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.driverName,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.client,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.supplier,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.material,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.netWeightKg,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: SizedBox(
-                          width: 20,
-                          child: Text(l10n.status,
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: OperationHeader(),
                 ),
 
                 // Real data from database
@@ -455,129 +383,11 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                     ),
                   )
                 else
-                  ..._operations
-                      .take(50)
-                      .map((operation) => Container(
-                            key: ValueKey(
-                                'operation_${operation['id'] ?? operation['tab_id'] ?? DateTime.now().millisecondsSinceEpoch}'),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    color: Colors.grey.withOpacity(0.2)),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                        width: 20,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: FilledButton(
-                                            onPressed: () {
-                                              _showOrderDetails(operation);
-                                            },
-                                            child: Text(
-                                                '${operation['id'] ?? operation['tab_id'] ?? ''}'),
-                                          ),
-                                        ))),
-                                Expanded(
-                                  flex: 1,
-                                  child: SizedBox(
-                                    width: 20,
-                                    child: Text(_formatDateTime(
-                                        operation['created_at'])),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: SizedBox(
-                                    width: 20,
-                                    child: Text(operation['truck_plate'] ?? ''),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: SizedBox(
-                                    width: 20,
-                                    child: Text(operation['driver_name'] ?? ''),
-                                  ),
-                                ),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                        width: 20,
-                                        child:
-                                            Text(operation['client'] ?? ''))),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                        width: 20,
-                                        child:
-                                            Text(operation['supplier'] ?? ''))),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                        width: 20,
-                                        child:
-                                            Text(_getMaterialName(operation)))),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                      width: 20,
-                                      child: Text(
-                                          '${(operation['net_weight'] ?? 0.0).toStringAsFixed(1)}'),
-                                    )),
-                                Expanded(
-                                    flex: 1,
-                                    child: SizedBox(
-                                      width: 20,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: _getStatusColor(
-                                                  operation['status'])
-                                              .withOpacity(0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                _formatStatus(
-                                                    operation['status']),
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: _getStatusColor(
-                                                      operation['status']),
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                            if (operation['notes'].isNotEmpty)
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Tooltip(
-                                                    message: 'ملاحظات: ' +
-                                                        operation['notes'],
-                                                    child: Icon(FluentIcons
-                                                        .comment_active)),
-                                              )
-                                          ],
-                                        ),
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          ))
-                      .toList(),
+                  ..._operations.take(50).map((operation) => OperationEntry(
+                      operation: operation,
+                      onPressed: (v) {
+                        _showOrderDetails(v as Map<String, dynamic>);
+                      })),
               ],
             ),
           ),

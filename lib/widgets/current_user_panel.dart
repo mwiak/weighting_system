@@ -17,6 +17,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
     with SingleTickerProviderStateMixin {
   final GlobalKey _parentKey = GlobalKey();
   late User user;
+  bool isInitialized = false;
   bool isHovered = false;
   bool isPressed = false;
   final overlayPortalController = OverlayPortalController();
@@ -56,6 +57,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<UserProvider>();
       user = provider.activeUser!;
+      isInitialized = true;
       provider.addListener(() {
         if (provider.activeUser != null) {
           user = provider.activeUser!;
@@ -83,7 +85,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
 
     return Consumer<UserProvider>(
       builder: (context, value, child) {
-        if (value.activeUser == null) {
+        if (!isInitialized) {
           return Container(
             width: 60,
             height: 60,

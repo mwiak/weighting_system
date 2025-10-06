@@ -61,7 +61,7 @@ class ExcelService {
       List<CellValue> data = [
         if (columns['id'] ?? true) TextCellValue(inputTab.id.toString()),
         if (columns['date'] ?? true)
-          TextCellValue(inputTab.createdAt.toString()),
+          TextCellValue(dateToArabicDatetimeExcel(inputTab.createdAt)),
         if (columns['driverName'] ?? true)
           TextCellValue(inputTab.driverName.toString()),
         if (columns['plateNumber'] ?? true)
@@ -128,7 +128,7 @@ class ExcelService {
       // alternate (greyscale) for every 2nd data row:
       if (i % 2 == 1) {
         final rowIndex = i + 1; // 0 = header, so data starts at 1
-        for (int c = 0; c < 2; c++) {
+        for (int c = 0; c < columnsCells.length; c++) {
           sheet
               .cell(CellIndex.indexByColumnRow(
                   columnIndex: c, rowIndex: rowIndex))
@@ -196,7 +196,7 @@ class ExcelService {
       List<CellValue> data = [
         if (columns['id'] ?? true) TextCellValue(inputTab.id.toString()),
         if (columns['date'] ?? true)
-          TextCellValue(inputTab.createdAt.toString()),
+          TextCellValue(dateToArabicDatetimeExcel(inputTab.createdAt)),
         if (columns['driverName'] ?? true)
           TextCellValue(inputTab.driverName.toString()),
         if (columns['plateNumber'] ?? true)
@@ -256,12 +256,13 @@ class ExcelService {
 
     // Data rows (use TextCellValue and IntCellValue/DoubleCellValue)
     for (int i = 0; i < tabs.length; i++) {
+      if (tabs[i].status == 'cancelled') continue;
       sheet.appendRow(buildRows(tabs[i]));
 
       // alternate (greyscale) for every 2nd data row:
       if (i % 2 == 1) {
         final rowIndex = i + 1; // 0 = header, so data starts at 1
-        for (int c = 0; c < 2; c++) {
+        for (int c = 0; c < columnsCells.length; c++) {
           sheet
               .cell(CellIndex.indexByColumnRow(
                   columnIndex: c, rowIndex: rowIndex))
