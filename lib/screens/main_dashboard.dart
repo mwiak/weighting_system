@@ -6,6 +6,7 @@ import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/reports_view.dart';
 import 'package:weighing_system/screens/settings_main.dart';
+import 'package:weighing_system/screens/summaries_screen.dart';
 import 'package:weighing_system/screens/template_management_screen.dart';
 import 'package:weighing_system/screens/weighting_operations_view.dart';
 import 'package:weighing_system/widgets/current_user_panel.dart';
@@ -46,6 +47,13 @@ class _MainDashboardState extends State<MainDashboard> {
         icon: const Icon(FluentIcons.chart_series),
         title: Text(l10n.reports),
         body: const ReportsView(),
+      ),
+      PaneItem(
+        key: const ValueKey('/summaries'),
+        icon: const Icon(FluentIcons.data_flow),
+        //TODO localize
+        title: Text('الجرد'),
+        body: const SummariesScreen(),
       ),
       PaneItem(
         key: const ValueKey('/template'),

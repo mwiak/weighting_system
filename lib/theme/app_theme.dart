@@ -10,6 +10,7 @@ class AppTheme {
   static const Color warningColor = Color(0xFFF39C12); // Yellow
   static const Color successColor = Color(0xFF27AE60); // Success Green
 
+  static const double summaryBoxSized = 60;
   // Background colors
   static const Color backgroundColor =
       Color(0xFFFAFAFA); // Light gray background

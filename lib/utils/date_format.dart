@@ -12,3 +12,9 @@ String dateToArabicDatetimeShort(DateTime input) {
 
   return formatter.format(input);
 }
+
+String dateToArabicDatetimeForFile(DateTime input) {
+  final formatter = DateFormat('yyyy_MM_dd_hh_mm_a', 'ar');
+
+  return formatter.format(input);
+}

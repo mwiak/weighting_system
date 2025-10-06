@@ -42,6 +42,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   late TextEditingController _supplierController;
   late TextEditingController _materialController;
   late TextEditingController _kiloPriceController;
+  late TextEditingController _notesController;
   late TextEditingController _totalPriceController;
   final TemplatePrintService _printService = TemplatePrintService();
   final CustomTemplateService _templateService = CustomTemplateService();
@@ -125,6 +126,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     _clientController = TextEditingController(text: tab?.client ?? '');
     _supplierController = TextEditingController(text: tab?.supplier ?? '');
     _materialController = TextEditingController(text: tab?.material ?? '');
+    _notesController = TextEditingController(text: tab?.notes ?? '');
     _kiloPriceController = TextEditingController(
         text: tab?.kilo_price.toStringAsFixed(2) ?? (0.0).toStringAsFixed(2));
     _totalPriceController = TextEditingController(
@@ -549,44 +551,65 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
                       const SizedBox(height: 8),
 
-                      // Material
-                      _buildLabel(
-                          AppLocalizations.of(context)!.materialRequired),
-                      const SizedBox(height: 4),
-                      AutoCompleteComboBox(
-                        placeholder:
-                            AppLocalizations.of(context)!.selectMaterial,
-                        value: tab.material,
-                        controller: _materialController,
-                        onChanged: (value) async {
-                          tabsProvider
-                              .updateTab(widget.tabIndex, {'material': value});
-                          if (_materialController.text.isNotEmpty) {
-                            await getMaterialLogic();
-                          }
-                        },
-                        suggestionType: AutoCompleteType.material,
-                      ),
-                      const SizedBox(height: 8),
-
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              _buildLabel(AppLocalizations.of(context)!
+                                  .materialRequired),
+                              const SizedBox(height: 4),
+                              AutoCompleteComboBox(
+                                placeholder: AppLocalizations.of(context)!
+                                    .selectMaterial,
+                                value: tab.material,
+                                controller: _materialController,
+                                onChanged: (value) async {
+                                  tabsProvider.updateTab(
+                                      widget.tabIndex, {'material': value});
+                                  if (_materialController.text.isNotEmpty) {
+                                    await getMaterialLogic();
+                                  }
+                                },
+                                suggestionType: AutoCompleteType.material,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
                           KiloPriceBox(
                               controller: _kiloPriceController,
                               onChange: (v) {
                                 calculateTotalPrice();
                               }),
                           SizedBox(
-                            width: 8,
+                            width: 5,
                           ),
                           TotalPriceBox(
                               controller: _totalPriceController,
                               onChange: (v) {})
                         ],
-                      ),
+                      ), // Material
 
                       const SizedBox(height: 8),
 
+                      Row(
+                        children: [
+                          _buildLabel(AppLocalizations.of(context)!.notes),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            child: TextBox(
+                                controller: _notesController,
+                                onChanged: (v) {
+                                  tabsProvider
+                                      .updateTab(widget.tabIndex, {'notes': v});
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       // Payment Status
                       ToggleSwitch(
                         checked: tab.isPaid,

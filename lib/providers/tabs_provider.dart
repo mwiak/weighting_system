@@ -261,6 +261,13 @@ class TabsProvider extends ChangeNotifier {
         hasChanges = true;
       }
     }
+    if (updates.containsKey('notes')) {
+      final value = updates['notes'] as String? ?? '';
+      if (tab.notes != value) {
+        tab.notes = value;
+        hasChanges = true;
+      }
+    }
 
     if (updates.containsKey('isPaid')) {
       final value = updates['isPaid'] as bool? ?? false;

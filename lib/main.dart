@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:weighing_system/providers/summaries_provider.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/login_screen.dart';
 import 'package:window_manager/window_manager.dart';
@@ -19,21 +20,26 @@ import 'providers/app_settings_provider.dart';
 import 'providers/driver_provider.dart';
 import 'providers/driver_plate_provider.dart';
 import 'providers/tabs_provider.dart';
-import 'screens/main_dashboard.dart';
 import 'theme/app_theme.dart';
+import 'package:screen_retriever/screen_retriever.dart';
 
 void main() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize window manager for desktop
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(1100, 750),
-    minimumSize: Size(900, 650),
+  final display = await screenRetriever.getPrimaryDisplay();
+  final screenSize = display.size;
+  final hdSize = Size(1366, 768);
+  final windowWidth = hdSize.width * 0.88;
+  final windowHeight = hdSize.height * 0.8;
+
+  // Initialize window manager for desktop
+
+  WindowOptions windowOptions = WindowOptions(
+    size: Size(windowWidth, windowHeight),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -44,6 +50,7 @@ void main() async {
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
+    await windowManager.setResizable(false);
   });
 
   runApp(const WeighingSystemApp());
@@ -69,6 +76,7 @@ class WeighingSystemApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DriverPlateProvider()),
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => SummariesProvider()),
       ],
       child: fluent.FluentApp(
         title: 'Truck Weighing System',

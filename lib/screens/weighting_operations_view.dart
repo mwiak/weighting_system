@@ -6,6 +6,7 @@ import 'package:weighing_system/widgets/autom_complete_filter_combo_box.dart';
 import 'package:weighing_system/widgets/order_details_dialog.dart';
 import '../providers/report_provider.dart';
 import '../models/weighing_tab.dart';
+import '../services/excel_service.dart';
 
 class WeightingOperationsView extends StatefulWidget {
   const WeightingOperationsView({super.key});
@@ -81,6 +82,23 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     final l10n = AppLocalizations.of(context)!;
 
     return ScaffoldPage.scrollable(
+      header: PageHeader(
+        title: CommandBar(
+          primaryItems: [
+            CommandBarButton(
+              icon: const Icon(FluentIcons.time_sheet),
+              label: Text('تصدير excel'),
+              onPressed: () {
+                final excel = ExcelService();
+                excel.createOperationsExcel(
+                    tabs:
+                        _operations.map((o) => WeighingTab.fromMap(o)).toList(),
+                    context: context);
+              },
+            ),
+          ],
+        ),
+      ),
       children: [
         Expander(
           contentPadding: EdgeInsets.zero,
@@ -339,43 +357,78 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                     ),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Expanded(
                           flex: 1,
-                          child: Text(l10n.orderNumber,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                          child: SizedBox(
+                            width: 20,
+                            child: Text(l10n.orderNumber,
+                                style: TextStyle(fontWeight: FontWeight.w600)),
+                          )),
                       Expanded(
-                          flex: 1,
-                          child: Text(l10n.dateTime,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                        flex: 1,
+                        child: SizedBox(
+                            width: 20,
+                            child: Text(l10n.dateTime,
+                                style: TextStyle(fontWeight: FontWeight.w600))),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.truckPlate,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.driverName,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.client,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.supplier,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.material,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 2,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.netWeightKg,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                       Expanded(
-                          flex: 1,
+                        flex: 1,
+                        child: SizedBox(
+                          width: 20,
                           child: Text(l10n.status,
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -415,64 +468,110 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                               ),
                             ),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Expanded(
                                     flex: 1,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: FilledButton(
-                                        onPressed: () {
-                                          _showOrderDetails(operation);
-                                        },
-                                        child: Text(
-                                            '${operation['id'] ?? operation['tab_id'] ?? ''}'),
-                                      ),
+                                    child: SizedBox(
+                                        width: 20,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: FilledButton(
+                                            onPressed: () {
+                                              _showOrderDetails(operation);
+                                            },
+                                            child: Text(
+                                                '${operation['id'] ?? operation['tab_id'] ?? ''}'),
+                                          ),
+                                        ))),
+                                Expanded(
+                                  flex: 1,
+                                  child: SizedBox(
+                                    width: 20,
+                                    child: Text(_formatDateTime(
+                                        operation['created_at'])),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: SizedBox(
+                                    width: 20,
+                                    child: Text(operation['truck_plate'] ?? ''),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: SizedBox(
+                                    width: 20,
+                                    child: Text(operation['driver_name'] ?? ''),
+                                  ),
+                                ),
+                                Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                        width: 20,
+                                        child:
+                                            Text(operation['client'] ?? ''))),
+                                Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                        width: 20,
+                                        child:
+                                            Text(operation['supplier'] ?? ''))),
+                                Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                        width: 20,
+                                        child:
+                                            Text(_getMaterialName(operation)))),
+                                Expanded(
+                                    flex: 1,
+                                    child: SizedBox(
+                                      width: 20,
+                                      child: Text(
+                                          '${(operation['net_weight'] ?? 0.0).toStringAsFixed(1)}'),
                                     )),
                                 Expanded(
                                     flex: 1,
-                                    child: Text(_formatDateTime(
-                                        operation['created_at']))),
-                                Expanded(
-                                    flex: 1,
-                                    child:
-                                        Text(operation['truck_plate'] ?? '')),
-                                Expanded(
-                                    flex: 1,
-                                    child:
-                                        Text(operation['driver_name'] ?? '')),
-                                Expanded(
-                                    flex: 1,
-                                    child: Text(operation['client'] ?? '')),
-                                Expanded(
-                                    flex: 1,
-                                    child: Text(operation['supplier'] ?? '')),
-                                Expanded(
-                                    flex: 1,
-                                    child: Text(_getMaterialName(operation))),
-                                Expanded(
-                                    flex: 2,
-                                    child: Text(
-                                        '${(operation['net_weight'] ?? 0.0).toStringAsFixed(1)}')),
-                                Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            _getStatusColor(operation['status'])
-                                                .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Text(
-                                        _formatStatus(operation['status']),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
+                                    child: SizedBox(
+                                      width: 20,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
                                           color: _getStatusColor(
-                                              operation['status']),
+                                                  operation['status'])
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                        textAlign: TextAlign.center,
+                                        child: Stack(
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                _formatStatus(
+                                                    operation['status']),
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: _getStatusColor(
+                                                      operation['status']),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            if (operation['notes'].isNotEmpty)
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Tooltip(
+                                                    message: 'ملاحظات: ' +
+                                                        operation['notes'],
+                                                    child: Icon(FluentIcons
+                                                        .comment_active)),
+                                              )
+                                          ],
+                                        ),
                                       ),
                                     )),
                               ],
@@ -527,13 +626,27 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
         'N/A';
   }
 
-  String _formatStatus(dynamic status) {
-    if (status == null) return 'Unknown';
-    return status
-        .toString()
-        .split('_')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
+  String _formatStatus(String status) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return l10n.statusCompleted;
+      case 'in-progress':
+      case 'inprogress':
+        return l10n.statusInProgress;
+      case 'incomplete':
+        return l10n.statusIncomplete;
+      case 'cancelled':
+        return l10n.statusCancelled;
+      case 'empty':
+        return l10n.statusEmpty;
+      default:
+        // Fallback: capitalize each word
+        return status
+            .split('-')
+            .map((word) => word[0].toUpperCase() + word.substring(1))
+            .join(' ');
+    }
   }
 
   Color _getStatusColor(dynamic status) {

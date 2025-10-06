@@ -1,5 +1,13 @@
 import 'package:flutter/foundation.dart';
 
+extension PriceSum on List<WeighingTab> {
+  num get totalPrice => fold(0.0, (sum, tab) => sum + tab.total_price);
+}
+
+extension NetWeightSum on List<WeighingTab> {
+  int get totalWeight => fold(0, (sum, tab) => sum + tab.netWeight);
+}
+
 class WeighingTab {
   int? id; // Database ID (null until persisted)
 
@@ -25,6 +33,8 @@ class WeighingTab {
 
   num kilo_price = 0.0;
   num total_price = 0.0;
+
+  String notes = '';
 
   bool isPaid = false;
   bool showPriceOnPrint = false;
@@ -207,6 +217,7 @@ class WeighingTab {
       'material': material,
       'kilo_price': kilo_price,
       'total_price': total_price,
+      'notes': notes,
       'is_paid': isPaid ? 1 : 0,
       'show_price_on_print': showPriceOnPrint ? 1 : 0,
       'has_unsaved_changes': hasUnsavedChanges ? 1 : 0,
@@ -235,6 +246,7 @@ class WeighingTab {
     tab.supplier = map['supplier'] as String? ?? '';
     tab.client = map['client'] as String? ?? '';
     tab.material = map['material'] as String? ?? '';
+    tab.notes = map['notes'] as String? ?? '';
     tab.kilo_price = map['kilo_price'] as num? ?? 0.0;
     tab.total_price = map['total_price'] as num? ?? 0.0;
     tab.isPaid = (map['is_paid'] as int?) == 1;

@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 *.md
+database.db
 NUL
 .DS_Store
 .atom/

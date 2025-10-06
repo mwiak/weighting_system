@@ -112,7 +112,7 @@ class _CurrentUserPanelState extends State<CurrentUserPanel>
                 shape: BoxShape.circle,
                 color: _avatarColor,
                 border: Border.all(
-                    width: 5,
+                    width: user.type == UserRanks.admin ? 5 : 1,
                     color: user.type == UserRanks.admin
                         ? Colors.yellow
                         : Colors.transparent),

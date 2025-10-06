@@ -80,8 +80,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create suppliers table
-    await db.execute('''
+      // Create suppliers table
+      await db.execute('''
       CREATE TABLE suppliers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
@@ -97,8 +97,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create materials table
-    await db.execute('''
+      // Create materials table
+      await db.execute('''
       CREATE TABLE materials (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
@@ -113,10 +113,10 @@ class DatabaseHelper {
       )
     ''');
 
-    // Orders table removed - replaced by weighing_tabs table
+      // Orders table removed - replaced by weighing_tabs table
 
-    // Create sync queue table
-    await db.execute('''
+      // Create sync queue table
+      await db.execute('''
       CREATE TABLE sync_queue (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         table_name TEXT NOT NULL,
@@ -131,8 +131,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create drivers table - now with plate numbers instead of license
-    await db.execute('''
+      // Create drivers table - now with plate numbers instead of license
+      await db.execute('''
       CREATE TABLE drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
@@ -146,8 +146,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create driver_plates table - simple mapping of drivers to plate numbers
-    await db.execute('''
+      // Create driver_plates table - simple mapping of drivers to plate numbers
+      await db.execute('''
       CREATE TABLE driver_plates (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         driver_id INTEGER NOT NULL,
@@ -160,8 +160,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create weighing_tabs table (new tab management system)
-    await db.execute('''
+      // Create weighing_tabs table (new tab management system)
+      await db.execute('''
       CREATE TABLE weighing_tabs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         empty_weight INTEGER DEFAULT 0,
@@ -176,6 +176,7 @@ class DatabaseHelper {
         material TEXT DEFAULT '',
         kilo_price REAL,
         total_price REAL,
+        notes TEXT DEFAULT '',
         is_paid INTEGER DEFAULT 0,
         show_price_on_print INTEGER DEFAULT 0,
         has_unsaved_changes INTEGER DEFAULT 0,
@@ -184,8 +185,8 @@ class DatabaseHelper {
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     ''');
-    //auth - admin or normal
-    await db.execute('''
+      //auth - admin or normal
+      await db.execute('''
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
@@ -194,8 +195,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create app_settings table
-    await db.execute('''
+      // Create app_settings table
+      await db.execute('''
       CREATE TABLE app_settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         setting_key TEXT NOT NULL UNIQUE,
@@ -207,8 +208,8 @@ class DatabaseHelper {
       )
     ''');
 
-    // Insert default Odoo settings
-    await db.execute('''
+      // Insert default Odoo settings
+      await db.execute('''
       INSERT INTO app_settings (setting_key, setting_value, setting_type, description) VALUES
       ('odoo_url', '', 'string', 'Odoo server URL'),
       ('odoo_database', '', 'string', 'Odoo database name'),
@@ -219,30 +220,30 @@ class DatabaseHelper {
       ('auto_sync_enabled', '1', 'boolean', 'Enable automatic synchronization with Odoo')
     ''');
 
-    await db.execute('''
+      await db.execute('''
       INSERT INTO users (username, password, type) VALUES
       ('Mohammed', '362646', 'admin'),
       ('Abo Hussien', '0', 'user')
     ''');
 
-    // Create indexes for better performance
-    await db.execute('CREATE INDEX idx_clients_name ON clients (name)');
-    await db.execute('CREATE INDEX idx_suppliers_name ON suppliers (name)');
-    await db.execute('CREATE INDEX idx_materials_name ON materials (name)');
-    // Orders indexes removed - replaced by weighing_tabs indexes
-    await db.execute(
-        'CREATE INDEX idx_sync_queue_table_record ON sync_queue (table_name, record_id)');
-    await db.execute('CREATE INDEX idx_drivers_name ON drivers (name)');
-    await db.execute(
-        'CREATE INDEX idx_driver_plates_driver ON driver_plates (driver_id)');
-    await db.execute(
-        'CREATE INDEX idx_driver_plates_plate ON driver_plates (plate_number)');
-    await db.execute(
-        'CREATE INDEX idx_app_settings_key ON app_settings (setting_key)');
-    await db.execute(
-        'CREATE INDEX idx_weighing_tabs_truck ON weighing_tabs (truck_plate)');
-    await db.execute(
-        'CREATE INDEX idx_weighing_tabs_status ON weighing_tabs (status)');
+      // Create indexes for better performance
+      await db.execute('CREATE INDEX idx_clients_name ON clients (name)');
+      await db.execute('CREATE INDEX idx_suppliers_name ON suppliers (name)');
+      await db.execute('CREATE INDEX idx_materials_name ON materials (name)');
+      // Orders indexes removed - replaced by weighing_tabs indexes
+      await db.execute(
+          'CREATE INDEX idx_sync_queue_table_record ON sync_queue (table_name, record_id)');
+      await db.execute('CREATE INDEX idx_drivers_name ON drivers (name)');
+      await db.execute(
+          'CREATE INDEX idx_driver_plates_driver ON driver_plates (driver_id)');
+      await db.execute(
+          'CREATE INDEX idx_driver_plates_plate ON driver_plates (plate_number)');
+      await db.execute(
+          'CREATE INDEX idx_app_settings_key ON app_settings (setting_key)');
+      await db.execute(
+          'CREATE INDEX idx_weighing_tabs_truck ON weighing_tabs (truck_plate)');
+      await db.execute(
+          'CREATE INDEX idx_weighing_tabs_status ON weighing_tabs (status)');
 
       debugPrint('All tables and indexes created successfully');
     } catch (e, stackTrace) {

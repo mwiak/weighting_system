@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen>
       builder: (BuildContext context, UserProvider value, Widget? child) {
         if (value.isInitializing) {
           return ScaffoldPage(
+            padding: EdgeInsets.zero,
             content: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -113,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen>
         users = value.allUsers;
 
         return ScaffoldPage(
+          padding: EdgeInsets.zero,
           content: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -131,6 +133,8 @@ class _LoginScreenState extends State<LoginScreen>
                 child: SlideTransition(
                   position: _slideAnimation,
                   child: Card(
+                    backgroundColor: Color(0x30E6E0E0),
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
                     padding: const EdgeInsets.all(48),
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 500),
