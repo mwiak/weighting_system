@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:weighing_system/providers/seasons_provider.dart';
 import 'package:weighing_system/providers/summaries_provider.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/login_screen.dart';
@@ -77,6 +78,10 @@ class WeighingSystemApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => SummariesProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SeasonsProvider(),
+          lazy: false,
+        ),
       ],
       child: fluent.FluentApp(
         title: 'Truck Weighing System',

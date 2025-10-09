@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'dart:io';
@@ -233,7 +235,13 @@ class DatabaseHelper {
       ('Mohammed', '362646', 'admin'),
       ('Abo Hussien', '0', 'user')
     ''');
-
+      await db.insert('prefs', {
+        'setting': 'seasons',
+        'data': json.encode({
+          'dayOfInversion': DateTime(2025, 10, 5).toIso8601String(),
+          'firstSeason': DateTime.now().toIso8601String()
+        })
+      });
       // Create indexes for better performance
       await db.execute('CREATE INDEX idx_clients_name ON clients (name)');
       await db.execute('CREATE INDEX idx_suppliers_name ON suppliers (name)');

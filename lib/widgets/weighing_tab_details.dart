@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
 import '../providers/tabs_provider.dart';
 import '../models/weighing_tab.dart';
 
@@ -21,7 +22,6 @@ class WeighingTabDetails extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Row(
                   children: [
                     const Icon(FluentIcons.info, size: 20),
@@ -49,41 +49,40 @@ class WeighingTabDetails extends StatelessWidget {
   }
 
   Widget _buildNoSelectionState() {
-    return Builder(
-      builder: (context) {
-        final l10n = AppLocalizations.of(context)!;
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                FluentIcons.info,
-                size: 48,
+    return Builder(builder: (context) {
+      final l10n = AppLocalizations.of(context)!;
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              FluentIcons.info,
+              size: 48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.noTabSelectedMessage,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: Colors.grey,
               ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.noTabSelectedMessage,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.selectTabToView,
-                style: const TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      }
-    );
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.selectTabToView,
+              style: const TextStyle(color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildTabDetails(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+  Widget _buildTabDetails(
+      BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
     final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
@@ -160,8 +159,18 @@ class WeighingTabDetails extends StatelessWidget {
             l10n.vehicleInformation,
             FluentIcons.bus,
             [
-              _buildDetailRow(l10n.truckPlateLabel, tab.truckPlate.isNotEmpty ? tab.truckPlate : l10n.notSpecified, l10n),
-              _buildDetailRow(l10n.driverName, tab.driverName.isNotEmpty ? tab.driverName : l10n.notSpecified, l10n),
+              _buildDetailRow(
+                  l10n.truckPlateLabel,
+                  tab.truckPlate.isNotEmpty
+                      ? tab.truckPlate
+                      : l10n.notSpecified,
+                  l10n),
+              _buildDetailRow(
+                  l10n.driverName,
+                  tab.driverName.isNotEmpty
+                      ? tab.driverName
+                      : l10n.notSpecified,
+                  l10n),
             ],
           ),
           const SizedBox(height: 20),
@@ -199,12 +208,22 @@ class WeighingTabDetails extends StatelessWidget {
             l10n.businessInformation,
             FluentIcons.people,
             [
-              _buildDetailRow(l10n.clientSupplier,
-                (tab.client.isNotEmpty ? tab.client : tab.supplier.isNotEmpty ? tab.supplier : l10n.notSpecified), l10n),
-              _buildDetailRow(l10n.material,
-                tab.material.isNotEmpty ? tab.material : l10n.notSpecified, l10n),
-              _buildDetailRow(l10n.paymentStatus, tab.isPaid ? l10n.paid : l10n.unpaid, l10n),
-              _buildDetailRow(l10n.showPriceOnPrint, tab.showPriceOnPrint ? l10n.yes : l10n.no, l10n),
+              _buildDetailRow(
+                  l10n.clientSupplier,
+                  (tab.client.isNotEmpty
+                      ? tab.client
+                      : tab.supplier.isNotEmpty
+                          ? tab.supplier
+                          : l10n.notSpecified),
+                  l10n),
+              _buildDetailRow(
+                  l10n.material,
+                  tab.material.isNotEmpty ? tab.material : l10n.notSpecified,
+                  l10n),
+              _buildDetailRow(l10n.paymentStatus,
+                  tab.isPaid ? l10n.paid : l10n.unpaid, l10n),
+              _buildDetailRow(l10n.showPriceOnPrint,
+                  tab.showPriceOnPrint ? l10n.yes : l10n.no, l10n),
             ],
           ),
           const SizedBox(height: 20),
@@ -214,8 +233,10 @@ class WeighingTabDetails extends StatelessWidget {
             l10n.timingInformation,
             FluentIcons.clock,
             [
-              _buildDetailRow(l10n.createdAt, _formatDateTime(tab.createdAt, l10n), l10n),
-              _buildDetailRow(l10n.lastUpdated, _formatDateTime(tab.updatedAt, l10n), l10n),
+              _buildDetailRow(
+                  l10n.createdAt, _formatDateTime(tab.createdAt, l10n), l10n),
+              _buildDetailRow(
+                  l10n.lastUpdated, _formatDateTime(tab.updatedAt, l10n), l10n),
               // Operation type removed from schema
             ],
           ),
@@ -252,7 +273,8 @@ class WeighingTabDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, AppLocalizations l10n, {bool isHighlighted = false}) {
+  Widget _buildDetailRow(String label, String value, AppLocalizations l10n,
+      {bool isHighlighted = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -284,7 +306,8 @@ class WeighingTabDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildActionsSection(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+  Widget _buildActionsSection(
+      BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -445,8 +468,7 @@ class WeighingTabDetails extends StatelessWidget {
 
   void _startWeighing(BuildContext context, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
-    _showInfoBar(
-        context, l10n.switchToWeighingTab, InfoBarSeverity.info);
+    _showInfoBar(context, l10n.switchToWeighingTab, InfoBarSeverity.info);
   }
 
   void _continueWeighing(BuildContext context, WeighingTab tab) {
@@ -455,7 +477,8 @@ class WeighingTabDetails extends StatelessWidget {
         context, l10n.switchToWeighingTabContinue, InfoBarSeverity.info);
   }
 
-  void _completeTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+  void _completeTab(
+      BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -473,8 +496,8 @@ class WeighingTabDetails extends StatelessWidget {
               tab.completeTab();
               tabsProvider.saveTab(tab);
               Navigator.of(context).pop();
-              _showInfoBar(context, l10n.tabCompletedSuccess,
-                  InfoBarSeverity.success);
+              _showInfoBar(
+                  context, l10n.tabCompletedSuccess, InfoBarSeverity.success);
             },
           ),
         ],
@@ -484,8 +507,7 @@ class WeighingTabDetails extends StatelessWidget {
 
   void _editTab(BuildContext context, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
-    _showInfoBar(
-        context, l10n.tabEditingComingSoon, InfoBarSeverity.info);
+    _showInfoBar(context, l10n.tabEditingComingSoon, InfoBarSeverity.info);
   }
 
   void _printTab(BuildContext context, WeighingTab tab) {
@@ -494,7 +516,8 @@ class WeighingTabDetails extends StatelessWidget {
         context, l10n.printFunctionalityComingSoon, InfoBarSeverity.info);
   }
 
-  void _resetTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+  void _resetTab(
+      BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -512,8 +535,8 @@ class WeighingTabDetails extends StatelessWidget {
               tab.reset();
               tabsProvider.saveTab(tab);
               Navigator.of(context).pop();
-              _showInfoBar(context, l10n.tabResetSuccess,
-                  InfoBarSeverity.warning);
+              _showInfoBar(
+                  context, l10n.tabResetSuccess, InfoBarSeverity.warning);
             },
           ),
         ],
@@ -521,7 +544,8 @@ class WeighingTabDetails extends StatelessWidget {
     );
   }
 
-  void _cancelTab(BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
+  void _cancelTab(
+      BuildContext context, WeighingTab tab, TabsProvider tabsProvider) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -538,11 +562,14 @@ class WeighingTabDetails extends StatelessWidget {
             onPressed: () async {
               Navigator.of(context).pop();
               // Use unified cancellation logic from TabsProvider
-              final success = await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
+              final success =
+                  await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
               if (success) {
-                _showInfoBar(context, l10n.tabCancelledMessage, InfoBarSeverity.warning);
+                _showInfoBar(
+                    context, l10n.tabCancelledMessage, InfoBarSeverity.warning);
               } else {
-                _showInfoBar(context, l10n.failedToCancelTab, InfoBarSeverity.error);
+                _showInfoBar(
+                    context, l10n.failedToCancelTab, InfoBarSeverity.error);
               }
             },
           ),

@@ -1,6 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/models/user.dart';
+import 'package:weighing_system/providers/user_provider.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_entry.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
 import '../models/print_template.dart';
 import '../services/custom_template_service.dart';
 import '../services/template_print_service.dart';
@@ -106,209 +110,181 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return ContentDialog(
-      constraints: const BoxConstraints(
-        maxWidth: 1200,
-        maxHeight: 900,
-      ),
-      title: Row(
-        children: [
-          const Icon(FluentIcons.info),
-          const SizedBox(width: 8),
-          Text(l10n.orderDetails),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(FluentIcons.chrome_close),
-            onPressed: () => Navigator.of(context).pop(),
+    return Consumer<UserProvider>(
+      builder: (BuildContext context, value, Widget? child) {
+        return ContentDialog(
+          constraints: const BoxConstraints(
+            maxWidth: 1200,
+            maxHeight: 900,
           ),
-        ],
-      ),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 700,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Action buttons row
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    onPressed: _printOrder,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(FluentIcons.print),
-                        const SizedBox(width: 8),
-                        Text(l10n.print),
-                      ],
-                    ),
+          title: Row(
+            children: [
+              const Icon(FluentIcons.info),
+              const SizedBox(width: 8),
+              Text(l10n.orderDetails),
+              const SizedBox(width: 8),
+              if (value.activeUser!.type == UserRanks.admin) ...[
+                Button(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.delete),
+                      const SizedBox(width: 8),
+                      Text(l10n.delete),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
+                Button(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.cancel),
+                      const SizedBox(width: 8),
+                      Text(l10n.cancel),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Button(
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(FluentIcons.edit),
+                      const SizedBox(width: 8),
+                      Text(l10n.edit),
+                    ],
+                  ),
+                ),
+              ],
+              const Spacer(),
+              FilledButton(
+                onPressed: _printOrder,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(FluentIcons.print),
+                    const SizedBox(width: 8),
+                    Text(l10n.print),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Button(
+                onPressed: _savePDF,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(FluentIcons.save),
+                    const SizedBox(width: 8),
+                    Text(l10n.savePDF),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(FluentIcons.chrome_close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 700,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                OperationDetailsHeader(),
+                SizedBox(
+                  height: 10,
+                ),
+                // Action buttons row
+
+                const SizedBox(height: 8),
+                OperationDetailsEntry(
+                    operation: widget.operation.toMap(), onPressed: () {}),
+
+                // Order details content
                 Expanded(
-                  child: Button(
-                    onPressed: _savePDF,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(FluentIcons.save),
-                        const SizedBox(width: 8),
-                        Text(l10n.savePDF),
+                        // Use a two-column layout to fit more information
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Left Column
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  // Basic Order Information
+                                  _buildSection(
+                                    l10n.additionalInfo,
+                                    [
+                                      _buildDetailRow(
+                                          l10n.status,
+                                          _formatStatus(
+                                              widget.operation.status)),
+                                      _buildDetailRow(
+                                          l10n.createDate,
+                                          _formatDateTime(
+                                              widget.operation.createdAt)),
+                                      _buildDetailRow(
+                                          l10n.lastUpdated,
+                                          _formatDateTime(
+                                              widget.operation.updatedAt)),
+                                      _buildDetailRow(
+                                          l10n.weighInTime,
+                                          _formatDateTime(widget
+                                              .operation.scaleEmptyWeightAt)),
+                                      _buildDetailRow(
+                                          l10n.weighOutTime,
+                                          _formatDateTime(widget
+                                              .operation.scaleGrossWeightAt)),
+                                      _buildDetailRow(
+                                          l10n.paid,
+                                          widget.operation.isPaid
+                                              ? l10n.yes
+                                              : l10n.no),
+                                      _buildDetailRow(
+                                          l10n.showPriceOnPrint,
+                                          widget.operation.showPriceOnPrint
+                                              ? l10n.yes
+                                              : l10n.no),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // Vehicle and Driver Information
+                                  const SizedBox(height: 16),
+                                  // Business Partners Information
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            // Right Column
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-
-            // Order details content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Use a two-column layout to fit more information
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Column
-                        Expanded(
-                          child: Column(
-                            children: [
-                              // Basic Order Information
-                              _buildSection(
-                                l10n.basicInformation,
-                                [
-                                  _buildDetailRow(l10n.orderNumber,
-                                      '${widget.operation.id}'),
-                                  _buildDetailRow(l10n.status,
-                                      _formatStatus(widget.operation.status)),
-                                  _buildDetailRow(
-                                      l10n.createDate,
-                                      _formatDateTime(
-                                          widget.operation.createdAt)),
-                                  _buildDetailRow(
-                                      l10n.lastUpdated,
-                                      _formatDateTime(
-                                          widget.operation.updatedAt)),
-                                  _buildDetailRow(
-                                      l10n.weighInTime,
-                                      _formatDateTime(
-                                          widget.operation.scaleEmptyWeightAt)),
-                                  _buildDetailRow(
-                                      l10n.weighOutTime,
-                                      _formatDateTime(
-                                          widget.operation.scaleGrossWeightAt)),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Vehicle and Driver Information
-                              _buildSection(
-                                l10n.vehicleInformation,
-                                [
-                                  _buildDetailRow(l10n.truckPlate,
-                                      widget.operation.truckPlate),
-                                  _buildDetailRow(l10n.driverName,
-                                      widget.operation.driverName),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Business Partners Information
-                              _buildSection(
-                                l10n.businessPartners,
-                                [
-                                  _buildDetailRow(
-                                      l10n.client, widget.operation.client),
-                                  _buildDetailRow(
-                                      l10n.supplier, widget.operation.supplier),
-                                  _buildDetailRow(
-                                      l10n.material, widget.operation.material),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
-                        // Right Column
-                        Expanded(
-                          child: Column(
-                            children: [
-                              // Weight Measurements
-                              _buildSection(
-                                l10n.weightMeasurements,
-                                [
-                                  _buildDetailRow(l10n.grossWeight,
-                                      '${widget.operation.grossWeight} kg'),
-                                  _buildDetailRow(l10n.tareWeight,
-                                      '${widget.operation.emptyWeight} kg'),
-                                  _buildDetailRow(l10n.netWeight,
-                                      '${widget.operation.netWeight} kg'),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Financial Information
-                              _buildSection(
-                                l10n.financialInformation,
-                                [
-                                  _buildDetailRow(l10n.unitPrice,
-                                      '${widget.operation.kilo_price.toStringAsFixed(2)}'),
-                                  _buildDetailRow(l10n.totalAmount,
-                                      '${widget.operation.total_price.toStringAsFixed(2)}'),
-                                  _buildDetailRow(
-                                      l10n.paid,
-                                      widget.operation.isPaid
-                                          ? l10n.yes
-                                          : l10n.no),
-                                  _buildDetailRow(
-                                      l10n.showPriceOnPrint,
-                                      widget.operation.showPriceOnPrint
-                                          ? l10n.yes
-                                          : l10n.no),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Additional Information
-                              _buildSection(
-                                l10n.additionalInfo,
-                                [
-                                  _buildDetailRow(
-                                      l10n.unsavedChanges,
-                                      widget.operation.hasUnsavedChanges
-                                          ? l10n.yes
-                                          : l10n.no),
-                                  _buildDetailRow(
-                                      l10n.completed,
-                                      widget.operation.isComplete
-                                          ? l10n.yes
-                                          : l10n.no),
-                                  _buildDetailRow(
-                                      l10n.databaseId,
-                                      widget.operation.id?.toString() ??
-                                          l10n.unsaved),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
+          ),
+          actions: [
+            Button(
+              child: Text(l10n.close),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
-        ),
-      ),
-      actions: [
-        Button(
-          child: Text(l10n.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ],
+        );
+      },
     );
   }
 

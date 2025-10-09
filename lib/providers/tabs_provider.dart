@@ -9,7 +9,7 @@ import '../models/material.dart';
 
 class TabsProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
-
+  WeighingTab? manualActiveTab;
   List<WeighingTab> _tabs = [];
   int _currentTabIndex = -1;
   static const int maxTabs = 15;
@@ -85,9 +85,32 @@ class TabsProvider extends ChangeNotifier {
     }
   }
 
+  Future<int> createNewManualTab() async {
+    final tab = WeighingTab();
+
+    // Immediately insert into database to get ID
+    try {
+      final tabData = tab.toMap();
+      tabData.remove('id'); // Remove null id for insert
+      final dbId = await _db.insert('weighing_tabs', tabData);
+      tab.id = dbId;
+      manualActiveTab = tab;
+      notifyListeners();
+      debugPrint('TabsProvider: Created new tab with ID ${tab.id}');
+      return dbId;
+    } catch (e) {
+      debugPrint('TabsProvider: Error creating new tab: $e');
+      return 0;
+    }
+  }
+
   /// Check if a new tab can be created
   bool canCreateNewTab() {
     return _tabs.length < maxTabs;
+  }
+
+  void createInMemoryManualTab() {
+    manualActiveTab = WeighingTab();
   }
 
   /// Switch to a specific tab
@@ -299,6 +322,139 @@ class TabsProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateManualTab(int tab, Map<String, dynamic> updates) async {
+    final tab = manualActiveTab!;
+    bool hasChanges = false;
+
+    // Update the tab fields
+    if (updates.containsKey('createdAt')) {
+      final value = (updates['createdAt'] as DateTime?) ?? DateTime.now();
+      if (tab.createdAt != value) {
+        tab.createdAt = value;
+      }
+    }
+
+    if (updates.containsKey('emptyWeight')) {
+      final value = (updates['emptyWeight'] as int?) ?? 0;
+      if (tab.emptyWeight != value) {
+        tab.emptyWeight = value;
+      }
+    }
+
+    if (updates.containsKey('scaleEmptyWeight')) {
+      final value =
+          (updates['scaleEmptyWeight'] as DateTime?) ?? DateTime.now();
+
+      tab.scaleEmptyWeightAt = value;
+    }
+
+    if (updates.containsKey('grossWeight')) {
+      final value = (updates['grossWeight'] as int?) ?? 0;
+      if (tab.grossWeight != value) {
+        tab.grossWeight = value;
+      }
+    }
+
+    if (updates.containsKey('scaleGrossWeight')) {
+      final value =
+          (updates['scaleGrossWeight'] as DateTime?) ?? DateTime.now();
+
+      tab.scaleGrossWeightAt = value;
+    }
+
+    if (updates.containsKey('truckPlate')) {
+      final value = updates['truckPlate'] as String? ?? '';
+      if (tab.truckPlate != value) {
+        tab.truckPlate = value;
+      }
+    }
+
+    if (updates.containsKey('driverName')) {
+      final value = updates['driverName'] as String? ?? '';
+      if (tab.driverName != value) {
+        tab.driverName = value;
+      }
+    }
+
+    if (updates.containsKey('supplier')) {
+      final value = updates['supplier'] as String? ?? '';
+      if (tab.supplier != value) {
+        tab.supplier = value;
+        // Clear client when supplier is set (mutual exclusivity)
+        if (value.isNotEmpty && tab.client.isNotEmpty) {
+          tab.client = '';
+        }
+      }
+    }
+
+    if (updates.containsKey('client')) {
+      final value = updates['client'] as String? ?? '';
+      if (tab.client != value) {
+        tab.client = value;
+        // Clear supplier when client is set (mutual exclusivity)
+        if (value.isNotEmpty && tab.supplier.isNotEmpty) {
+          tab.supplier = '';
+        }
+      }
+    }
+
+    if (updates.containsKey('material')) {
+      final value = updates['material'] as String? ?? '';
+      if (tab.material != value) {
+        tab.material = value;
+      }
+    }
+
+    if (updates.containsKey('kilo_price')) {
+      final value = updates['kilo_price'] as num? ?? 0.0;
+      if (tab.kilo_price != value) {
+        tab.kilo_price = value;
+      }
+    }
+
+    if (updates.containsKey('total_price')) {
+      final value = updates['total_price'] as num? ?? 0.0;
+      if (tab.total_price != value) {
+        tab.total_price = value;
+      }
+    }
+    if (updates.containsKey('notes')) {
+      final value = updates['notes'] as String? ?? '';
+      if (tab.notes != value) {
+        tab.notes = value;
+      }
+    }
+
+    if (updates.containsKey('isPaid')) {
+      final value = updates['isPaid'] as bool? ?? false;
+      if (tab.isPaid != value) {
+        tab.isPaid = value;
+      }
+    }
+
+    if (updates.containsKey('showPriceOnPrint')) {
+      final value = updates['showPriceOnPrint'] as bool? ?? true;
+      if (tab.showPriceOnPrint != value) {
+        tab.showPriceOnPrint = value;
+      }
+    }
+
+    notifyListeners();
+
+    // if (hasChanges) {
+    //   tab.markAsChanged();
+    //   tab.updateStatus(); // Update complete/incomplete status
+    //   try {
+    //     await _saveTabToDatabase(tab);
+    //   } catch (e) {
+    //     debugPrint('TabsProvider: Failed to save tab changes: $e');
+    //     // Revert the changes if database save fails
+    //     tab.hasUnsavedChanges = true;
+    //   }
+    //   notifyListeners();
+    // }
+  }
+
   /// Get tab data for a specific index
   Map<String, dynamic>? getTabData(int index) {
     if (index < 0 || index >= _tabs.length) return null;
@@ -392,6 +548,36 @@ class TabsProvider extends ChangeNotifier {
 
       notifyListeners();
       debugPrint('TabsProvider: Completed tab at index $index');
+      return true;
+    } catch (e) {
+      debugPrint('TabsProvider: Error completing tab: $e');
+      return false;
+    }
+  }
+
+  Future<bool> completeManualTab() async {
+    final tab = manualActiveTab!;
+
+    // Check if tab can be completed
+    if (!tab.isComplete) {
+      debugPrint('TabsProvider: Cannot complete tab - missing required fields');
+      return false;
+    }
+
+    try {
+      // First, save any new values to their respective tables
+      await _saveNewValuesToTables(tab);
+
+      // Mark as completed
+      tab.completeTab();
+
+      // Save to database
+      await _saveTabToDatabase(tab);
+
+      // Remove from active tabs
+
+      notifyListeners();
+      debugPrint('TabsProvider: Completed tab');
       return true;
     } catch (e) {
       debugPrint('TabsProvider: Error completing tab: $e');

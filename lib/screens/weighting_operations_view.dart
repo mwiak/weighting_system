@@ -2,6 +2,9 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/database/database_helper.dart';
+import 'package:weighing_system/models/season.dart';
+import 'package:weighing_system/providers/seasons_provider.dart';
 import 'package:weighing_system/widgets/autom_complete_filter_combo_box.dart';
 import 'package:weighing_system/widgets/operation_widgets/operation_entry.dart';
 import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
@@ -77,6 +80,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _calAllSeasons() async {
+    final dataHelper = DatabaseHelper();
   }
 
   @override
@@ -280,34 +287,101 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Quick Date Buttons
-                      Column(
-                        children: [
-                          const SizedBox(height: 20), // Align with date pickers
-                          Button(
-                            child: Text(l10n.last7Days),
-                            onPressed: () => setState(() {
-                              _endDate = DateTime.now();
-                              _startDate =
-                                  _endDate!.subtract(const Duration(days: 7));
-                            }),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                                height: 20), // Align with date pickers
+                            Button(
+                              child: Text('اليوم'),
+                              onPressed: () => setState(() {
+                                _endDate = DateTime.now().copyWith(
+                                    hour: 0,
+                                    minute: 0,
+                                    second: 0,
+                                    microsecond: 0);
+                                _startDate = DateTime.now().copyWith(
+                                    hour: 23,
+                                    minute: 59,
+                                    second: 59,
+                                    microsecond: 999);
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                                height: 20), // Align with date pickers
+                            Button(
+                              child: Text('البارحة'),
+                              onPressed: () => setState(() {
+                                _endDate = DateTime.now()
+                                    .subtract(Duration(days: 1))
+                                    .copyWith(
+                                        hour: 0,
+                                        minute: 0,
+                                        second: 0,
+                                        microsecond: 0);
+                                _startDate = _endDate!.copyWith(
+                                    hour: 23,
+                                    minute: 59,
+                                    second: 59,
+                                    microsecond: 999);
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                                height: 20), // Align with date pickers
+                            Consumer<SeasonsProvider>(
+                              builder:
+                                  (BuildContext context, value, Widget? child) {
+                                return DropDownButton(
+                                  title: Text('مواسم'),
+                                  items: _buildSeasonsOptions(
+                                      value.availableSeasons),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          Button(
-                            child: Text(l10n.last30Days),
-                            onPressed: () => setState(() {
-                              _endDate = DateTime.now();
-                              _startDate =
-                                  _endDate!.subtract(const Duration(days: 30));
-                            }),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          children: [
+                            const SizedBox(
+                                height: 20), // Align with date pickers
+                            DropDownButton(title: Text('مزيد'), items: [
+                              MenuFlyoutItem(
+                                  text: Text('آخر 7 أيام'),
+                                  onPressed: () => setState(() {
+                                        _endDate = DateTime.now();
+                                        _startDate = _endDate!
+                                            .subtract(const Duration(days: 7));
+                                      })),
+                              MenuFlyoutItem(
+                                text: Text('آخر 30 يوما'),
+                                onPressed: () => () => setState(() {
+                                      _endDate = DateTime.now();
+                                      _startDate = _endDate!
+                                          .subtract(const Duration(days: 30));
+                                    }),
+                              ),
+                            ]),
+                          ],
+                        ),
                       ),
+                      // Quick Date Buttons
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -323,6 +397,11 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       Button(
                         onPressed: _clearFilters,
                         child: Text(l10n.clearFilters),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton(
+                        onPressed: () {},
+                        child: Text('إعداد تقرير'),
                       ),
                     ],
                   ),
@@ -418,61 +497,17 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     );
   }
 
-  String _formatDateTime(dynamic dateTime) {
-    if (dateTime == null) return '';
-    try {
-      final dt = DateTime.parse(dateTime.toString());
-      return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-    } catch (e) {
-      return dateTime.toString();
-    }
-  }
+  List<MenuFlyoutItem> _buildSeasonsOptions(List<Season> data) {
+    List<MenuFlyoutItem> items = [];
 
-  String _getMaterialName(Map<String, dynamic> operation) {
-    // Handle multiple possible field names for material
-    return operation['material'] ??
-        operation['material_name'] ??
-        operation['product_name'] ??
-        'N/A';
-  }
-
-  String _formatStatus(String status) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return l10n.statusCompleted;
-      case 'in-progress':
-      case 'inprogress':
-        return l10n.statusInProgress;
-      case 'incomplete':
-        return l10n.statusIncomplete;
-      case 'cancelled':
-        return l10n.statusCancelled;
-      case 'empty':
-        return l10n.statusEmpty;
-      default:
-        // Fallback: capitalize each word
-        return status
-            .split('-')
-            .map((word) => word[0].toUpperCase() + word.substring(1))
-            .join(' ');
+    for (Season item in data) {
+      items.add(MenuFlyoutItem(
+          text: Text(item.label),
+          onPressed: () {
+            _endDate = item.seasonEndDate;
+            _startDate = item.seasonStartDate;
+          }));
     }
-  }
-
-  Color _getStatusColor(dynamic status) {
-    switch (status?.toString().toLowerCase()) {
-      case 'complete':
-      case 'completed':
-        return Colors.green;
-      case 'incomplete':
-      case 'pending':
-        return Colors.orange;
-      case 'active':
-        return Colors.blue;
-      case 'cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
+    return items;
   }
 }

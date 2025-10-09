@@ -1,6 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/models/user.dart';
+import 'package:weighing_system/providers/user_provider.dart';
+import 'package:weighing_system/widgets/admin_weighting_tab_content.dart';
 import '../providers/tabs_provider.dart';
 import '../widgets/weighing_tab_content.dart';
 import '../widgets/weight_display_card.dart';
@@ -56,18 +59,28 @@ class _TabsScreenState extends State<TabsScreen> {
               // Command Bar
               SizedBox(
                 height: 35,
-                child: CommandBar(
-                  primaryItems: [
-                    CommandBarButton(
-                      icon: const Icon(FluentIcons.add),
-                      label: Text(l10n.newTab),
-                      onPressed:
-                          provider.canCreateNewTab() ? _createNewTab : null,
-                    ),
-                    if (provider.hasActiveTabs) ...[
-                      CommandBarSeparator(),
-                    ],
-                  ],
+                child: Consumer<UserProvider>(
+                  builder: (context, value, child) {
+                    return CommandBar(
+                      primaryItems: [
+                        CommandBarButton(
+                          icon: const Icon(FluentIcons.add),
+                          label: Text(l10n.newTab),
+                          onPressed:
+                              provider.canCreateNewTab() ? _createNewTab : null,
+                        ),
+                        if (value.activeUser!.type == UserRanks.admin)
+                          CommandBarButton(
+                            icon:
+                                const Icon(FluentIcons.admin_d_logo_inverse32),
+                            label: Text('إضافة يدوية'),
+                            onPressed: () {
+                              _showManualAddDialog();
+                            },
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ),
 
@@ -151,8 +164,8 @@ class _TabsScreenState extends State<TabsScreen> {
                             ),
                           )
                         : Center(
-                            child:
-                                Text(l10n.activeOperationsExist)), // Keep as fallback
+                            child: Text(l10n
+                                .activeOperationsExist)), // Keep as fallback
               ),
             ],
           ),
@@ -253,5 +266,15 @@ class _TabsScreenState extends State<TabsScreen> {
         ),
       ),
     );
+  }
+
+  void _showManualAddDialog() async {
+    context.read<TabsProvider>().createInMemoryManualTab();
+    showDialog(
+        context: context,
+        builder: (context) {
+          //TODO
+          return AdminWeightingTabContent();
+        });
   }
 }

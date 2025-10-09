@@ -85,9 +85,9 @@
   
   "notes": "الملاحظات",
   
-  "weighInTime": "وقت الوزن الداخل",
+  "weighInTime": "وقت الوزن الفارغ",
   
-  "weighOutTime": "وقت الوزن الخارج",
+  "weighOutTime": "وقت الوزن الإجمالي",
   
   "createDate": "تاريخ الإنشاء",
   

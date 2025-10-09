@@ -53,6 +53,8 @@ class _AutoCompleteFilterComboBoxState
   OverlayEntry? _overlayEntry;
   Timer? _debounceTimer;
 
+  bool isPointerInside = false;
+
   @override
   void initState() {
     super.initState();
@@ -131,11 +133,9 @@ class _AutoCompleteFilterComboBoxState
       _showOverlay();
     } else if (!_focusNode.hasFocus && _showSuggestions) {
       // Fixed: Hide overlay when focus is lost AND overlay is showing
-      Future.delayed(Duration(milliseconds: 200), () {
-        if (!_focusNode.hasFocus) {
-          _hideOverlay();
-        }
-      });
+      if (!_focusNode.hasFocus && !isPointerInside) {
+        _hideOverlay();
+      }
     }
   }
 
@@ -209,9 +209,17 @@ class _AutoCompleteFilterComboBoxState
         child: material.Material(
           elevation: 4,
           borderRadius: BorderRadius.circular(4),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: _buildSuggestionsOverlay(),
+          child: MouseRegion(
+            onEnter: (v) {
+              isPointerInside = true;
+            },
+            onExit: (v) {
+              isPointerInside = false;
+            },
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: _buildSuggestionsOverlay(),
+            ),
           ),
         ),
       ),
@@ -240,7 +248,7 @@ class _AutoCompleteFilterComboBoxState
                   final suggestion = filteredSuggestions[index];
                   return HoverButton(
                     onPressed: () {
-                      printd('clicked');
+                      printd('hjgkkhfghfjhgfghfghf');
                       debugPrint(
                           'AutoCompleteComboBox: Selecting suggestion: $suggestion');
                       _controller.text = suggestion;
@@ -272,39 +280,6 @@ class _AutoCompleteFilterComboBoxState
             ),
 
           // Add new entry option
-          if (_controller.text.isNotEmpty &&
-              !filteredSuggestions.contains(_controller.text))
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey.withOpacity(0.3)),
-                ),
-              ),
-              child: HoverButton(
-                onPressed: () => widget.controller?.text = _controller.text,
-                builder: (context, states) {
-                  final l10n = AppLocalizations.of(context)!;
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    width: double.infinity,
-                    color: states.isHovering
-                        ? FluentTheme.of(context).accentColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    child: Row(
-                      children: [
-                        const Icon(FluentIcons.add),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.addItem(_controller.text),
-                          style: FluentTheme.of(context).typography.body,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
         ],
       ),
     );
