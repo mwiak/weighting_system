@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/database/database_helper.dart';
 import '../providers/client_provider.dart';
 import '../models/client.dart';
 
@@ -49,7 +50,8 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return ContentDialog(
-      title: Text(widget.isEditing ? l10n.editClientTitle : l10n.createNewClient),
+      title:
+          Text(widget.isEditing ? l10n.editClientTitle : l10n.createNewClient),
       content: SizedBox(
         width: 400,
         height: 350,
@@ -144,11 +146,13 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
     try {
       final clientProvider = context.read<ClientProvider>();
       final l10n = AppLocalizations.of(context)!;
+      final databaseHelper = DatabaseHelper();
 
       if (widget.isEditing) {
         // Update existing client
         final client = widget.client;
         if (client == null) return;
+
         final updatedClient = client.copyWith(
           name: _nameController.text.trim(),
           phone: _phoneController.text.trim().isEmpty
@@ -173,6 +177,14 @@ class _ClientFormDialogState extends State<ClientFormDialog> {
                 context, clientProvider.lastError ?? l10n.failedToUpdateClient);
         }
       } else {
+        final data = await databaseHelper.query('clients',
+            where: 'name = ?', whereArgs: [_nameController.text.trim()]);
+
+        if (data.isNotEmpty) {
+          if (!mounted) return;
+          _showErrorMessage(context, l10n.alreadyThere);
+          return;
+        }
         // Create new client
         final client = await clientProvider.createClient(
           name: _nameController.text.trim(),

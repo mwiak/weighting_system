@@ -5,7 +5,7 @@
   
   "weighingOperations": "عمليات الوزن",
   
-  "clients": "العملاء",
+  "clients": "الزبائن",
   
   "suppliers": "الموردين",
   
@@ -123,7 +123,7 @@
 
   "closeTab": "إغلاق التبويب",
 
-  "unitPrice": "سعر الوحدة",
+  "unitPrice": "سعر الكيلو",
 
   "pricePerKg": "السعر لكل كيلو",
 
@@ -137,19 +137,19 @@
 
   "search": "بحث",
 
-  "selectClient": "اختر العميل",
+  "selectClient": "اختر الزبون",
 
   "selectSupplier": "اختر المورد",
 
   "selectMaterial": "اختر المادة",
 
-  "addClient": "إضافة عميل",
+  "addClient": "إضافة الزبون",
 
   "addSupplier": "إضافة مورد",
 
   "addMaterial": "إضافة مادة",
 
-  "editClient": "تعديل العميل",
+  "editClient": "تعديل الزبون",
 
   "editSupplier": "تعديل المورد",
 
@@ -251,7 +251,7 @@
 
   "revenueReport": "تقرير الإيرادات",
 
-  "clientReport": "تقرير العملاء",
+  "clientReport": "تقرير الزبون",
 
   "materialReport": "تقرير المواد",
 
@@ -277,9 +277,9 @@
 
   "clear": "مسح",
 
-  "clientFilter": "مرشح العملاء",
+  "clientFilter": "مرشح الزبون",
 
-  "allClients": "جميع العملاء",
+  "allClients": "جميع الزبائن",
 
   "statusFilter": "مرشح الحالة",
 
@@ -399,7 +399,7 @@
 
   "filterBySupplier": "فلترة حسب المورد...",
 
-  "filterByClient": "فلترة حسب العميل...",
+  "filterByClient": "فلترة حسب الزبون...",
 
   "dateTime": "التاريخ/الوقت",
 
@@ -429,11 +429,11 @@
 
   "clearFilters": "مسح",
 
-  "clientManagement": "إدارة العملاء",
+  "clientManagement": "إدارة الزبائن",
 
   "supplierManagement": "إدارة الموردين",
 
-  "newClient": "عميل جديد",
+  "newClient": "زبون جديد",
 
   "newSupplier": "مورد جديد",
 
@@ -441,9 +441,9 @@
 
   "export": "تصدير",
 
-  "totalClients": "إجمالي العملاء",
+  "totalClients": "إجمالي الزبائن",
 
-  "activeClients": "العملاء النشطين",
+  "activeClients": "الزبائن النشطين",
 
   "totalSuppliers": "إجمالي الموردين",
 
@@ -453,7 +453,7 @@
 
   "individuals": "الأفراد",
 
-  "searchClients": "البحث في العملاء...",
+  "searchClients": "البحث في الزبائن...",
 
   "searchSuppliers": "البحث في الموردين...",
 
@@ -473,11 +473,11 @@
 
   "noContactInfo": "لا توجد معلومات اتصال",
 
-  "noClientsFound": "لم يتم العثور على عملاء",
+  "noClientsFound": "لم يتم العثور على زبائن",
 
-  "createFirstClient": "أنشئ عميلك الأول للبدء",
+  "createFirstClient": "أنشئ زبونك الأول للبدء",
 
-  "createClient": "إنشاء عميل",
+  "createClient": "إنشاء زبون",
 
   "noSuppliersFound": "لم يتم العثور على موردين",
 
@@ -485,7 +485,7 @@
 
   "createSupplier": "إنشاء مورد",
 
-  "deleteClient": "حذف العميل",
+  "deleteClient": "حذف الزبون",
 
   "deleteClientConfirm": "هل أنت متأكد من حذف \"{name}\"؟",
 
@@ -495,7 +495,7 @@
 
   "importFunctionalityComingSoon": "وظيفة الاستيراد قريباً",
 
-  "exportedClients": "تم تصدير {count} عميل",
+  "exportedClients": "تم تصدير {count} زبون",
 
   "exportedSuppliers": "تم تصدير {count} مورد",
 
@@ -519,9 +519,9 @@
 
   "enterDriverName": "أدخل اسم السائق...",
 
-  "customerLoadingOperation": "العميل (عملية التحميل)",
+  "customerLoadingOperation": "الزبون (عملية التحميل)",
 
-  "selectCustomer": "اختر العميل...",
+  "selectCustomer": "اختر الزبون...",
 
   "supplierUnloadingOperation": "المورد (عملية التفريغ)",
 
@@ -751,7 +751,7 @@
 
   "businessInformation": "معلومات العمل",
 
-  "clientSupplier": "العميل/المورد",
+  "clientSupplier": "الزبون/المورد",
 
   "paymentStatus": "حالة الدفع",
 
@@ -974,10 +974,10 @@
 
   "switchUser": "تبديل المستخدم",
   "noOtherUsersAvailable": "لا يوجد مستخدمين آخرين متاحين",
-  "editClientTitle": "تعديل العميل",
-  "createNewClient": "إنشاء عميل جديد",
+  "editClientTitle": "تعديل الزبون",
+  "createNewClient": "إنشاء زبون جديد",
   "nameRequired": "الاسم *",
-  "clientNamePlaceholder": "اسم العميل",
+  "clientNamePlaceholder": "اسم الزبون",
   "nameIsRequired": "الاسم مطلوب",
   "phoneLabel": "الهاتف",
   "phonePlaceholder": "+1 (555) 123-4567",
@@ -987,10 +987,10 @@
   "cityPlaceholder": "المدينة",
   "updateButton": "تحديث",
   "createButton": "إنشاء",
-  "clientUpdatedSuccessfully": "تم تحديث العميل بنجاح",
-  "failedToUpdateClient": "فشل تحديث العميل",
-  "clientCreatedSuccessfully": "تم إنشاء العميل بنجاح",
-  "failedToCreateClient": "فشل إنشاء العميل",
+  "clientUpdatedSuccessfully": "تم تحديث الزبون بنجاح",
+  "failedToUpdateClient": "فشل تحديث الزبون",
+  "clientCreatedSuccessfully": "تم إنشاء الزبون بنجاح",
+  "failedToCreateClient": "فشل إنشاء الزبون",
   "editSupplierTitle": "تعديل المورد",
   "createNewSupplier": "إنشاء مورد جديد",
   "supplierNamePlaceholder": "اسم المورد",
@@ -1004,5 +1004,6 @@
   "enterPasswordToContinue": "أدخل كلمة المرور للمتابعة",
   "passwordIsRequired": "كلمة المرور مطلوبة",
   "invalidPassword": "كلمة مرور غير صحيحة",
-  "loginFailedError": "فشل تسجيل الدخول: {error}"
+  "loginFailedError": "فشل تسجيل الدخول: {error}",
+  "alreadyThere": "الاسم موجود مسبقا في السجل"
 }

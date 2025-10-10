@@ -70,7 +70,7 @@ class DatabaseHelper {
         CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         phone TEXT,
         mobile TEXT,
         city TEXT,
@@ -87,7 +87,7 @@ class DatabaseHelper {
       CREATE TABLE suppliers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         phone TEXT,
         mobile TEXT,
         city TEXT,
@@ -104,7 +104,7 @@ class DatabaseHelper {
       CREATE TABLE materials (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         price REAL,
         description TEXT,
         active INTEGER DEFAULT 1,
@@ -138,7 +138,7 @@ class DatabaseHelper {
       CREATE TABLE drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
-        name TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
         phone TEXT,
         mobile TEXT,
         city TEXT,

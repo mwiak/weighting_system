@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../database/database_helper.dart';
 import '../providers/supplier_provider.dart';
 import '../models/supplier.dart';
 
@@ -49,7 +50,8 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return ContentDialog(
-      title: Text(widget.isEditing ? l10n.editSupplierTitle : l10n.createNewSupplier),
+      title: Text(
+          widget.isEditing ? l10n.editSupplierTitle : l10n.createNewSupplier),
       content: SizedBox(
         width: 400,
         height: 350,
@@ -144,6 +146,7 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
     try {
       final supplierProvider = context.read<SupplierProvider>();
       final l10n = AppLocalizations.of(context)!;
+      final databaseHelper = DatabaseHelper();
 
       if (widget.isEditing) {
         // Update existing supplier
@@ -173,6 +176,14 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
                 supplierProvider.lastError ?? l10n.failedToUpdateSupplier);
         }
       } else {
+        final data = await databaseHelper.query('suppliers',
+            where: 'name = ?', whereArgs: [_nameController.text.trim()]);
+
+        if (data.isNotEmpty) {
+          if (!mounted) return;
+          _showErrorMessage(context, l10n.alreadyThere);
+          return;
+        }
         // Create new supplier
         final supplier = Supplier(
           name: _nameController.text.trim(),

@@ -45,7 +45,7 @@ void main() async {
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.normal,
-    title: 'Truck Weighing System',
+    title: 'برنامج القبان',
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {

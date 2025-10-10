@@ -462,6 +462,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                       widget.tabIndex, {'truckPlate': value});
                                 },
                                 suggestionType: AutoCompleteType.truckPlate,
+                                driverController: _driverNameController,
                               ),
                             ],
                           ),
@@ -481,6 +482,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                       widget.tabIndex, {'driverName': value});
                                 },
                                 suggestionType: AutoCompleteType.driver,
+                                plateController: _truckPlateController,
                               ),
                             ],
                           ),

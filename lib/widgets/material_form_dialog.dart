@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../database/database_helper.dart';
 import '../providers/material_provider.dart';
 import '../models/material.dart';
 
@@ -17,23 +18,23 @@ class MaterialFormDialog extends StatefulWidget {
 
 class _MaterialFormDialogState extends State<MaterialFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _nameController;
   late TextEditingController _priceController;
   late TextEditingController _descriptionController;
-  
+
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     final material = widget.material;
     _nameController = TextEditingController(text: material?.name ?? '');
-    _priceController = TextEditingController(
-      text: material?.price?.toString() ?? ''
-    );
-    _descriptionController = TextEditingController(text: material?.description ?? '');
+    _priceController =
+        TextEditingController(text: material?.price?.toString() ?? '');
+    _descriptionController =
+        TextEditingController(text: material?.description ?? '');
   }
 
   @override
@@ -46,9 +47,9 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // final l10n = AppLocalizations.of(context)!; // Commented out - localization not available
+    final l10n = AppLocalizations.of(context)!;
     return ContentDialog(
-      title: Text(widget.isEditing ? 'Edit Material' : 'Add Material'),
+      title: Text(widget.isEditing ? l10n.editMaterial : l10n.addMaterial),
       content: SizedBox(
         width: 400,
         height: 350,
@@ -60,32 +61,33 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
               children: [
                 // Name
                 InfoLabel(
-                  label: 'Name *',
+                  label: l10n.name,
                   child: TextFormBox(
                     controller: _nameController,
-                    placeholder: 'Material name',
+                    placeholder: 'اسم المادة',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Required';
+                        return l10n.required;
                       }
                       return null;
                     },
                   ),
                 ),
-                
+
                 // Price per kg (optional)
                 InfoLabel(
-                  label: 'Price per kg',
+                  label: l10n.unitPrice,
                   child: TextFormBox(
                     controller: _priceController,
-                    placeholder: '0.00',
-                    prefix: Text('${AppLocalizations.of(context)!.currencySymbol} '),
+                    placeholder: '0.000',
+                    prefix: Text(
+                        '${AppLocalizations.of(context)!.currencySymbol} '),
                     suffix: Text(AppLocalizations.of(context)!.perKg),
                     validator: (value) {
                       if (value != null && value.isNotEmpty) {
                         final price = double.tryParse(value);
                         if (price == null || price < 0) {
-                          return 'Please enter a valid price';
+                          return l10n.validationError;
                         }
                       }
                       return null;
@@ -93,13 +95,13 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Description
                 InfoLabel(
-                  label: 'Notes',
+                  label: l10n.notes,
                   child: TextFormBox(
                     controller: _descriptionController,
-                    placeholder: 'Material description...',
+                    placeholder: l10n.notes,
                     minLines: 3,
                     maxLines: 5,
                   ),
@@ -130,7 +132,7 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
                     Text(AppLocalizations.of(context)!.saving),
                   ],
                 )
-              : Text(widget.isEditing ? 'Save' : 'Add'),
+              : Text(widget.isEditing ? l10n.save : l10n.add),
         ),
       ],
     );
@@ -143,11 +145,13 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
 
     try {
       final materialProvider = context.read<MaterialProvider>();
-      
-      final price = _priceController.text.trim().isEmpty 
-          ? null 
+      final databaseHelper = DatabaseHelper();
+      final l10n = AppLocalizations.of(context)!;
+
+      final price = _priceController.text.trim().isEmpty
+          ? null
           : double.tryParse(_priceController.text.trim());
-      
+
       if (widget.isEditing) {
         // Update existing material
         final material = widget.material;
@@ -155,32 +159,42 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
         final updatedMaterial = material.copyWith(
           name: _nameController.text.trim(),
           price: price,
-          description: _descriptionController.text.trim().isEmpty 
-              ? null : _descriptionController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty
+              ? null
+              : _descriptionController.text.trim(),
         );
-        
+
         final success = await materialProvider.updateMaterial(updatedMaterial);
         if (success) {
           Navigator.of(context).pop();
-          _showSuccessMessage(context, 'Material updated successfully');
+          _showSuccessMessage(context, '');
         } else {
-          _showErrorMessage(context, materialProvider.lastError ?? 'Failed to update material');
+          _showErrorMessage(context, materialProvider.lastError ?? l10n.error);
         }
       } else {
+        final data = await databaseHelper.query('materials',
+            where: 'name = ?', whereArgs: [_nameController.text.trim()]);
+
+        if (data.isNotEmpty) {
+          if (!mounted) return;
+          _showErrorMessage(context, l10n.alreadyThere);
+          return;
+        }
         // Create new material
         final material = Material(
           name: _nameController.text.trim(),
           price: price,
-          description: _descriptionController.text.trim().isEmpty 
-              ? null : _descriptionController.text.trim(),
+          description: _descriptionController.text.trim().isEmpty
+              ? null
+              : _descriptionController.text.trim(),
         );
-        
+
         final success = await materialProvider.addMaterial(material);
         if (success) {
           Navigator.of(context).pop();
-          _showSuccessMessage(context, 'Material created successfully');
+          _showSuccessMessage(context, 'تم');
         } else {
-          _showErrorMessage(context, materialProvider.lastError ?? 'Failed to create material');
+          _showErrorMessage(context, materialProvider.lastError ?? l10n.error);
         }
       }
     } finally {

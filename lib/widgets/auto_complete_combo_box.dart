@@ -28,6 +28,8 @@ class AutoCompleteComboBox extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final AutoCompleteType suggestionType;
   final TextEditingController? controller;
+  final TextEditingController? driverController;
+  final TextEditingController? plateController;
 
   const AutoCompleteComboBox({
     super.key,
@@ -36,6 +38,8 @@ class AutoCompleteComboBox extends StatefulWidget {
     required this.onChanged,
     required this.suggestionType,
     this.controller,
+    this.driverController,
+    this.plateController,
   });
 
   @override
@@ -44,6 +48,8 @@ class AutoCompleteComboBox extends StatefulWidget {
 
 class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
   late TextEditingController _controller;
+  late TextEditingController _driverController;
+  late TextEditingController _plateController;
   bool _ownsController = false;
   List<String> _suggestions = [];
   bool _isLoading = false;
@@ -52,6 +58,8 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
   final GlobalKey _textFieldKey = GlobalKey();
   OverlayEntry? _overlayEntry;
   Timer? _debounceTimer;
+  bool isPointerInside = false;
+  List<String> crossSuggestions = [];
 
   @override
   void initState() {
@@ -63,6 +71,19 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
       _controller = TextEditingController(text: widget.value);
       _ownsController = true;
     }
+
+    if (widget.suggestionType == AutoCompleteType.truckPlate &&
+        widget.driverController != null) {
+      widget.driverController!.addListener(_handleDriverVehicleRelationship);
+      _driverController = widget.driverController!;
+    }
+
+    if (widget.suggestionType == AutoCompleteType.driver &&
+        widget.plateController != null) {
+      widget.plateController!.addListener(_handleDriverVehicleRelationship);
+      _plateController = widget.plateController!;
+    }
+
     _focusNode.addListener(_handleFocusChange);
 
     // Listen to controller changes for immediate UI updates
@@ -109,6 +130,8 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     _overlayEntry = null;
     _debounceTimer?.cancel();
     _controller.removeListener(_onControllerChanged);
+    widget.driverController?.removeListener(_handleDriverVehicleRelationship);
+    widget.plateController?.removeListener(_handleDriverVehicleRelationship);
     if (_ownsController) {
       _controller.dispose();
     }
@@ -130,8 +153,9 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     if (_focusNode.hasFocus && !_showSuggestions) {
       _showOverlay();
     } else if (!_focusNode.hasFocus && _showSuggestions) {
-      await Future.delayed(Duration(milliseconds: 200));
-      _hideOverlay();
+      if (!isPointerInside) {
+        _hideOverlay();
+      }
     }
   }
 
@@ -206,7 +230,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
           elevation: 4,
           borderRadius: BorderRadius.circular(4),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
+            constraints: const BoxConstraints(maxHeight: 250),
             child: _buildSuggestionsOverlay(),
           ),
         ),
@@ -217,56 +241,137 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
   Widget _buildSuggestionsOverlay() {
     if (filteredSuggestions.isEmpty) return const SizedBox.shrink();
     printd("suggestioninggg");
-    return Container(
-      decoration: BoxDecoration(
-        color: FluentTheme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Existing entries
-          if (filteredSuggestions.isNotEmpty)
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: filteredSuggestions.length,
-                itemBuilder: (context, index) {
-                  final suggestion = filteredSuggestions[index];
-                  return HoverButton(
-                    onPressed: () {
-                      printd('clicked');
-                      debugPrint(
-                          'AutoCompleteComboBox: Selecting suggestion: $suggestion');
-                      _controller.text = suggestion;
-                      widget.onChanged(suggestion);
-                      _hideOverlay();
-                      _handleDriverVehicleRelationship(suggestion);
-                      debugPrint(
-                          'AutoCompleteComboBox: Controller text set to: ${_controller.text}');
-                    },
-                    builder: (context, states) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
-                        width: double.infinity,
-                        color: states.isHovering
-                            ? FluentTheme.of(context)
-                                .accentColor
-                                .withOpacity(0.1)
-                            : Colors.transparent,
-                        child: Text(
-                          suggestion,
-                          style: FluentTheme.of(context).typography.body,
-                        ),
-                      );
-                    },
-                  );
-                },
+    return MouseRegion(
+      onEnter: (x) {
+        isPointerInside = true;
+      },
+      onExit: (x) {
+        isPointerInside = false;
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: FluentTheme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Existing entries
+            if (filteredSuggestions.isNotEmpty)
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: filteredSuggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = filteredSuggestions[index];
+                    return HoverButton(
+                      onPressed: () {
+                        printd('clicked');
+                        debugPrint(
+                            'AutoCompleteComboBox: Selecting suggestion: $suggestion');
+                        _controller.text = suggestion;
+                        widget.onChanged(suggestion);
+                        _hideOverlay();
+                        debugPrint(
+                            'AutoCompleteComboBox: Controller text set to: ${_controller.text}');
+                      },
+                      builder: (context, states) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          width: double.infinity,
+                          color: states.isHovering
+                              ? FluentTheme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.1)
+                              : Colors.transparent,
+                          child: Text(
+                            suggestion,
+                            style: FluentTheme.of(context).typography.body,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-        ],
+            if (crossSuggestions.isNotEmpty)
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: crossSuggestions.length,
+                  itemBuilder: (context, index) {
+                    final suggestion = crossSuggestions[index];
+                    if (index == 0) {
+                      return Column(
+                        children: [
+                          Text('عناصر مرتبطة'),
+                          HoverButton(
+                            onPressed: () {
+                              printd('clicked');
+                              debugPrint(
+                                  'AutoCompleteComboBox: Selecting suggestion: $suggestion');
+                              _controller.text = suggestion;
+                              widget.onChanged(suggestion);
+                              _hideOverlay();
+                              debugPrint(
+                                  'AutoCompleteComboBox: Controller text set to: ${_controller.text}');
+                            },
+                            builder: (context, states) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                width: double.infinity,
+                                color: states.isHovering
+                                    ? FluentTheme.of(context)
+                                        .accentColor
+                                        .withOpacity(0.1)
+                                    : Colors.transparent,
+                                child: Text(
+                                  suggestion,
+                                  style:
+                                      FluentTheme.of(context).typography.body,
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    }
+                    return HoverButton(
+                      onPressed: () {
+                        printd('clicked');
+                        debugPrint(
+                            'AutoCompleteComboBox: Selecting suggestion: $suggestion');
+                        _controller.text = suggestion;
+                        widget.onChanged(suggestion);
+                        _hideOverlay();
+                        debugPrint(
+                            'AutoCompleteComboBox: Controller text set to: ${_controller.text}');
+                      },
+                      builder: (context, states) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          width: double.infinity,
+                          color: states.isHovering
+                              ? FluentTheme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.1)
+                              : Colors.transparent,
+                          child: Text(
+                            suggestion,
+                            style: FluentTheme.of(context).typography.body,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -455,13 +560,13 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
               'AutoCompleteComboBox: TextFormBox onChanged called with: $value');
           _onTextChanged(value);
           // Show overlay if we have suggestions and focus, or if user is typing
+
           if ((_focusNode.hasFocus && filteredSuggestions.isNotEmpty) ||
               value.isNotEmpty) {
             _showOverlay();
           } else {
             _hideOverlay();
           }
-          _handleDriverVehicleRelationship(value);
         },
         onTap: () {
           if (filteredSuggestions.isNotEmpty) {
@@ -496,52 +601,32 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     );
   }
 
-  Future<void> _showAddClientDialog(String name) async {
-    if (!mounted) return;
-
-    final client = Provider.of<ClientProvider>(context, listen: false);
-    await client.createClient(name: name.trim());
-  }
-
-  Future<void> _showAddSupplierDialog(String name) async {
-    if (!mounted) return;
-
-    final supplier = Provider.of<SupplierProvider>(context, listen: false);
-    final newSupplier = Supplier(
-      name: name.trim(),
-      active: true,
-      createDate: DateTime.now().toIso8601String(),
-      writeDate: DateTime.now().toIso8601String(),
-    );
-    await supplier.addSupplier(newSupplier);
-  }
-
-  Future<void> _showAddMaterialDialog(String name) async {
-    if (!mounted) return;
-
-    final materialProvider =
-        Provider.of<MaterialProvider>(context, listen: false);
-    final newMaterial = m.Material(
-      name: name.trim(),
-      active: true,
-      createDate: DateTime.now(),
-      writeDate: DateTime.now(),
-    );
-    await materialProvider.addMaterial(newMaterial);
-  }
-
-  Future<void> _handleDriverVehicleRelationship(String value) async {
+  void _handleDriverVehicleRelationship() async {
     if (widget.suggestionType == AutoCompleteType.truckPlate) {
       // When truck plate is entered, suggest related drivers
-      final drivers = await _getRelatedDrivers(value);
-      if (drivers.isNotEmpty) {
-        _showDriverSuggestions(drivers);
+      final value = widget.driverController?.text;
+      printd('the plate is printing this1!!!!11      ' + (value ?? 'no value'));
+      crossSuggestions = [];
+      if (value != null && value.isNotEmpty) {
+        final veichles = await _getRelatedVehicles(value);
+        printd(veichles.toString());
+        if (veichles.isNotEmpty) {
+          printd('there is actuay a value');
+          crossSuggestions = veichles;
+        }
       }
     } else if (widget.suggestionType == AutoCompleteType.driver) {
       // When driver is entered, suggest related vehicles
-      final vehicles = await _getRelatedVehicles(value);
-      if (vehicles.isNotEmpty) {
-        _showVehicleSuggestions(vehicles);
+      final value = widget.plateController?.text;
+      printd('the driver is printing this1!!!!11   ' + (value ?? 'no value'));
+      crossSuggestions = [];
+      if (value != null && value.isNotEmpty) {
+        final drivers = await _getRelatedDrivers(value);
+        printd(drivers.toString());
+        if (drivers.isNotEmpty) {
+          crossSuggestions = drivers;
+          printd(crossSuggestions.toString());
+        }
       }
     }
   }
@@ -551,17 +636,26 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
 
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
+    print('i am searching for values');
+    final data = await db.rawQuery('SELECT * FROM drivers');
+    final data3 = await db.rawQuery('SELECT * FROM driver_plates');
+
+    String orignialQuery = '''SELECT d.name as driver_name FROM drivers d
+      INNER JOIN driver_plates dp ON d.id = dp.driver_id WHERE dp.plate_number = ?''';
+
+    //WHERE dp.plate_number = ? AND dp.active = 1 AND d.active = 1
     final results = await db.rawQuery('''
-      SELECT DISTINCT d.name as driver_name FROM drivers d
-      INNER JOIN driver_plates dp ON d.id = dp.driver_id
-      WHERE dp.plate_number = ? AND dp.active = 1 AND d.active = 1
+      SELECT d.name as driver_name FROM drivers d
+      INNER JOIN driver_plates dp ON d.id = dp.driver_id WHERE dp.plate_number = ?
+      
     ''', [vehiclePlate]);
+    printd(results.toString());
     return results.map((row) => row['driver_name'] as String).toList();
   }
 
   Future<List<String>> _getRelatedVehicles(String driverName) async {
     if (driverName.isEmpty) return [];
-
+    print('I am searching for value');
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     final results = await db.rawQuery('''

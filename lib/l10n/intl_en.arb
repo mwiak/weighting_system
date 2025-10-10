@@ -3082,5 +3082,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "alreadyThere": "the name is already there"
 }
