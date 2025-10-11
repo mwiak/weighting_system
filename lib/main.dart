@@ -54,11 +54,13 @@ void main() async {
     await windowManager.setResizable(false);
   });
 
-  runApp(const WeighingSystemApp());
+  runApp(WeighingSystemApp());
 }
 
 class WeighingSystemApp extends StatelessWidget {
-  const WeighingSystemApp({super.key});
+  WeighingSystemApp({super.key});
+  final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,7 @@ class WeighingSystemApp extends StatelessWidget {
         ),
       ],
       child: fluent.FluentApp(
+        navigatorKey: rootNavigatorKey,
         title: 'Truck Weighing System',
         theme: AppTheme.lightTheme,
         home: const LoginScreen(),

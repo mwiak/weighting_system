@@ -273,28 +273,28 @@ class ReportProvider extends ChangeNotifier {
   }
 
   // Methods for operations history management
-  Future<List<Map<String, dynamic>>> getOrdersHistory({
-    DateTime? startDate,
-    DateTime? endDate,
-    String? status,
-    String? driverFilter,
-    String? truckFilter,
-    String? clientFilter,
-    String? supplierFilter,
-    String? materialFilter,
-  }) async {
+  Future<List<Map<String, dynamic>>> getOrdersHistory(
+      {DateTime? startDate,
+      DateTime? endDate,
+      String? status,
+      String? driverFilter,
+      String? truckFilter,
+      String? clientFilter,
+      String? supplierFilter,
+      String? materialFilter,
+      int? idFilter}) async {
     try {
       return await _reportService.getTabsHistory(
-        // Updated method
-        startDate: startDate,
-        endDate: endDate,
-        status: status,
-        driverFilter: driverFilter,
-        truckFilter: truckFilter,
-        clientFilter: clientFilter,
-        supplierFilter: supplierFilter,
-        materialFilter: materialFilter,
-      );
+          // Updated method
+          startDate: startDate,
+          endDate: endDate,
+          status: status,
+          driverFilter: driverFilter,
+          truckFilter: truckFilter,
+          clientFilter: clientFilter,
+          supplierFilter: supplierFilter,
+          materialFilter: materialFilter,
+          idFilter: idFilter);
     } catch (e) {
       _setError('Failed to load orders history: $e');
       return [];

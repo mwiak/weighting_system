@@ -338,16 +338,16 @@ class WeighingTabReportService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getTabsHistory({
-    DateTime? startDate,
-    DateTime? endDate,
-    String? status,
-    String? driverFilter,
-    String? truckFilter,
-    String? clientFilter,
-    String? supplierFilter,
-    String? materialFilter,
-  }) async {
+  Future<List<Map<String, dynamic>>> getTabsHistory(
+      {DateTime? startDate,
+      DateTime? endDate,
+      String? status,
+      String? driverFilter,
+      String? truckFilter,
+      String? clientFilter,
+      String? supplierFilter,
+      String? materialFilter,
+      int? idFilter}) async {
     startDate ??= DateTime.now().subtract(const Duration(days: 30));
     endDate ??= DateTime.now();
 
@@ -366,6 +366,11 @@ class WeighingTabReportService {
     if (status != null && status.isNotEmpty && status != 'all') {
       whereConditions.add('status = ?');
       params.add(status);
+    }
+
+    if (idFilter != null && idFilter != 0) {
+      whereConditions.add('id = ?');
+      params.add(idFilter);
     }
 
     if (driverFilter != null && driverFilter.isNotEmpty) {

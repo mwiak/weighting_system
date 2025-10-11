@@ -198,9 +198,8 @@ class TabsProvider extends ChangeNotifier {
     }
 
     if (updates.containsKey('scaleEmptyWeight')) {
-      final value =
-          (updates['scaleEmptyWeight'] as DateTime?) ?? DateTime.now();
-
+      final value = (updates['scaleEmptyWeight'] as DateTime?);
+      print('the current value of the stamp is' + value.toString());
       tab.scaleEmptyWeightAt = value;
       hasChanges = true;
     }
@@ -214,8 +213,7 @@ class TabsProvider extends ChangeNotifier {
     }
 
     if (updates.containsKey('scaleGrossWeight')) {
-      final value =
-          (updates['scaleGrossWeight'] as DateTime?) ?? DateTime.now();
+      final value = (updates['scaleGrossWeight'] as DateTime?);
 
       tab.scaleGrossWeightAt = value;
       hasChanges = true;

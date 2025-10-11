@@ -569,6 +569,9 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
           }
         },
         onTap: () {
+          _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: widget.controller!.text.length),
+          );
           if (filteredSuggestions.isNotEmpty) {
             _showOverlay();
           }

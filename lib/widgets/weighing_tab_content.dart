@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/print_template.dart';
+import 'package:weighing_system/models/user.dart';
+import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'dart:async';
@@ -58,6 +60,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   // Track last synced values to avoid unnecessary updates
   WeighingTab? _lastSyncedTab;
   bool _isUpdatingControllers = false;
+  final controller = FlyoutController();
 
   WeighingTab? get _tab {
     final provider = context.read<TabsProvider>();
@@ -238,6 +241,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           context
               .read<TabsProvider>()
               .updateTab(widget.tabIndex, {'emptyWeight': weight});
+          context
+              .read<TabsProvider>()
+              .updateTab(widget.tabIndex, {'scaleEmptyWeight': null});
           calculateTotalPrice();
         } catch (e) {
           debugPrint('WeighingTabContent: Error updating empty weight: $e');
@@ -255,6 +261,11 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           context
               .read<TabsProvider>()
               .updateTab(widget.tabIndex, {'grossWeight': weight});
+          //TODO
+          context
+              .read<TabsProvider>()
+              .updateTab(widget.tabIndex, {'scaleGrossWeight': null});
+
           calculateTotalPrice();
         } catch (e) {
           debugPrint('WeighingTabContent: Error updating gross weight: $e');
@@ -314,335 +325,382 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           _syncControllersWithTab(tab);
         });
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Left Column - Weight Information
-            Expanded(
-              flex: 2,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Empty Weight
-                      _buildWeightField(
-                        label: AppLocalizations.of(context)!.grossWeightKg,
-                        controller: _grossWeightController,
-                        onChanged: _onGrossWeightChanged,
-                        onScalePressed: () => _captureWeightFromScale(false),
-                        onFocusChanged: (focused) =>
-                            setState(() => _grossWeightFieldFocused = focused),
-                      ),
-                      const SizedBox(height: 4),
-                      _buildWeightField(
-                        label: AppLocalizations.of(context)!.emptyWeightKg,
-                        controller: _emptyWeightController,
-                        onChanged: _onEmptyWeightChanged,
-                        onScalePressed: () => _captureWeightFromScale(true),
-                        onFocusChanged: (focused) =>
-                            setState(() => _emptyWeightFieldFocused = focused),
-                      ),
-
-                      // Gross Weight
-
-                      const SizedBox(height: 4),
-
-                      // Net Weight (calculated)
-                      _buildCalculatedWeight(
-                        label: AppLocalizations.of(context)!.netWeightKg,
-                        value: tab.netWeight,
-                      ),
-                      const SizedBox(height: 4),
-
-                      // Operation Status
-                      // Container(
-                      //   padding: const EdgeInsets.all(10),
-                      //   decoration: BoxDecoration(
-                      //     color: _getStatusColor(tab.status).withOpacity(0.1),
-                      //     borderRadius: BorderRadius.circular(8),
-                      //   ),
-                      //   child: Row(
-                      //     children: [
-                      //       Icon(
-                      //         _getStatusIcon(tab.status),
-                      //         color: _getStatusColor(tab.status),
-                      //         size: kIconSize,
-                      //       ),
-                      //       const SizedBox(width: 4),
-                      //       Text(
-                      //         AppLocalizations.of(context)!.statusLabel(
-                      //             _getStatusText(context, tab.status)),
-                      //         style: TextStyle(
-                      //           color: _getStatusColor(tab.status),
-                      //           fontWeight: FontWeight.w600,
-                      //           fontSize: kStatusFontSize,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      const SizedBox(height: 30),
-
-                      Button(
-                        onPressed: () => _cancelTab(),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                              if (states.isDisabled) {
-                                return Colors.grey;
-                              }
-                              if (states.isPressed) {
-                                return Colors.red.darkest.withOpacity(0.44);
-                              }
-                              if (states.isHovered) {
-                                return Colors.red.dark.withOpacity(0.36);
-                              }
-                              return Colors.red.darker
-                                  .withOpacity(0.60); // default
-                            },
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(FluentIcons.cancel, size: kIconSize),
-                              const SizedBox(width: 6),
-                              Text(
-                                AppLocalizations.of(context)!.cancel,
-                                style: TextStyle(
-                                  fontSize: kButtonFontSize + 2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Operation type removed from schema
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-
-            // Right Column - Business Information
-            Expanded(
-              flex: 3,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Truck Plate
-                      Row(
+        return Consumer<UserProvider>(
+          builder: (BuildContext context, UserProvider value, Widget? child) {
+            final enabled =
+                value.activeUser?.type == UserRanks.admin ? true : false;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left Column - Weight Information
+                Expanded(
+                  flex: 2,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            children: [
-                              _buildLabel(AppLocalizations.of(context)!
-                                  .truckPlateRequired),
-                              const SizedBox(height: 4),
-                              AutoCompleteComboBox(
-                                placeholder: AppLocalizations.of(context)!
-                                    .enterTruckPlate,
-                                value: tab.truckPlate,
-                                controller: _truckPlateController,
-                                onChanged: (value) {
-                                  tabsProvider.updateTab(
-                                      widget.tabIndex, {'truckPlate': value});
-                                },
-                                suggestionType: AutoCompleteType.truckPlate,
-                                driverController: _driverNameController,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Column(
-                            children: [
-                              _buildLabel(
-                                  AppLocalizations.of(context)!.driverName),
-                              const SizedBox(height: 4),
-                              AutoCompleteComboBox(
-                                placeholder: AppLocalizations.of(context)!
-                                    .enterDriverName,
-                                value: tab.driverName,
-                                controller: _driverNameController,
-                                onChanged: (value) {
-                                  tabsProvider.updateTab(
-                                      widget.tabIndex, {'driverName': value});
-                                },
-                                suggestionType: AutoCompleteType.driver,
-                                plateController: _truckPlateController,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Column(
-                            children: [
-                              _buildLabel(AppLocalizations.of(context)!.client),
-                              const SizedBox(height: 4),
-                              AutoCompleteComboBox(
-                                placeholder: AppLocalizations.of(context)!
-                                    .selectCustomer,
-                                value: tab.client,
-                                controller: _clientController,
-                                onChanged: (value) {
-                                  if (value.isNotEmpty) {
-                                    // Clear supplier when client is set
-                                    _supplierController.text = '';
-                                    tabsProvider.updateTab(widget.tabIndex, {
-                                      'client': value,
-                                      'supplier': '',
-                                    });
-                                  } else {
-                                    tabsProvider.updateTab(
-                                        widget.tabIndex, {'client': value});
-                                  }
-                                },
-                                suggestionType: AutoCompleteType.client,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Column(
-                            children: [
-                              _buildLabel(
-                                  AppLocalizations.of(context)!.supplier),
-                              const SizedBox(height: 4),
-                              AutoCompleteComboBox(
-                                placeholder: AppLocalizations.of(context)!
-                                    .selectSupplier,
-                                value: tab.supplier,
-                                controller: _supplierController,
-                                onChanged: (value) {
-                                  if (value.isNotEmpty) {
-                                    // Clear client when supplier is set
-                                    _clientController.text = '';
-                                    tabsProvider.updateTab(widget.tabIndex, {
-                                      'supplier': value,
-                                      'client': '',
-                                    });
-                                  } else {
-                                    tabsProvider.updateTab(
-                                        widget.tabIndex, {'supplier': value});
-                                  }
-                                },
-                                suggestionType: AutoCompleteType.supplier,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              _buildLabel(AppLocalizations.of(context)!
-                                  .materialRequired),
-                              const SizedBox(height: 4),
-                              AutoCompleteComboBox(
-                                placeholder: AppLocalizations.of(context)!
-                                    .selectMaterial,
-                                value: tab.material,
-                                controller: _materialController,
-                                onChanged: (value) async {
-                                  tabsProvider.updateTab(
-                                      widget.tabIndex, {'material': value});
-                                  if (_materialController.text.isNotEmpty) {
-                                    await getMaterialLogic();
-                                  }
+                          // Empty Weight
+                          _buildWeightField(
+                            enabled: enabled,
+                            label: AppLocalizations.of(context)!.grossWeightKg,
+                            controller: _grossWeightController,
+                            onChanged: _onGrossWeightChanged,
+                            onScalePressed: () =>
+                                _captureWeightFromScale(false),
+                            onFocusChanged: (focused) => setState(
+                                () => _grossWeightFieldFocused = focused),
+                          ),
+                          const SizedBox(height: 4),
+                          _buildWeightField(
+                            enabled: enabled,
+                            label: AppLocalizations.of(context)!.emptyWeightKg,
+                            controller: _emptyWeightController,
+                            onChanged: _onEmptyWeightChanged,
+                            onScalePressed: () => _captureWeightFromScale(true),
+                            onFocusChanged: (focused) => setState(
+                                () => _emptyWeightFieldFocused = focused),
+                          ),
+
+                          // Gross Weight
+
+                          const SizedBox(height: 4),
+
+                          // Net Weight (calculated)
+                          _buildCalculatedWeight(
+                            label: AppLocalizations.of(context)!.netWeightKg,
+                            value: tab.netWeight,
+                          ),
+                          const SizedBox(height: 4),
+
+                          const SizedBox(height: 30),
+                          FlyoutTarget(
+                              controller: controller,
+                              child: Button(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.resolveWith<Color?>(
+                                    (states) {
+                                      if (states.isDisabled) {
+                                        return Colors.grey;
+                                      }
+                                      if (states.isPressed) {
+                                        return Colors.red.darkest
+                                            .withOpacity(0.44);
+                                      }
+                                      if (states.isHovered) {
+                                        return Colors.red.dark
+                                            .withOpacity(0.36);
+                                      }
+                                      return Colors.red.darker
+                                          .withOpacity(0.60); // default
+                                    },
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(FluentIcons.cancel,
+                                          size: kIconSize),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                        style: TextStyle(
+                                          fontSize: kButtonFontSize + 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.showFlyout(
+                                    autoModeConfiguration:
+                                        FlyoutAutoConfiguration(
+                                      preferredMode:
+                                          FlyoutPlacementMode.topCenter,
+                                    ),
+                                    barrierDismissible: true,
+                                    dismissOnPointerMoveAway: false,
+                                    dismissWithEsc: true,
+                                    builder: (context) {
+                                      return FlyoutContent(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'سيتم إلغاء العملية و نقلها للسجل الملغى',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 12.0),
+                                            Button(
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    WidgetStateProperty
+                                                        .resolveWith<Color?>(
+                                                  (states) {
+                                                    if (states.isDisabled) {
+                                                      return Colors.grey;
+                                                    }
+                                                    if (states.isPressed) {
+                                                      return Colors.red.darkest
+                                                          .withOpacity(0.44);
+                                                    }
+                                                    if (states.isHovered) {
+                                                      return Colors.red.dark
+                                                          .withOpacity(0.36);
+                                                    }
+                                                    return Colors.red.darker
+                                                        .withOpacity(
+                                                            0.60); // default
+                                                  },
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Flyout.of(context).close();
+                                                _cancelTab();
+                                              },
+                                              child: const Text(
+                                                  'نعم قم بإلغاء العملية'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
                                 },
-                                suggestionType: AutoCompleteType.material,
+                              )),
+
+                          // Operation type removed from schema
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                // Right Column - Business Information
+                Expanded(
+                  flex: 3,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Truck Plate
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Column(
+                                children: [
+                                  _buildLabel(AppLocalizations.of(context)!
+                                      .truckPlateRequired),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: AppLocalizations.of(context)!
+                                        .enterTruckPlate,
+                                    value: tab.truckPlate,
+                                    controller: _truckPlateController,
+                                    onChanged: (value) {
+                                      tabsProvider.updateTab(widget.tabIndex,
+                                          {'truckPlate': value});
+                                    },
+                                    suggestionType: AutoCompleteType.truckPlate,
+                                    driverController: _driverNameController,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 4),
+                              Column(
+                                children: [
+                                  _buildLabel(
+                                      AppLocalizations.of(context)!.driverName),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: AppLocalizations.of(context)!
+                                        .enterDriverName,
+                                    value: tab.driverName,
+                                    controller: _driverNameController,
+                                    onChanged: (value) {
+                                      tabsProvider.updateTab(widget.tabIndex,
+                                          {'driverName': value});
+                                    },
+                                    suggestionType: AutoCompleteType.driver,
+                                    plateController: _truckPlateController,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 5,
+
+                          const SizedBox(height: 8),
+
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Column(
+                                children: [
+                                  _buildLabel(
+                                      AppLocalizations.of(context)!.client),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: AppLocalizations.of(context)!
+                                        .selectCustomer,
+                                    value: tab.client,
+                                    controller: _clientController,
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        // Clear supplier when client is set
+                                        _supplierController.text = '';
+                                        tabsProvider
+                                            .updateTab(widget.tabIndex, {
+                                          'client': value,
+                                          'supplier': '',
+                                        });
+                                      } else {
+                                        tabsProvider.updateTab(
+                                            widget.tabIndex, {'client': value});
+                                      }
+                                    },
+                                    suggestionType: AutoCompleteType.client,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 4),
+                              Column(
+                                children: [
+                                  _buildLabel(
+                                      AppLocalizations.of(context)!.supplier),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: AppLocalizations.of(context)!
+                                        .selectSupplier,
+                                    value: tab.supplier,
+                                    controller: _supplierController,
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        // Clear client when supplier is set
+                                        _clientController.text = '';
+                                        tabsProvider
+                                            .updateTab(widget.tabIndex, {
+                                          'supplier': value,
+                                          'client': '',
+                                        });
+                                      } else {
+                                        tabsProvider.updateTab(widget.tabIndex,
+                                            {'supplier': value});
+                                      }
+                                    },
+                                    suggestionType: AutoCompleteType.supplier,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          KiloPriceBox(
-                              controller: _kiloPriceController,
-                              onChange: (v) {
-                                calculateTotalPrice();
-                              }),
-                          SizedBox(
-                            width: 5,
+
+                          const SizedBox(height: 8),
+
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  _buildLabel(AppLocalizations.of(context)!
+                                      .materialRequired),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: AppLocalizations.of(context)!
+                                        .selectMaterial,
+                                    value: tab.material,
+                                    controller: _materialController,
+                                    onChanged: (value) async {
+                                      tabsProvider.updateTab(
+                                          widget.tabIndex, {'material': value});
+                                      if (_materialController.text.isNotEmpty) {
+                                        await getMaterialLogic();
+                                      }
+                                    },
+                                    suggestionType: AutoCompleteType.material,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              KiloPriceBox(
+                                  controller: _kiloPriceController,
+                                  onChange: (v) {
+                                    calculateTotalPrice();
+                                  }),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              TotalPriceBox(
+                                  controller: _totalPriceController,
+                                  onChange: (v) {})
+                            ],
+                          ), // Material
+
+                          const SizedBox(height: 8),
+
+                          Row(
+                            children: [
+                              _buildLabel(AppLocalizations.of(context)!.notes),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.15,
+                                child: TextBox(
+                                    controller: _notesController,
+                                    onChanged: (v) {
+                                      tabsProvider.updateTab(
+                                          widget.tabIndex, {'notes': v});
+                                    }),
+                              ),
+                            ],
                           ),
-                          TotalPriceBox(
-                              controller: _totalPriceController,
-                              onChange: (v) {})
+                          const SizedBox(height: 8),
+                          // Payment Status
+                          ToggleSwitch(
+                            checked: tab.isPaid,
+                            onChanged: (value) {
+                              tabsProvider.updateTab(
+                                  widget.tabIndex, {'isPaid': value});
+                            },
+                            content: Text(AppLocalizations.of(context)!.paid),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Show Price on Print
+                          ToggleSwitch(
+                            checked: tab.showPriceOnPrint,
+                            onChanged: (value) {
+                              tabsProvider.updateTab(
+                                  widget.tabIndex, {'showPriceOnPrint': value});
+                            },
+                            content: Text(
+                                AppLocalizations.of(context)!.showPriceOnPrint),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Action Buttons
+                          _buildActionButtons(tab),
                         ],
-                      ), // Material
-
-                      const SizedBox(height: 8),
-
-                      Row(
-                        children: [
-                          _buildLabel(AppLocalizations.of(context)!.notes),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.15,
-                            child: TextBox(
-                                controller: _notesController,
-                                onChanged: (v) {
-                                  tabsProvider
-                                      .updateTab(widget.tabIndex, {'notes': v});
-                                }),
-                          ),
-                        ],
                       ),
-                      const SizedBox(height: 8),
-                      // Payment Status
-                      ToggleSwitch(
-                        checked: tab.isPaid,
-                        onChanged: (value) {
-                          tabsProvider
-                              .updateTab(widget.tabIndex, {'isPaid': value});
-                        },
-                        content: Text(AppLocalizations.of(context)!.paid),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Show Price on Print
-                      ToggleSwitch(
-                        checked: tab.showPriceOnPrint,
-                        onChanged: (value) {
-                          tabsProvider.updateTab(
-                              widget.tabIndex, {'showPriceOnPrint': value});
-                        },
-                        content: Text(
-                            AppLocalizations.of(context)!.showPriceOnPrint),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Action Buttons
-                      _buildActionButtons(tab),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
@@ -654,6 +712,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     required ValueChanged<String> onChanged,
     required VoidCallback onScalePressed,
     required ValueChanged<bool> onFocusChanged,
+    bool enabled = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,6 +725,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               child: Focus(
                 onFocusChange: onFocusChanged,
                 child: TextFormBox(
+                  enabled: enabled,
                   controller: controller,
                   placeholder: '0.0',
                   onChanged: onChanged,

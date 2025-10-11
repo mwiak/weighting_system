@@ -28,6 +28,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   String _clientFilter = '';
   String _supplierFilter = '';
   String _materialFilter = '';
+  String _idFilter = '';
   DateTime? _startDate;
   DateTime? _endDate;
   List<Map<String, dynamic>> _operations = [];
@@ -54,15 +55,15 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       debugPrint('  Date Range: $_startDate to $_endDate');
 
       final operations = await provider.getOrdersHistory(
-        startDate: _startDate,
-        endDate: _endDate,
-        status: _statusFilter == 'all' ? null : _statusFilter,
-        driverFilter: _driverFilter.isEmpty ? null : _driverFilter,
-        truckFilter: _truckFilter.isEmpty ? null : _truckFilter,
-        supplierFilter: _supplierFilter.isEmpty ? null : _supplierFilter,
-        clientFilter: _clientFilter.isEmpty ? null : _clientFilter,
-        materialFilter: _materialFilter.isEmpty ? null : _materialFilter,
-      );
+          startDate: _startDate,
+          endDate: _endDate,
+          status: _statusFilter == 'all' ? null : _statusFilter,
+          driverFilter: _driverFilter.isEmpty ? null : _driverFilter,
+          truckFilter: _truckFilter.isEmpty ? null : _truckFilter,
+          supplierFilter: _supplierFilter.isEmpty ? null : _supplierFilter,
+          clientFilter: _clientFilter.isEmpty ? null : _clientFilter,
+          materialFilter: _materialFilter.isEmpty ? null : _materialFilter,
+          idFilter: int.tryParse(_idFilter) ?? 0);
 
       debugPrint('Found ${operations.length} operations');
       if (operations.isNotEmpty) {
@@ -80,10 +81,6 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     } finally {
       setState(() => _isLoading = false);
     }
-  }
-
-  void _calAllSeasons() async {
-    final dataHelper = DatabaseHelper();
   }
 
   @override
@@ -149,6 +146,24 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                               ],
                               onChanged: (value) => setState(
                                   () => _statusFilter = value ?? 'all'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.orderNumber + ':'),
+                            const SizedBox(height: 4),
+                            SizedBox(
+                              width: 500,
+                              child: TextBox(
+                                placeholder: 'فلترة بالرقم التسلسلي',
+                                onChanged: (value) =>
+                                    setState(() => _idFilter = value),
+                              ),
                             ),
                           ],
                         ),
