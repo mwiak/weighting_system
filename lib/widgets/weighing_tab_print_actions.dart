@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/weighing_tab.dart';
 import '../models/print_job.dart';
 import '../models/print_template.dart';
@@ -115,8 +115,10 @@ class WeighingTabPrintActionsWidget extends StatelessWidget {
               items: [
                 ComboBoxItem(value: 'A4', child: Text(l10n.paperSizeA4)),
                 ComboBoxItem(value: 'A5', child: Text(l10n.paperSizeA5)),
-                ComboBoxItem(value: 'Letter', child: Text(l10n.paperSizeLetter)),
-                ComboBoxItem(value: 'Custom', child: Text(l10n.paperSizeCustom)),
+                ComboBoxItem(
+                    value: 'Letter', child: Text(l10n.paperSizeLetter)),
+                ComboBoxItem(
+                    value: 'Custom', child: Text(l10n.paperSizeCustom)),
               ],
               onChanged: (value) => printProvider.setPaperSize(value ?? 'A4'),
             ),

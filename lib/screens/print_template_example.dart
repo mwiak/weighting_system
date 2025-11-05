@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'template_management_screen.dart';
 import '../theme/app_theme.dart';
 
@@ -42,9 +42,9 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Information card
             Container(
               width: 400,
@@ -67,11 +67,16 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
                     style: const TextStyle(color: AppTheme.secondaryTextColor),
                   ),
                   const SizedBox(height: 12),
-                  _buildFeatureRow(fluent.FluentIcons.edit, l10n.createCustomTemplates),
-                  _buildFeatureRow(fluent.FluentIcons.move, l10n.dragDropFieldPositioning),
-                  _buildFeatureRow(fluent.FluentIcons.settings, l10n.configureFontsFormatting),
-                  _buildFeatureRow(fluent.FluentIcons.save, l10n.importExportTemplates),
-                  _buildFeatureRow(fluent.FluentIcons.print, l10n.testPrintAlignment),
+                  _buildFeatureRow(
+                      fluent.FluentIcons.edit, l10n.createCustomTemplates),
+                  _buildFeatureRow(
+                      fluent.FluentIcons.move, l10n.dragDropFieldPositioning),
+                  _buildFeatureRow(fluent.FluentIcons.settings,
+                      l10n.configureFontsFormatting),
+                  _buildFeatureRow(
+                      fluent.FluentIcons.save, l10n.importExportTemplates),
+                  _buildFeatureRow(
+                      fluent.FluentIcons.print, l10n.testPrintAlignment),
                 ],
               ),
             ),
@@ -80,7 +85,7 @@ class PrintTemplateIntegrationExample extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildFeatureRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),

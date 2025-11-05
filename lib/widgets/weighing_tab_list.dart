@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/tabs_provider.dart';
 import '../models/weighing_tab.dart';
 import 'weighing_tab_print_actions.dart';
@@ -223,7 +223,8 @@ class WeighingTabList extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       ),
                     ),
-                    onPressed: () => _continueWeighing(context, tabsProvider, tab),
+                    onPressed: () =>
+                        _continueWeighing(context, tabsProvider, tab),
                     child: Text(l10n.continueButton),
                   )
                 else if (tab.isComplete)
@@ -285,7 +286,8 @@ class WeighingTabList extends StatelessWidget {
     return tab.status.toUpperCase();
   }
 
-  void _startWeighing(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _startWeighing(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     // Switch to this tab to start working on it
     final tabIndex = tabsProvider.tabs.indexOf(tab);
     if (tabIndex != -1) {
@@ -293,7 +295,8 @@ class WeighingTabList extends StatelessWidget {
     }
   }
 
-  void _continueWeighing(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _continueWeighing(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     // Switch to this tab to continue working on it
     final tabIndex = tabsProvider.tabs.indexOf(tab);
     if (tabIndex != -1) {
@@ -301,7 +304,8 @@ class WeighingTabList extends StatelessWidget {
     }
   }
 
-  void _completeTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _completeTab(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -326,7 +330,8 @@ class WeighingTabList extends StatelessWidget {
     );
   }
 
-  void _showTabActions(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _showTabActions(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -446,7 +451,8 @@ class WeighingTabList extends StatelessWidget {
     );
   }
 
-  void _cancelTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _cancelTab(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -463,7 +469,8 @@ class WeighingTabList extends StatelessWidget {
             onPressed: () async {
               Navigator.of(context).pop();
               // Use unified cancellation logic from TabsProvider
-              final success = await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
+              final success =
+                  await tabsProvider.cancelTab(tabsProvider.tabs.indexOf(tab));
               if (!success) {
                 // Show error if cancellation failed
                 debugPrint('Failed to cancel tab');
@@ -475,7 +482,8 @@ class WeighingTabList extends StatelessWidget {
     );
   }
 
-  void _closeTab(BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
+  void _closeTab(
+      BuildContext context, TabsProvider tabsProvider, WeighingTab tab) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,

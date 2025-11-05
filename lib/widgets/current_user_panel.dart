@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 import '../models/user.dart';
 import '../providers/user_provider.dart';

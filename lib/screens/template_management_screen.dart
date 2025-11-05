@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/print_template.dart';
 import '../models/weighing_tab.dart';
 import '../widgets/template_editor.dart';
@@ -536,17 +536,20 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
             ),
             const SizedBox(height: 16),
             _buildDetailRow(l10n.nameLabel, _selectedTemplate!.name),
-            _buildDetailRow(l10n.descriptionLabel, _selectedTemplate!.description),
-            _buildDetailRow(l10n.paperSizeLabel, _selectedTemplate!.paperSize),
-            _buildDetailRow(l10n.orientationLabel, _selectedTemplate!.orientation),
-            _buildDetailRow(l10n.fieldsLabel, '${_selectedTemplate!.fields.length}'),
             _buildDetailRow(
-                l10n.statusLabel, _selectedTemplate!.isActive ? l10n.active : l10n.inactive),
+                l10n.descriptionLabel, _selectedTemplate!.description),
+            _buildDetailRow(l10n.paperSizeLabel, _selectedTemplate!.paperSize),
+            _buildDetailRow(
+                l10n.orientationLabel, _selectedTemplate!.orientation),
+            _buildDetailRow(
+                l10n.fieldsLabel, '${_selectedTemplate!.fields.length}'),
+            _buildDetailRow(l10n.statusLabel,
+                _selectedTemplate!.isActive ? l10n.active : l10n.inactive),
             _buildDetailRow(
                 l10n.createdLabel, _formatDate(_selectedTemplate!.createdAt)),
             if (_selectedTemplate!.updatedAt != null)
-              _buildDetailRow(
-                  l10n.updatedLabel, _formatDate(_selectedTemplate!.updatedAt!)),
+              _buildDetailRow(l10n.updatedLabel,
+                  _formatDate(_selectedTemplate!.updatedAt!)),
             const SizedBox(height: 24),
             Text(
               l10n.fields,
@@ -598,7 +601,8 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                   : Center(
                       child: Text(
                         l10n.noFieldsInTemplate,
-                        style: const TextStyle(color: AppTheme.secondaryTextColor),
+                        style:
+                            const TextStyle(color: AppTheme.secondaryTextColor),
                       ),
                     ),
             ),
@@ -1149,15 +1153,17 @@ class _TemplateManagementScreenState extends State<TemplateManagementScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               fluent.Button(
-                                child: const Text('Silent Print (Windows Direct)'),
+                                child:
+                                    const Text('Silent Print (Windows Direct)'),
                                 onPressed: () async {
                                   Navigator.of(quickPrintContext).pop();
                                   try {
                                     // Get default printer for silent printing
                                     // DISABLED: final printers = await _printService.getAvailablePrinters();
                                     final printers = <String>[];
-                                    final defaultPrinter =
-                                        printers.isNotEmpty ? printers.first : null;
+                                    final defaultPrinter = printers.isNotEmpty
+                                        ? printers.first
+                                        : null;
 
                                     // DISABLED: Template printing temporarily disabled
                                     throw Exception(

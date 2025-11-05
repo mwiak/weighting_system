@@ -1,8 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/driver_plate_provider.dart';
 import '../models/driver.dart';
+import '../providers/tabs_provider.dart';
 import '../widgets/custom_info_label.dart';
 
 /// Drivers Management Screen
@@ -232,7 +233,8 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => ContentDialog(
-          title: Text(existingDriver == null ? l10n.addDriver : l10n.editDriver),
+          title:
+              Text(existingDriver == null ? l10n.addDriver : l10n.editDriver),
           content: SizedBox(
             width: 500,
             child: SingleChildScrollView(
@@ -375,7 +377,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   ) async {
     final driverPlateProvider = context.read<DriverPlateProvider>();
     bool success;
-
+    bool? isNameModified;
     if (existingDriver == null) {
       success = await driverPlateProvider.addDriverWithPlates(
         name.trim(),
@@ -385,6 +387,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
         city: city.trim().isEmpty ? null : city.trim(),
       );
     } else {
+      isNameModified = existingDriver.name != name.trim();
       success = await driverPlateProvider.updateDriverWithPlates(
         existingDriver.id!,
         name.trim(),
@@ -396,6 +399,11 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
     }
 
     if (success && mounted) {
+      if (isNameModified != null && isNameModified == true) {
+        await context
+            .read<TabsProvider>()
+            .updateTabsWith('driver_name', existingDriver!.name, name.trim());
+      }
       Navigator.of(context).pop();
     }
   }

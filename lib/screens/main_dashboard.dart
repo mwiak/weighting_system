@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/reports_view.dart';

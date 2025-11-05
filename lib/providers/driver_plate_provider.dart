@@ -4,12 +4,12 @@ import '../models/driver.dart';
 import '../models/driver_plate.dart';
 
 /// Driver Plate Provider
-/// 
+///
 /// Manages the state and operations for driver-plate relationships in the weighing system.
 /// Handles the many-to-many relationship between drivers and plate numbers.
 class DriverPlateProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
-  
+
   List<DriverPlate> _driverPlates = [];
   List<Driver> _driversWithPlates = [];
   bool _isLoading = false;
@@ -32,13 +32,15 @@ class DriverPlateProvider extends ChangeNotifier {
         where: 'active = 1',
         orderBy: 'driver_id, plate_number',
       );
-      
-      _driverPlates = driverPlateData.map((map) => DriverPlate.fromMap(map)).toList();
+
+      _driverPlates =
+          driverPlateData.map((map) => DriverPlate.fromMap(map)).toList();
 
       // Load drivers with their plate numbers
       await _loadDriversWithPlates();
-      
-      debugPrint('DriverPlateProvider: Loaded ${_driverPlates.length} driver-plate relationships');
+
+      debugPrint(
+          'DriverPlateProvider: Loaded ${_driverPlates.length} driver-plate relationships');
     } catch (e) {
       _setError('Failed to load driver plates: $e');
       debugPrint('DriverPlateProvider: Error loading driver plates: $e');
@@ -57,7 +59,7 @@ class DriverPlateProvider extends ChangeNotifier {
       );
 
       _driversWithPlates = [];
-      
+
       for (final driverMap in driversData) {
         final driverId = driverMap['id'] as int;
         final plateNumbers = _driverPlates
@@ -74,7 +76,9 @@ class DriverPlateProvider extends ChangeNotifier {
   }
 
   /// Adds a new driver with plate numbers
-  Future<bool> addDriverWithPlates(String driverName, List<String> plateNumbers, {
+  Future<bool> addDriverWithPlates(
+    String driverName,
+    List<String> plateNumbers, {
     String? phone,
     String? mobile,
     String? city,
@@ -97,11 +101,12 @@ class DriverPlateProvider extends ChangeNotifier {
         _setError('All plate numbers must be non-empty');
         return false;
       }
-      
+
       // Check if plate is already assigned to another driver
       final existingDriverForPlate = await _getDriverByPlate(plate.trim());
       if (existingDriverForPlate != null) {
-        _setError('Plate number $plate is already assigned to ${existingDriverForPlate.name}');
+        _setError(
+            'Plate number $plate is already assigned to ${existingDriverForPlate.name}');
         return false;
       }
     }
@@ -136,7 +141,8 @@ class DriverPlateProvider extends ChangeNotifier {
       });
 
       await loadDriverPlates();
-      debugPrint('DriverPlateProvider: Added driver $driverName with ${plateNumbers.length} plates');
+      debugPrint(
+          'DriverPlateProvider: Added driver $driverName with ${plateNumbers.length} plates');
       return true;
     } catch (e) {
       _setError('Failed to add driver: $e');
@@ -146,7 +152,10 @@ class DriverPlateProvider extends ChangeNotifier {
   }
 
   /// Updates a driver and their plate numbers
-  Future<bool> updateDriverWithPlates(int driverId, String driverName, List<String> plateNumbers, {
+  Future<bool> updateDriverWithPlates(
+    int driverId,
+    String driverName,
+    List<String> plateNumbers, {
     String? phone,
     String? mobile,
     String? city,
@@ -169,11 +178,13 @@ class DriverPlateProvider extends ChangeNotifier {
         _setError('All plate numbers must be non-empty');
         return false;
       }
-      
+
       // Check if plate is already assigned to another driver
       final existingDriverForPlate = await _getDriverByPlate(plate.trim());
-      if (existingDriverForPlate != null && existingDriverForPlate.id != driverId) {
-        _setError('Plate number $plate is already assigned to ${existingDriverForPlate.name}');
+      if (existingDriverForPlate != null &&
+          existingDriverForPlate.id != driverId) {
+        _setError(
+            'Plate number $plate is already assigned to ${existingDriverForPlate.name}');
         return false;
       }
     }
@@ -183,7 +194,7 @@ class DriverPlateProvider extends ChangeNotifier {
       final database = await _db.database;
       await database.transaction((txn) async {
         final now = DateTime.now();
-        
+
         // Update driver
         await txn.update(
           'drivers',
@@ -218,7 +229,8 @@ class DriverPlateProvider extends ChangeNotifier {
       });
 
       await loadDriverPlates();
-      debugPrint('DriverPlateProvider: Updated driver $driverName with ${plateNumbers.length} plates');
+      debugPrint(
+          'DriverPlateProvider: Updated driver $driverName with ${plateNumbers.length} plates');
       return true;
     } catch (e) {
       _setError('Failed to update driver: $e');
@@ -233,17 +245,6 @@ class DriverPlateProvider extends ChangeNotifier {
 
     try {
       // Check if driver has any orders
-      final orders = await _db.query(
-        'orders',
-        where: 'truck_plate IN (SELECT plate_number FROM driver_plates WHERE driver_id = ?)',
-        whereArgs: [driverId],
-        limit: 1,
-      );
-
-      if (orders.isNotEmpty) {
-        _setError('Cannot delete driver: has historical weighing operations');
-        return false;
-      }
 
       // Start transaction
       final database = await _db.database;
@@ -325,9 +326,8 @@ class DriverPlateProvider extends ChangeNotifier {
   /// Gets a driver by plate number (from loaded data)
   Driver? getDriverByPlateNumber(String plateNumber) {
     try {
-      return _driversWithPlates.firstWhere(
-        (driver) => driver.plateNumbers.contains(plateNumber)
-      );
+      return _driversWithPlates
+          .firstWhere((driver) => driver.plateNumbers.contains(plateNumber));
     } catch (e) {
       return null;
     }
@@ -340,11 +340,12 @@ class DriverPlateProvider extends ChangeNotifier {
         .map((dp) => dp.plateNumber)
         .toSet()
         .toList()
-        ..sort();
+      ..sort();
   }
 
   /// Gets active drivers only
-  List<Driver> get activeDrivers => _driversWithPlates.where((d) => d.active).toList();
+  List<Driver> get activeDrivers =>
+      _driversWithPlates.where((d) => d.active).toList();
 
   /// Sets loading state
   void _setLoading(bool loading) {

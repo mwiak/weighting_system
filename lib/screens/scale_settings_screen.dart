@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/weight_provider.dart';
 
 class ScaleSettingsScreen extends StatefulWidget {
@@ -55,7 +55,8 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             const SizedBox(width: 8),
                             Text(
                               l10n.connectionStatus,
-                              style: FluentTheme.of(context).typography.subtitle,
+                              style:
+                                  FluentTheme.of(context).typography.subtitle,
                             ),
                           ],
                         ),
@@ -105,12 +106,17 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             Expanded(
                               child: ComboBox<String>(
                                 value: weightProvider.selectedPort,
-                                items: weightProvider.getAvailablePorts().map(
-                                  (port) => ComboBoxItem<String>(
-                                    value: port,
-                                    child: Text(port == 'auto' ? l10n.autoDetect : port),
-                                  ),
-                                ).toList(),
+                                items: weightProvider
+                                    .getAvailablePorts()
+                                    .map(
+                                      (port) => ComboBoxItem<String>(
+                                        value: port,
+                                        child: Text(port == 'auto'
+                                            ? l10n.autoDetect
+                                            : port),
+                                      ),
+                                    )
+                                    .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
                                     weightProvider.updateSettings(port: value);
@@ -133,15 +139,19 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             Expanded(
                               child: ComboBox<int>(
                                 value: weightProvider.baudRate,
-                                items: weightProvider.getAvailableBaudRates().map(
-                                  (rate) => ComboBoxItem<int>(
-                                    value: rate,
-                                    child: Text(rate.toString()),
-                                  ),
-                                ).toList(),
+                                items: weightProvider
+                                    .getAvailableBaudRates()
+                                    .map(
+                                      (rate) => ComboBoxItem<int>(
+                                        value: rate,
+                                        child: Text(rate.toString()),
+                                      ),
+                                    )
+                                    .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    weightProvider.updateSettings(baudRate: value);
+                                    weightProvider.updateSettings(
+                                        baudRate: value);
                                   }
                                 },
                               ),
@@ -161,15 +171,19 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             Expanded(
                               child: ComboBox<int>(
                                 value: weightProvider.dataBits,
-                                items: weightProvider.getAvailableDataBits().map(
-                                  (bits) => ComboBoxItem<int>(
-                                    value: bits,
-                                    child: Text(bits.toString()),
-                                  ),
-                                ).toList(),
+                                items: weightProvider
+                                    .getAvailableDataBits()
+                                    .map(
+                                      (bits) => ComboBoxItem<int>(
+                                        value: bits,
+                                        child: Text(bits.toString()),
+                                      ),
+                                    )
+                                    .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    weightProvider.updateSettings(dataBits: value);
+                                    weightProvider.updateSettings(
+                                        dataBits: value);
                                   }
                                 },
                               ),
@@ -189,15 +203,19 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             Expanded(
                               child: ComboBox<int>(
                                 value: weightProvider.stopBits,
-                                items: weightProvider.getAvailableStopBits().map(
-                                  (bits) => ComboBoxItem<int>(
-                                    value: bits,
-                                    child: Text(bits.toString()),
-                                  ),
-                                ).toList(),
+                                items: weightProvider
+                                    .getAvailableStopBits()
+                                    .map(
+                                      (bits) => ComboBoxItem<int>(
+                                        value: bits,
+                                        child: Text(bits.toString()),
+                                      ),
+                                    )
+                                    .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    weightProvider.updateSettings(stopBits: value);
+                                    weightProvider.updateSettings(
+                                        stopBits: value);
                                   }
                                 },
                               ),
@@ -217,15 +235,20 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                             Expanded(
                               child: ComboBox<int>(
                                 value: weightProvider.parity,
-                                items: weightProvider.getAvailableParityOptions().entries.map(
-                                  (entry) => ComboBoxItem<int>(
-                                    value: entry.key,
-                                    child: Text(entry.value),
-                                  ),
-                                ).toList(),
+                                items: weightProvider
+                                    .getAvailableParityOptions()
+                                    .entries
+                                    .map(
+                                      (entry) => ComboBoxItem<int>(
+                                        value: entry.key,
+                                        child: Text(entry.value),
+                                      ),
+                                    )
+                                    .toList(),
                                 onChanged: (value) {
                                   if (value != null) {
-                                    weightProvider.updateSettings(parity: value);
+                                    weightProvider.updateSettings(
+                                        parity: value);
                                   }
                                 },
                               ),
@@ -251,36 +274,27 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                           style: FluentTheme.of(context).typography.subtitle,
                         ),
                         const SizedBox(height: 16),
-
                         InfoLabel(
                           label: l10n.protocol,
                           child: Text(l10n.serialComReadOnly),
                         ),
-
                         const SizedBox(height: 12),
-
                         InfoLabel(
                           label: l10n.expectedFormat,
                           child: Text(l10n.weightFormatExample),
                         ),
-
                         const SizedBox(height: 12),
-
                         InfoLabel(
                           label: l10n.readingInterval,
                           child: Text(l10n.readingInterval100ms),
                         ),
-
                         const SizedBox(height: 12),
-
                         InfoLabel(
                           label: l10n.connectionRetry,
                           child: Text(l10n.connectionRetryInterval),
                         ),
-
                         if (weightProvider.isConnected) ...[
                           const SizedBox(height: 16),
-
                           InfoLabel(
                             label: l10n.currentWeightLabel,
                             child: Text(
@@ -311,7 +325,8 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                       Button(
                         onPressed: () {
                           weightProvider.disconnect();
-                          _showInfoBar(context, l10n.disconnectedFromScale, InfoBarSeverity.info);
+                          _showInfoBar(context, l10n.disconnectedFromScale,
+                              InfoBarSeverity.info);
                         },
                         child: Text(l10n.disconnect),
                       ),
@@ -320,7 +335,8 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
                     FilledButton(
                       onPressed: () {
                         weightProvider.reconnect();
-                        _showInfoBar(context, l10n.attemptingToReconnect, InfoBarSeverity.info);
+                        _showInfoBar(context, l10n.attemptingToReconnect,
+                            InfoBarSeverity.info);
                       },
                       child: Text(l10n.reconnect),
                     ),
@@ -334,7 +350,8 @@ class _ScaleSettingsScreenState extends State<ScaleSettingsScreen> {
     );
   }
 
-  void _showInfoBar(BuildContext context, String message, InfoBarSeverity severity) {
+  void _showInfoBar(
+      BuildContext context, String message, InfoBarSeverity severity) {
     displayInfoBar(
       context,
       builder: (context, close) => InfoBar(

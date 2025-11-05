@@ -6,9 +6,10 @@ import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/print_template.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
 import 'package:weighing_system/utils/date_format.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'dart:async';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/weighing_tab.dart';
 import '../providers/weight_provider.dart';
 import '../providers/tabs_provider.dart';
@@ -25,9 +26,8 @@ const double kButtonFontSize = 12.5;
 const double kIconSize = 12.0;
 
 class AdminWeightingTabContent extends StatefulWidget {
-  const AdminWeightingTabContent({
-    super.key,
-  });
+  WeighingTab? tab;
+  AdminWeightingTabContent({super.key, this.tab});
 
   @override
   State<AdminWeightingTabContent> createState() =>
@@ -51,6 +51,7 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
   late TabsProvider myProvider;
   bool isPaid = false;
   bool printPrice = false;
+  bool isEditing = false;
 
   Timer? _emptyWeightDebounceTimer;
   Timer? _grossWeightDebounceTimer;
@@ -110,7 +111,10 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
   @override
   void initState() {
     super.initState();
-    final tab = _tab;
+    if (widget.tab != null) isEditing = true;
+    printd(isEditing.toString());
+    final tab = widget.tab ?? _tab;
+
     _emptyWeightController = TextEditingController(
       text: tab?.emptyWeight != null && tab!.emptyWeight > 0
           ? tab.emptyWeight.toString()
@@ -336,6 +340,43 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        isEditing
+                            ? Row(
+                                children: [
+                                  Text(
+                                    _formatStatus(_tab!.status),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: _getStatusColor(_tab!.status),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  ComboBox(
+                                      placeholder: Text('تغيير الحالة'),
+                                      onChanged: (v) {
+                                        if (v != null) {
+                                          tabsProvider.manualActiveTab?.status =
+                                              v;
+                                          setState(() {});
+                                        }
+                                      },
+                                      items: [
+                                        ComboBoxItem(
+                                            value: 'completed',
+                                            child: Text(
+                                                _formatStatus('completed'))),
+                                        ComboBoxItem(
+                                            value: 'cancelled',
+                                            child: Text(
+                                                _formatStatus('cancelled'))),
+                                      ])
+                                ],
+                              )
+                            : SizedBox.shrink(),
                         Text(dateToArabicDatetimeOperationEntry(creationDate!)),
                         SizedBox(
                           height: 10,
@@ -757,25 +798,38 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
         Row(
           children: [
             Expanded(
-              child: FilledButton(
-                onPressed: tab.isComplete ? () => _completeTab() : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                        tab.isComplete
-                            ? FluentIcons.completed
-                            : FluentIcons.clear,
-                        size: kIconSize),
-                    const SizedBox(width: 6),
-                    Text(
-                        tab.isComplete
-                            ? AppLocalizations.of(context)!.complete
-                            : AppLocalizations.of(context)!.incomplete,
-                        style: TextStyle(fontSize: kButtonFontSize)),
-                  ],
-                ),
-              ),
+              child: isEditing
+                  ? FilledButton(
+                      onPressed: () {
+                        _modifyTab();
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(AppLocalizations.of(context)!.save,
+                              style: TextStyle(fontSize: kButtonFontSize)),
+                        ],
+                      ),
+                    )
+                  : FilledButton(
+                      onPressed: tab.isComplete ? () => _completeTab() : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                              tab.isComplete
+                                  ? FluentIcons.completed
+                                  : FluentIcons.clear,
+                              size: kIconSize),
+                          const SizedBox(width: 6),
+                          Text(
+                              tab.isComplete
+                                  ? AppLocalizations.of(context)!.complete
+                                  : AppLocalizations.of(context)!.incomplete,
+                              style: TextStyle(fontSize: kButtonFontSize)),
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
@@ -830,6 +884,59 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
     } else {
       _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
           InfoBarSeverity.error);
+    }
+  }
+
+  void _modifyTab() async {
+    final tabsProvider = context.read<TabsProvider>();
+    final success = await tabsProvider.modifyManualTab();
+    if (success) {
+      Navigator.of(context).pop();
+      _showInfoBar(AppLocalizations.of(context)!.tabCompletedAndMoved,
+          InfoBarSeverity.success);
+    } else {
+      _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
+          InfoBarSeverity.error);
+    }
+  }
+
+  Color _getStatusColor(dynamic status) {
+    switch (status?.toString().toLowerCase()) {
+      case 'complete':
+      case 'completed':
+        return Colors.green;
+      case 'incomplete':
+      case 'pending':
+        return Colors.orange;
+      case 'active':
+        return Colors.blue;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _formatStatus(String status) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return l10n.statusCompleted;
+      case 'in-progress':
+      case 'inprogress':
+        return l10n.statusInProgress;
+      case 'incomplete':
+        return l10n.statusIncomplete;
+      case 'cancelled':
+        return l10n.statusCancelled;
+      case 'empty':
+        return l10n.statusEmpty;
+      default:
+        // Fallback: capitalize each word
+        return status
+            .split('-')
+            .map((word) => word[0].toUpperCase() + word.substring(1))
+            .join(' ');
     }
   }
 

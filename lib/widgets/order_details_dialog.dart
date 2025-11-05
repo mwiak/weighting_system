@@ -1,11 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/database/database_helper.dart';
+import 'package:weighing_system/widgets/admin_weighting_tab_content.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/widgets/operation_widgets/operation_entry.dart';
 import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
 import '../models/print_template.dart';
+import '../providers/tabs_provider.dart';
 import '../services/custom_template_service.dart';
 import '../services/template_print_service.dart';
 import '../models/weighing_tab.dart';
@@ -106,6 +109,27 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
     );
   }
 
+  void _showEditingDialog() async {
+    context.read<TabsProvider>().createInMemoryManualTab(tab: widget.operation);
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AdminWeightingTabContent(
+            tab: widget.operation,
+          );
+        });
+  }
+
+  void _deleteOperation(int id) async {
+    final DatabaseHelper db = DatabaseHelper();
+    final response =
+        await db.delete('weighing_tabs', where: 'id = ?', whereArgs: [id]);
+    if (response > 0) {
+      _showInfoBar('تم الحذف', InfoBarSeverity.success);
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -125,7 +149,9 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
               const SizedBox(width: 8),
               if (value.activeUser!.type == UserRanks.admin) ...[
                 Button(
-                  onPressed: () {},
+                  onPressed: () {
+                    _deleteOperation(widget.operation.id!);
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -137,19 +163,10 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                 ),
                 const SizedBox(width: 8),
                 Button(
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(FluentIcons.cancel),
-                      const SizedBox(width: 8),
-                      Text(l10n.cancel),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Button(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showEditingDialog();
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -255,6 +272,8 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                                           widget.operation.showPriceOnPrint
                                               ? l10n.yes
                                               : l10n.no),
+                                      _buildDetailRow(
+                                          l10n.notes, widget.operation.notes),
                                     ],
                                   ),
                                   const SizedBox(height: 16),

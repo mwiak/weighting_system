@@ -13,6 +13,12 @@ String dateToArabicDatetimeOperationEntry(DateTime input) {
   return formatter.format(input);
 }
 
+String dateToArabicDatetimeWeightTab(DateTime input) {
+  final formatter = DateFormat('EEEE  dd/ MM / yyyy   hh:mm a', 'ar');
+
+  return formatter.format(input);
+}
+
 String dateToArabicDatetimeExcel(DateTime input) {
   final formatter = DateFormat('EEEE_dd/ MM / yyyy_hh:mm a', 'ar');
 
@@ -29,4 +35,14 @@ String dateToArabicDatetimeForFile(DateTime input) {
   final formatter = DateFormat('yyyy_MM_dd_hh_mm_a', 'ar');
 
   return formatter.format(input);
+}
+
+String formatDateTime(dynamic dateTime) {
+  if (dateTime == null) return '';
+  try {
+    DateTime date = DateTime.parse(dateTime);
+    return dateToArabicDatetimeOperationEntry(date);
+  } catch (e) {
+    return dateTime.toString();
+  }
 }

@@ -1,15 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/app_settings_provider.dart';
 import '../services/odoo_service.dart';
 import '../widgets/custom_info_label.dart';
 
 /// Odoo Configuration Settings Screen
-/// 
+///
 /// Allows users to configure Odoo connection credentials including:
 /// - Server URL
-/// - Database name  
+/// - Database name
 /// - Username and password
 /// - Test connection functionality
 class OdooSettingsScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
   final _databaseController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   bool _isTestingConnection = false;
   bool _showPassword = false;
   String? _connectionTestResult;
@@ -40,7 +40,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
   @override
   void dispose() {
     _urlController.dispose();
-    _databaseController.dispose(); 
+    _databaseController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -50,13 +50,17 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
   void _loadCurrentSettings() async {
     final settingsProvider = context.read<AppSettingsProvider>();
     await settingsProvider.loadSettings();
-    
+
     if (mounted) {
       setState(() {
-        _urlController.text = settingsProvider.getSetting('odoo_url')?.value ?? '';
-        _databaseController.text = settingsProvider.getSetting('odoo_database')?.value ?? '';
-        _usernameController.text = settingsProvider.getSetting('odoo_username')?.value ?? '';
-        _passwordController.text = settingsProvider.getSetting('odoo_password')?.value ?? '';
+        _urlController.text =
+            settingsProvider.getSetting('odoo_url')?.value ?? '';
+        _databaseController.text =
+            settingsProvider.getSetting('odoo_database')?.value ?? '';
+        _usernameController.text =
+            settingsProvider.getSetting('odoo_username')?.value ?? '';
+        _passwordController.text =
+            settingsProvider.getSetting('odoo_password')?.value ?? '';
       });
     }
   }
@@ -64,14 +68,18 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
   /// Save Odoo settings to the database
   Future<void> _saveSettings() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final settingsProvider = context.read<AppSettingsProvider>();
-    
+
     try {
-      await settingsProvider.updateSetting(key: 'odoo_url', value: _urlController.text.trim());
-      await settingsProvider.updateSetting(key: 'odoo_database', value: _databaseController.text.trim());
-      await settingsProvider.updateSetting(key: 'odoo_username', value: _usernameController.text.trim());
-      await settingsProvider.updateSetting(key: 'odoo_password', value: _passwordController.text.trim());
+      await settingsProvider.updateSetting(
+          key: 'odoo_url', value: _urlController.text.trim());
+      await settingsProvider.updateSetting(
+          key: 'odoo_database', value: _databaseController.text.trim());
+      await settingsProvider.updateSetting(
+          key: 'odoo_username', value: _usernameController.text.trim());
+      await settingsProvider.updateSetting(
+          key: 'odoo_password', value: _passwordController.text.trim());
 
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -110,7 +118,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
   /// Test the Odoo connection with current settings
   Future<void> _testConnection() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     setState(() {
       _isTestingConnection = true;
       _connectionTestResult = null;
@@ -118,7 +126,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
 
     try {
       final odooService = OdooService();
-      
+
       // Configure the service with current form values
       final config = OdooConfig(
         baseUrl: _urlController.text.trim(),
@@ -127,23 +135,22 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
         password: _passwordController.text.trim(),
       );
       odooService.configure(config);
-      
+
       // Test authentication
       final success = await odooService.authenticate();
-      
+
       final l10n = AppLocalizations.of(context)!;
       setState(() {
         _connectionSuccessful = success;
-        _connectionTestResult = success
-            ? l10n.connectionSuccessful
-            : l10n.connectionFailed;
+        _connectionTestResult =
+            success ? l10n.connectionSuccessful : l10n.connectionFailed;
       });
-
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
       setState(() {
         _connectionSuccessful = false;
-        _connectionTestResult = '${l10n.connectionFailedWithError}: ${e.toString()}';
+        _connectionTestResult =
+            '${l10n.connectionFailedWithError}: ${e.toString()}';
       });
     } finally {
       setState(() {
@@ -191,7 +198,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Odoo URL
                   CustomInfoLabel(
                     label: l10n.odooUrl,
@@ -212,7 +219,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Database Name
                   CustomInfoLabel(
                     label: l10n.databaseName,
@@ -269,7 +276,8 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                         const SizedBox(width: 8),
                         ToggleButton(
                           checked: _showPassword,
-                          onChanged: (value) => setState(() => _showPassword = value),
+                          onChanged: (value) =>
+                              setState(() => _showPassword = value),
                           child: Icon(
                             _showPassword ? FluentIcons.hide : FluentIcons.view,
                             size: 16,
@@ -279,7 +287,7 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Connection Test Result
                   if (_connectionTestResult != null) ...[
                     InfoBar(
@@ -296,7 +304,8 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                   Row(
                     children: [
                       FilledButton(
-                        onPressed: _isTestingConnection ? null : _testConnection,
+                        onPressed:
+                            _isTestingConnection ? null : _testConnection,
                         child: _isTestingConnection
                             ? Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -324,9 +333,9 @@ class _OdooSettingsScreenState extends State<OdooSettingsScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Information section
                   Expander(
                     header: Text(l10n.connectionInformation),

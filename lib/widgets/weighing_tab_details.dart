@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/widgets/operation_widgets/operation_header.dart';
 import '../providers/tabs_provider.dart';
 import '../models/weighing_tab.dart';

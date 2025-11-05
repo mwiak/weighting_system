@@ -8,7 +8,7 @@ import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/login_screen.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'providers/weight_provider.dart';
 import 'providers/sync_provider.dart';
 import 'providers/client_provider.dart';

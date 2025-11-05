@@ -1,9 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/database_helper.dart';
 import '../providers/supplier_provider.dart';
 import '../models/supplier.dart';
+import '../providers/tabs_provider.dart';
 
 class SupplierFormDialog extends StatefulWidget {
   final Supplier? supplier;
@@ -164,9 +165,13 @@ class _SupplierFormDialogState extends State<SupplierFormDialog> {
               ? null
               : _cityController.text.trim(),
         );
-
+        bool hasNameChanged = supplier.name != _nameController.text.trim();
         final success = await supplierProvider.updateSupplier(updatedSupplier);
         if (success) {
+          if (hasNameChanged) {
+            await context.read<TabsProvider>().updateTabsWith(
+                'supplier', supplier.name, updatedSupplier.name);
+          }
           if (mounted) Navigator.of(context).pop();
           if (mounted)
             _showSuccessMessage(context, l10n.supplierUpdatedSuccessfully);

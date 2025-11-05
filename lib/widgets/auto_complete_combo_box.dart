@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';
@@ -20,6 +20,7 @@ enum AutoCompleteType {
   client, // For customers only
   supplier, // For suppliers only
   material,
+  middleman,
 }
 
 class AutoCompleteComboBox extends StatefulWidget {
@@ -401,6 +402,9 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
         case AutoCompleteType.material:
           _suggestions = await _getMaterials();
           break;
+        case AutoCompleteType.middleman:
+          // TODO: Handle this case.
+          throw UnimplementedError();
       }
     } catch (e) {
       debugPrint('Error loading suggestions: $e');
@@ -430,6 +434,18 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     final db = await dbHelper.database;
     final results = await db.query(
       'drivers',
+      columns: ['name'],
+      where: 'active = 1',
+      orderBy: 'name',
+    );
+    return results.map((row) => row['name'] as String).toList();
+  }
+
+  Future<List<String>> _getMiddleMenNames() async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+    final results = await db.query(
+      'middlemen',
       columns: ['name'],
       where: 'active = 1',
       orderBy: 'name',
@@ -569,9 +585,12 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
           }
         },
         onTap: () {
-          _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: widget.controller!.text.length),
-          );
+          if (!_focusNode.hasFocus) {
+            _controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: widget.controller!.text.length),
+            );
+          }
+
           if (filteredSuggestions.isNotEmpty) {
             _showOverlay();
           }

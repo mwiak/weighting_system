@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
@@ -112,7 +112,8 @@ class GeneralSettings extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           weightProvider.isConnected
-                              ? l10n.connectedToPort(weightProvider.connectedPort ?? '')
+                              ? l10n.connectedToPort(
+                                  weightProvider.connectedPort ?? '')
                               : weightProvider.isScanning
                                   ? l10n.scanningForDevices
                                   : l10n.notConnected,

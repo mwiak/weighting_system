@@ -3,7 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';

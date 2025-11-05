@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/screens/summary_custome.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/screens/summary_daily.dart';
 
 class SummariesScreen extends StatefulWidget {
@@ -19,20 +20,8 @@ class _SummariesScreenState extends State<SummariesScreen> {
       PaneItem(
         icon: const SizedBox.shrink(),
         //TODO localize
-        title: Text('يومي'),
-        body: SummaryDaily(),
-      ),
-      PaneItem(
-        icon: const SizedBox.shrink(),
-        //TODO localize
-        title: Text('موسم'),
-        body: SummaryDaily(),
-      ),
-      PaneItem(
-        icon: const SizedBox.shrink(),
-        //TODO localize
         title: Text('مخصص'),
-        body: SummaryDaily(),
+        body: SummaryCustom(),
       ),
     ];
 

@@ -1,9 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../database/database_helper.dart';
 import '../providers/material_provider.dart';
 import '../models/material.dart';
+import '../providers/tabs_provider.dart';
 
 class MaterialFormDialog extends StatefulWidget {
   final Material? material;
@@ -163,9 +164,13 @@ class _MaterialFormDialogState extends State<MaterialFormDialog> {
               ? null
               : _descriptionController.text.trim(),
         );
-
+        bool hasNameChanged = material.name != _nameController.text.trim();
         final success = await materialProvider.updateMaterial(updatedMaterial);
         if (success) {
+          if (hasNameChanged) {
+            await context.read<TabsProvider>().updateTabsWith(
+                'material', material.name, updatedMaterial.name);
+          }
           Navigator.of(context).pop();
           _showSuccessMessage(context, '');
         } else {

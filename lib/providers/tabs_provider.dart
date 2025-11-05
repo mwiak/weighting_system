@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 import 'dart:async';
 import '../database/database_helper.dart';
 import '../models/weighing_tab.dart';
@@ -109,8 +110,8 @@ class TabsProvider extends ChangeNotifier {
     return _tabs.length < maxTabs;
   }
 
-  void createInMemoryManualTab() {
-    manualActiveTab = WeighingTab();
+  void createInMemoryManualTab({WeighingTab? tab}) {
+    manualActiveTab = tab ?? WeighingTab();
   }
 
   /// Switch to a specific tab
@@ -289,6 +290,13 @@ class TabsProvider extends ChangeNotifier {
         hasChanges = true;
       }
     }
+    if (updates.containsKey('middle_man')) {
+      final value = updates['middle_man'] as String? ?? '';
+      if (tab.middleMan != value) {
+        tab.middleMan = value;
+        hasChanges = true;
+      }
+    }
 
     if (updates.containsKey('isPaid')) {
       final value = updates['isPaid'] as bool? ?? false;
@@ -423,6 +431,13 @@ class TabsProvider extends ChangeNotifier {
       }
     }
 
+    if (updates.containsKey('middle_man')) {
+      final value = updates['middle_man'] as String? ?? '';
+      if (tab.middleMan != value) {
+        tab.middleMan = value;
+      }
+    }
+
     if (updates.containsKey('isPaid')) {
       final value = updates['isPaid'] as bool? ?? false;
       if (tab.isPaid != value) {
@@ -479,6 +494,7 @@ class TabsProvider extends ChangeNotifier {
       } else {
         // Update existing record
         final tabData = tab.toMap();
+        printd(tabData.toString());
         await _db.update(
           'weighing_tabs',
           tabData,
@@ -569,6 +585,33 @@ class TabsProvider extends ChangeNotifier {
       // Mark as completed
       tab.completeTab();
 
+      // Save to database
+      await _saveTabToDatabase(tab);
+
+      // Remove from active tabs
+
+      notifyListeners();
+      debugPrint('TabsProvider: Completed tab');
+      return true;
+    } catch (e) {
+      debugPrint('TabsProvider: Error completing tab: $e');
+      return false;
+    }
+  }
+
+  Future<bool> modifyManualTab() async {
+    final tab = manualActiveTab!;
+
+    // Check if tab can be completed
+    if (!tab.isComplete) {
+      debugPrint('TabsProvider: Cannot complete tab - missing required fields');
+      return false;
+    }
+
+    try {
+      // First, save any new values to their respective tables
+      await _saveNewValuesToTables(tab);
+      tab.updatedAt = DateTime.now();
       // Save to database
       await _saveTabToDatabase(tab);
 
@@ -775,6 +818,26 @@ class TabsProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('TabsProvider: Error cancelling tab: $e');
       return false;
+    }
+  }
+
+  /// Update all tabs when one of their references was modified
+  Future<void> updateTabsWith(
+      String type, String oldValue, String newValue) async {
+    try {
+      {
+        // Update existing record
+        final response = await _db.update(
+          'weighing_tabs',
+          {type: newValue},
+          where: '$type = ?',
+          whereArgs: [oldValue],
+        );
+        debugPrint('TabsProvider: Updated tabs count $response in database');
+      }
+    } catch (e) {
+      debugPrint('TabsProvider: Error saving tab: $e');
+      rethrow; // Re-throw to let caller handle the error
     }
   }
 

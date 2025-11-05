@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 // import 'package:flutter/foundation.dart'; // Unused
 import '../models/page_dimensions.dart';
 import '../models/windows_printer.dart';
@@ -29,10 +29,12 @@ class DimensionAwarePrintPreview extends StatefulWidget {
   });
 
   @override
-  State<DimensionAwarePrintPreview> createState() => _DimensionAwarePrintPreviewState();
+  State<DimensionAwarePrintPreview> createState() =>
+      _DimensionAwarePrintPreviewState();
 }
 
-class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview> {
+class _DimensionAwarePrintPreviewState
+    extends State<DimensionAwarePrintPreview> {
   double _zoomLevel = 1.0;
   Map<String, dynamic>? _validationResult;
 
@@ -130,7 +132,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(FluentIcons.document, size: 48, color: Color(0xFF9E9E9E)),
+            const Icon(FluentIcons.document,
+                size: 48, color: Color(0xFF9E9E9E)),
             const SizedBox(height: 8),
             Text(AppLocalizations.of(context)!.noDocumentToPreview),
           ],
@@ -179,7 +182,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
                   ),
                   Text(
                     '${pageSize.widthMm.toStringAsFixed(1)} × ${pageSize.heightMm.toStringAsFixed(1)} mm',
-                    style: const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
+                    style:
+                        const TextStyle(fontSize: 12, color: Color(0xFF9E9E9E)),
                   ),
                 ],
               ),
@@ -191,12 +195,16 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
               children: [
                 IconButton(
                   icon: const Icon(FluentIcons.remove),
-                  onPressed: _zoomLevel > 0.25 ? () => _setZoom(_zoomLevel - 0.25) : null,
+                  onPressed: _zoomLevel > 0.25
+                      ? () => _setZoom(_zoomLevel - 0.25)
+                      : null,
                 ),
                 Text('${(_zoomLevel * 100).toInt()}%'),
                 IconButton(
                   icon: const Icon(FluentIcons.add),
-                  onPressed: _zoomLevel < 3.0 ? () => _setZoom(_zoomLevel + 0.25) : null,
+                  onPressed: _zoomLevel < 3.0
+                      ? () => _setZoom(_zoomLevel + 0.25)
+                      : null,
                 ),
                 const SizedBox(width: 8),
                 Button(
@@ -232,7 +240,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InfoBar(
-        title: Text(_validationResult!['isValid'] ? 'Print Ready' : 'Print Warning'),
+        title: Text(
+            _validationResult!['isValid'] ? 'Print Ready' : 'Print Warning'),
         content: Text(_validationResult!['message']),
         severity: _validationResult!['isValid']
             ? InfoBarSeverity.success
@@ -283,7 +292,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
             ),
 
             // Rulers
-            if (widget.showRulers) _buildRulers(pageSize, finalScale, constraints),
+            if (widget.showRulers)
+              _buildRulers(pageSize, finalScale, constraints),
           ],
         );
       },
@@ -304,7 +314,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(FluentIcons.document, size: 48, color: Color(0xFFD32F2F)),
+            const Icon(FluentIcons.document,
+                size: 48, color: Color(0xFFD32F2F)),
             const SizedBox(height: 8),
             Text(AppLocalizations.of(context)!.pdfPreview),
           ],
@@ -313,7 +324,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
     );
   }
 
-  Widget _buildTemplatePreview(PrintTemplate template, PageSize pageSize, double scale) {
+  Widget _buildTemplatePreview(
+      PrintTemplate template, PageSize pageSize, double scale) {
     return Stack(
       children: [
         // Background
@@ -324,7 +336,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
         ),
 
         // Template fields
-        ...template.fields.map((field) => _buildFieldPreview(field, scale, pageSize)),
+        ...template.fields
+            .map((field) => _buildFieldPreview(field, scale, pageSize)),
 
         // Margins overlay
         if (widget.showMargins && widget.selectedPrinter != null)
@@ -333,7 +346,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
     );
   }
 
-  Widget _buildFieldPreview(TemplateField field, double scale, PageSize pageSize) {
+  Widget _buildFieldPreview(
+      TemplateField field, double scale, PageSize pageSize) {
     final data = widget.templateData ?? {};
     final value = data[field.fieldName]?.toString() ?? '[${field.fieldName}]';
 
@@ -347,7 +361,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
         child: Text(
           value,
           style: TextStyle(
-            fontSize: field.fontSize * scale * 0.75, // Approximate screen scaling
+            fontSize:
+                field.fontSize * scale * 0.75, // Approximate screen scaling
             fontWeight: field.bold ? FontWeight.bold : FontWeight.normal,
             color: const Color(0xFF212121),
           ),
@@ -382,7 +397,8 @@ class _DimensionAwarePrintPreviewState extends State<DimensionAwarePrintPreview>
     );
   }
 
-  Widget _buildRulers(PageSize pageSize, double scale, BoxConstraints constraints) {
+  Widget _buildRulers(
+      PageSize pageSize, double scale, BoxConstraints constraints) {
     return Stack(
       children: [
         // Horizontal ruler (top)

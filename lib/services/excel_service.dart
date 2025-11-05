@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/utils/date_format.dart';
 import '../models/weighing_tab.dart';
 import 'package:file_picker/file_picker.dart' as fp;

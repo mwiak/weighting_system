@@ -1,5 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
@@ -190,8 +190,8 @@ class _AddEditUserDialogState extends State<AddEditUserDialog> {
                             ? FluentIcons.red_eye
                             : FluentIcons.hide),
                         onPressed: () {
-                          setState(
-                              () => _hideConfirmPassword = !_hideConfirmPassword);
+                          setState(() =>
+                              _hideConfirmPassword = !_hideConfirmPassword);
                         },
                       ),
                     ),
@@ -338,7 +338,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       ? FluentIcons.red_eye
                       : FluentIcons.hide),
                   onPressed: () {
-                    setState(() => _hideConfirmPassword = !_hideConfirmPassword);
+                    setState(
+                        () => _hideConfirmPassword = !_hideConfirmPassword);
                   },
                 ),
               ),

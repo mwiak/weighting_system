@@ -4,6 +4,8 @@ import '../services/weighing_tab_report_service.dart';
 class ReportProvider extends ChangeNotifier {
   final WeighingTabReportService _reportService = WeighingTabReportService();
 
+  List<Map<String, dynamic>> operations = [];
+
   bool _isGenerating = false;
   String? _lastError;
   WeighingTabDashboardStats? _dashboardStats;
@@ -284,6 +286,18 @@ class ReportProvider extends ChangeNotifier {
       String? materialFilter,
       int? idFilter}) async {
     try {
+      operations = await _reportService.getTabsHistory(
+          // Updated method
+          startDate: startDate,
+          endDate: endDate,
+          status: status,
+          driverFilter: driverFilter,
+          truckFilter: truckFilter,
+          clientFilter: clientFilter,
+          supplierFilter: supplierFilter,
+          materialFilter: materialFilter,
+          idFilter: idFilter);
+      notifyListeners();
       return await _reportService.getTabsHistory(
           // Updated method
           startDate: startDate,

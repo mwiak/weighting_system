@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 
 // Simple script to add test data to the weighing system database
 void main() async {
@@ -8,21 +9,21 @@ void main() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  print('Adding test data to weighing system database...');
+  printd('Adding test data to weighing system database...');
 
   try {
     // Find the database path (similar to how the app does it)
     final documentsPath = Platform.environment['USERPROFILE'];
     if (documentsPath == null) {
-      print('Could not find user profile path');
+      printd('Could not find user profile path');
       return;
     }
 
     final dbPath = join(documentsPath, 'Documents', 'database', 'database.db');
-    print('Database path: $dbPath');
+    printd('Database path: $dbPath');
 
     if (!File(dbPath).existsSync()) {
-      print('Database file does not exist at: $dbPath');
+      printd('Database file does not exist at: $dbPath');
       return;
     }
 
@@ -30,7 +31,7 @@ void main() async {
 
     // Check current data
     final existingTabs = await db.query('weighing_tabs');
-    print('Existing tabs: ${existingTabs.length}');
+    printd('Existing tabs: ${existingTabs.length}');
 
     // Add test completed tabs
     final testTabs = [
@@ -48,8 +49,10 @@ void main() async {
         'operation_type': 'loading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'created_at': DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
-        'updated_at': DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
+        'created_at':
+            DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
+        'updated_at':
+            DateTime.now().subtract(Duration(days: 2)).toIso8601String(),
       },
       {
         'tab_id': 1002,
@@ -65,8 +68,10 @@ void main() async {
         'operation_type': 'unloading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'created_at': DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
-        'updated_at': DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
+        'created_at':
+            DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
+        'updated_at':
+            DateTime.now().subtract(Duration(days: 1)).toIso8601String(),
       },
       {
         'tab_id': 1003,
@@ -82,17 +87,20 @@ void main() async {
         'operation_type': 'loading',
         'has_unsaved_changes': 0,
         'status': 'completed',
-        'created_at': DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
-        'updated_at': DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
+        'created_at':
+            DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
+        'updated_at':
+            DateTime.now().subtract(Duration(hours: 5)).toIso8601String(),
       }
     ];
 
     for (final tab in testTabs) {
       try {
-        await db.insert('weighing_tabs', tab, conflictAlgorithm: ConflictAlgorithm.replace);
-        print('Added test tab: ${tab['tab_id']} - ${tab['truck_plate']}');
+        await db.insert('weighing_tabs', tab,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        printd('Added test tab: ${tab['tab_id']} - ${tab['truck_plate']}');
       } catch (e) {
-        print('Error adding tab ${tab['tab_id']}: $e');
+        printd('Error adding tab ${tab['tab_id']}: $e');
       }
     }
 
@@ -105,7 +113,8 @@ void main() async {
 
     print('\nCompleted tabs in database: ${completedTabs.length}');
     for (final tab in completedTabs) {
-      print('  Tab ${tab['tab_id']}: ${tab['truck_plate']} - ${tab['driver_name']} - ${tab['status']}');
+      print(
+          '  Tab ${tab['tab_id']}: ${tab['truck_plate']} - ${tab['driver_name']} - ${tab['status']}');
     }
 
     await db.close();

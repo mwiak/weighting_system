@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:provider/provider.dart';
+import '../l10n/app_localizations.dart';
 import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../widgets/user_form_dialog.dart';
@@ -76,27 +77,24 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             flex: 3,
                             child: Text(
                               l10n.username,
-                              style: FluentTheme.of(context)
-                                  .typography
-                                  .bodyStrong,
+                              style:
+                                  FluentTheme.of(context).typography.bodyStrong,
                             ),
                           ),
                           Expanded(
                             flex: 2,
                             child: Text(
                               l10n.type,
-                              style: FluentTheme.of(context)
-                                  .typography
-                                  .bodyStrong,
+                              style:
+                                  FluentTheme.of(context).typography.bodyStrong,
                             ),
                           ),
                           Expanded(
                             flex: 4,
                             child: Text(
                               l10n.actions,
-                              style: FluentTheme.of(context)
-                                  .typography
-                                  .bodyStrong,
+                              style:
+                                  FluentTheme.of(context).typography.bodyStrong,
                               textAlign: TextAlign.end,
                             ),
                           ),
@@ -225,8 +223,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     final canDelete = snapshot.data ?? false;
 
                     return Button(
-                      onPressed:
-                          canDelete ? () => _showDeleteConfirmation(user) : null,
+                      onPressed: canDelete
+                          ? () => _showDeleteConfirmation(user)
+                          : null,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

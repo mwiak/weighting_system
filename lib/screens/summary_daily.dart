@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/models/weighing_tab.dart';
 import 'package:weighing_system/providers/summaries_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/material_tree_item.dart';
 
 class SummaryDaily extends StatefulWidget {

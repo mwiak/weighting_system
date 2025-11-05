@@ -8,11 +8,12 @@ import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'dart:async';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import '../models/weighing_tab.dart';
 import '../providers/weight_provider.dart';
 import '../providers/tabs_provider.dart';
 import '../services/template_print_service.dart';
+import '../utils/date_format.dart';
 import 'auto_complete_combo_box.dart';
 
 // Text size constants for easy adjustment
@@ -342,6 +343,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text(dateToArabicDatetimeWeightTab(_tab!.createdAt)),
                           // Empty Weight
                           _buildWeightField(
                             enabled: enabled,
@@ -536,6 +538,22 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                     },
                                     suggestionType: AutoCompleteType.driver,
                                     plateController: _truckPlateController,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  _buildLabel('الوسيط (إختياري)'),
+                                  const SizedBox(height: 4),
+                                  AutoCompleteComboBox(
+                                    placeholder: 'اختياري',
+                                    value: tab.driverName,
+                                    controller: _driverNameController,
+                                    onChanged: (value) {
+                                      tabsProvider.updateTab(widget.tabIndex,
+                                          {'driverName': value});
+                                    },
+                                    suggestionType: AutoCompleteType.driver,
                                   ),
                                 ],
                               ),

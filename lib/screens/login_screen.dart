@@ -4,7 +4,7 @@ import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/screens/main_dashboard.dart';
 import 'package:weighing_system/utils/navigator_methods.dart';
 import 'package:weighing_system/widgets/user_login_avatar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 import '../models/user.dart';
 

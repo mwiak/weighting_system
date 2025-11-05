@@ -1,7 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:weighing_system/utils/date_range_formatter.dart';
+import '../l10n/app_localizations.dart';
 import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/season.dart';
 import 'package:weighing_system/providers/seasons_provider.dart';
@@ -39,8 +40,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   void initState() {
     super.initState();
     // Set default date range to last 30 days
-    _endDate = DateTime.now();
-    _startDate = _endDate!.subtract(const Duration(days: 30));
+    _endDate = getLast30EndDate();
+    _startDate = getLast30StartDate();
     _loadOperations();
   }
 
@@ -81,6 +82,42 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _loadOperationsWithoutSetState() async {
+    final provider = context.read<ReportProvider>();
+
+    debugPrint('Loading operations with filters:');
+    debugPrint('  Status: $_statusFilter');
+
+    debugPrint('  Date Range: $_startDate to $_endDate');
+
+    final operations = await provider.getOrdersHistory(
+        startDate: _startDate,
+        endDate: _endDate,
+        status: _statusFilter == 'all' ? null : _statusFilter,
+        driverFilter: _driverFilter.isEmpty ? null : _driverFilter,
+        truckFilter: _truckFilter.isEmpty ? null : _truckFilter,
+        supplierFilter: _supplierFilter.isEmpty ? null : _supplierFilter,
+        clientFilter: _clientFilter.isEmpty ? null : _clientFilter,
+        materialFilter: _materialFilter.isEmpty ? null : _materialFilter,
+        idFilter: int.tryParse(_idFilter) ?? 0);
+
+    debugPrint('Found ${operations.length} operations');
+    if (operations.isNotEmpty) {
+      debugPrint('Sample operation data: ${operations.first}');
+      // Show all available statuses for debugging
+      final statuses = operations.map((op) => op['status']).toSet();
+      debugPrint('Available statuses in results: $statuses');
+    } else {
+      debugPrint('No operations found - this might indicate the issue');
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   @override
@@ -303,99 +340,62 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
+                        flex: 3,
                         child: Column(
                           children: [
                             const SizedBox(
                                 height: 20), // Align with date pickers
-                            Button(
-                              child: Text('اليوم'),
-                              onPressed: () => setState(() {
-                                _endDate = DateTime.now().copyWith(
-                                    hour: 0,
-                                    minute: 0,
-                                    second: 0,
-                                    microsecond: 0);
-                                _startDate = DateTime.now().copyWith(
-                                    hour: 23,
-                                    minute: 59,
-                                    second: 59,
-                                    microsecond: 999);
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                                height: 20), // Align with date pickers
-                            Button(
-                              child: Text('البارحة'),
-                              onPressed: () => setState(() {
-                                _endDate = DateTime.now()
-                                    .subtract(Duration(days: 1))
-                                    .copyWith(
-                                        hour: 0,
-                                        minute: 0,
-                                        second: 0,
-                                        microsecond: 0);
-                                _startDate = _endDate!.copyWith(
-                                    hour: 23,
-                                    minute: 59,
-                                    second: 59,
-                                    microsecond: 999);
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                                height: 20), // Align with date pickers
-                            Consumer<SeasonsProvider>(
-                              builder:
-                                  (BuildContext context, value, Widget? child) {
-                                return DropDownButton(
-                                  title: Text('مواسم'),
-                                  items: _buildSeasonsOptions(
-                                      value.availableSeasons),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                                height: 20), // Align with date pickers
-                            DropDownButton(title: Text('مزيد'), items: [
-                              MenuFlyoutItem(
-                                  text: Text('آخر 7 أيام'),
+                            Row(
+                              children: [
+                                Button(
+                                  child: Text('اليوم'),
                                   onPressed: () => setState(() {
-                                        _endDate = DateTime.now();
-                                        _startDate = _endDate!
-                                            .subtract(const Duration(days: 7));
-                                      })),
-                              MenuFlyoutItem(
-                                text: Text('آخر 30 يوما'),
-                                onPressed: () => () => setState(() {
-                                      _endDate = DateTime.now();
-                                      _startDate = _endDate!
-                                          .subtract(const Duration(days: 30));
-                                    }),
-                              ),
-                            ]),
+                                    _startDate = getTodayStartDate();
+                                    _endDate = getTodayEndDate();
+                                  }),
+                                ),
+                                const SizedBox(width: 16),
+                                Button(
+                                  child: Text('البارحة'),
+                                  onPressed: () => setState(() {
+                                    _endDate = getYesterdayEndDate();
+                                    _startDate = getYesterdayStartDate();
+                                  }),
+                                ),
+                                const SizedBox(width: 16),
+                                Consumer<SeasonsProvider>(
+                                  builder: (BuildContext context, value,
+                                      Widget? child) {
+                                    return DropDownButton(
+                                      title: Text('مواسم'),
+                                      items: _buildSeasonsOptions(
+                                          value.availableSeasons),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 16),
+                                DropDownButton(title: Text('مزيد'), items: [
+                                  MenuFlyoutItem(
+                                      text: Text('آخر 7 أيام'),
+                                      onPressed: () => setState(() {
+                                            _endDate = getLast7EndDate();
+                                            _startDate = getLast7StartDate();
+                                          })),
+                                  MenuFlyoutItem(
+                                    text: Text('آخر 30 يوما'),
+                                    onPressed: () => () => setState(() {
+                                          _endDate = getLast30EndDate();
+                                          _startDate = getLast30StartDate();
+                                        }),
+                                  ),
+                                ]),
+                              ],
+                            ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 16),
+
                       // Quick Date Buttons
                     ],
                   ),

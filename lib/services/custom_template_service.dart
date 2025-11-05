@@ -438,7 +438,9 @@ class CustomTemplateService {
     //price
 
     // Additional fields
-    values['notes'] = ''; // Not available in WeighingTab, could add later
+    values['isPaid'] = values['isPaid']! +
+        '\n' +
+        weighingTab.notes; // Not available in WeighingTab, could add later
     values['barcode'] = weighingTab.id.toString(); // Use tab ID as barcode
     values['currentDate'] = _formatDate(now);
     values['currentTime'] = _formatTime(now);

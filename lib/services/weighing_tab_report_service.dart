@@ -355,7 +355,9 @@ class WeighingTabReportService {
     final params = <dynamic>[];
 
     // Date filter
-    whereConditions.add('DATE(created_at) BETWEEN DATE(?) AND DATE(?)');
+    // whereConditions.add('DATE(created_at) BETWEEN DATE(?) AND DATE(?)');
+
+    whereConditions.add('created_at >= ? AND created_at < ?');
     params.add(startDate.toIso8601String().split('T')[0]);
     params.add(endDate.toIso8601String().split('T')[0]);
 

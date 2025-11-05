@@ -4,7 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:weighing_system/services/excel_service.dart';
 
 import '../models/weighing_tab.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 
 import '../theme/app_theme.dart';
 
