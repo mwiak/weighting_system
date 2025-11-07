@@ -55,6 +55,31 @@ class DatabaseHelper {
     }
   }
 
+  Future<File?> getDatabaseCopy() async {
+    try {
+      // Database in same folder as executable
+      final databaseDir = Directory(join(Directory.current.path, 'database'));
+
+      // Create database directory if it doesn't exist
+      if (!await databaseDir.exists()) {}
+
+      String databasePath = join(databaseDir.path, 'database.db');
+
+      debugPrint('Database path: $databasePath');
+      final databaseFile = File(databasePath);
+      final bool isDatabaseExsits = await databaseFile.exists();
+
+      if (isDatabaseExsits) {
+        return databaseFile;
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('Error initializing database: $e');
+      rethrow;
+    }
+  }
+
   Future<Database> get database async {
     final database = await db;
     return database!;
@@ -85,23 +110,6 @@ class DatabaseHelper {
       // Create suppliers table
       await db.execute('''
       CREATE TABLE suppliers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        normalized_name TEXT NOT NULL,
-        name TEXT NOT NULL UNIQUE,
-        phone TEXT,
-        mobile TEXT,
-        city TEXT,
-        active INTEGER DEFAULT 1,
-        create_date TEXT DEFAULT CURRENT_TIMESTAMP,
-        write_date TEXT DEFAULT CURRENT_TIMESTAMP,
-        odoo_id INTEGER,
-        sync_status INTEGER DEFAULT 0
-      )
-    ''');
-
-      // Create middlemen table
-      await db.execute('''
-      CREATE TABLE middlemen (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         normalized_name TEXT NOT NULL,
         name TEXT NOT NULL UNIQUE,
@@ -196,7 +204,6 @@ class DatabaseHelper {
         kilo_price REAL,
         total_price REAL,
         notes TEXT DEFAULT '',
-        middle_man TEXT DEFAULT '',
         is_paid INTEGER DEFAULT 0,
         show_price_on_print INTEGER DEFAULT 0,
         has_unsaved_changes INTEGER DEFAULT 0,

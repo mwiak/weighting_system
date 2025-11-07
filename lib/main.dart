@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:weighing_system/providers/seasons_provider.dart';
@@ -53,6 +54,7 @@ void main() async {
     await windowManager.focus();
     await windowManager.setResizable(false);
   });
+  await dotenv.load(fileName: ".env");
 
   runApp(WeighingSystemApp());
 }

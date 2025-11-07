@@ -1,4 +1,10 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:weighing_system/database/database_helper.dart';
+import 'package:weighing_system/services/backup_service.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
+import 'package:weighing_system/utils/info_bars.dart';
 import '../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/models/user.dart';
@@ -58,8 +64,15 @@ class _SettingsViewState extends State<SettingsView> {
   }
 }
 
-class GeneralSettings extends StatelessWidget {
+class GeneralSettings extends StatefulWidget {
   const GeneralSettings({super.key});
+
+  @override
+  State<GeneralSettings> createState() => _GeneralSettingsState();
+}
+
+class _GeneralSettingsState extends State<GeneralSettings> {
+  bool isSubmiting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +165,32 @@ class GeneralSettings extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'النسخ الاحتياطي',
+                      style: FluentTheme.of(context).typography.subtitle,
+                    ),
+                    const Spacer(),
+                    Button(
+                      onPressed: isSubmiting ? null : _handleUpload,
+                      child:
+                          isSubmiting ? const ProgressRing() : Text('نسخ الان'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         // Print Settings
         // Consumer<PrintProvider>(
         //   builder: (context, printProvider, child) {
@@ -342,5 +380,35 @@ class GeneralSettings extends StatelessWidget {
         // ),
       ],
     );
+  }
+
+  void _handleUpload() async {
+    if (isSubmiting) return;
+
+    isSubmiting = true;
+
+    setState(() {});
+
+    try {
+      final file = await DatabaseHelper().getDatabaseCopy();
+      printd(file.toString());
+      if (file != null) {
+        final backup = BackupService();
+        final response = await backup.uploadToS3WithDio(file);
+        if (response == 1) {
+          if (!mounted) return;
+          showSuccessDialog(context: context);
+        } else {
+          showErrorDialog(context: context);
+        }
+      }
+    } catch (e) {
+      showErrorDialog(context: context, message: '${e.toString()}');
+    } finally {
+      isSubmiting = false;
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 }

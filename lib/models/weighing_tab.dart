@@ -36,8 +36,6 @@ class WeighingTab {
 
   String notes = '';
 
-  String middleMan = '';
-
   bool isPaid = false;
   bool showPriceOnPrint = false;
 
@@ -220,7 +218,6 @@ class WeighingTab {
       'kilo_price': kilo_price,
       'total_price': total_price,
       'notes': notes,
-      'middle_man': middleMan,
       'is_paid': isPaid ? 1 : 0,
       'show_price_on_print': showPriceOnPrint ? 1 : 0,
       'has_unsaved_changes': hasUnsavedChanges ? 1 : 0,
@@ -250,7 +247,6 @@ class WeighingTab {
     tab.client = map['client'] as String? ?? '';
     tab.material = map['material'] as String? ?? '';
     tab.notes = map['notes'] as String? ?? '';
-    tab.middleMan = map['middle_man'] as String? ?? '';
     tab.kilo_price = map['kilo_price'] as num? ?? 0.0;
     tab.total_price = map['total_price'] as num? ?? 0.0;
     tab.isPaid = (map['is_paid'] as int?) == 1;

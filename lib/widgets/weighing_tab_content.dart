@@ -541,22 +541,6 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                   ),
                                 ],
                               ),
-                              Column(
-                                children: [
-                                  _buildLabel('الوسيط (إختياري)'),
-                                  const SizedBox(height: 4),
-                                  AutoCompleteComboBox(
-                                    placeholder: 'اختياري',
-                                    value: tab.driverName,
-                                    controller: _driverNameController,
-                                    onChanged: (value) {
-                                      tabsProvider.updateTab(widget.tabIndex,
-                                          {'driverName': value});
-                                    },
-                                    suggestionType: AutoCompleteType.driver,
-                                  ),
-                                ],
-                              ),
                             ],
                           ),
 

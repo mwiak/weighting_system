@@ -290,13 +290,6 @@ class TabsProvider extends ChangeNotifier {
         hasChanges = true;
       }
     }
-    if (updates.containsKey('middle_man')) {
-      final value = updates['middle_man'] as String? ?? '';
-      if (tab.middleMan != value) {
-        tab.middleMan = value;
-        hasChanges = true;
-      }
-    }
 
     if (updates.containsKey('isPaid')) {
       final value = updates['isPaid'] as bool? ?? false;
@@ -428,13 +421,6 @@ class TabsProvider extends ChangeNotifier {
       final value = updates['notes'] as String? ?? '';
       if (tab.notes != value) {
         tab.notes = value;
-      }
-    }
-
-    if (updates.containsKey('middle_man')) {
-      final value = updates['middle_man'] as String? ?? '';
-      if (tab.middleMan != value) {
-        tab.middleMan = value;
       }
     }
 

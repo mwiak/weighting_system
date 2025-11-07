@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:weighing_system/screens/summary_by_person.dart';
 import 'package:weighing_system/screens/summary_custome.dart';
 import '../l10n/app_localizations.dart';
 import 'package:weighing_system/screens/summary_daily.dart';
@@ -20,8 +21,14 @@ class _SummariesScreenState extends State<SummariesScreen> {
       PaneItem(
         icon: const SizedBox.shrink(),
         //TODO localize
-        title: Text('مخصص'),
+        title: Text('حسب المادة'),
         body: SummaryCustom(),
+      ),
+      PaneItem(
+        icon: const SizedBox.shrink(),
+        //TODO localize
+        title: Text('حسب الزبون/المورد'),
+        body: SummaryByPerson(),
       ),
     ];
 

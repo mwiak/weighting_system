@@ -9,6 +9,7 @@ part of 'material.dart';
 Material _$MaterialFromJson(Map<String, dynamic> json) => Material(
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String,
+      normalizedName: json['normalizedName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       description: json['description'] as String?,
       active: json['active'] as bool? ?? true,
@@ -25,6 +26,7 @@ Material _$MaterialFromJson(Map<String, dynamic> json) => Material(
 Map<String, dynamic> _$MaterialToJson(Material instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'normalizedName': instance.normalizedName,
       'price': instance.price,
       'description': instance.description,
       'active': instance.active,
