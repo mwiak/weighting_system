@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:weighing_system/services/excel_service.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 
 import '../models/weighing_tab.dart';
 import '../l10n/app_localizations.dart';
@@ -50,6 +51,14 @@ class MaterialTreeItem extends TreeViewItem {
       return tabs;
     }
 
+    List<WeighingTab> allSuppliersList() {
+      List<WeighingTab> tabs = [];
+      for (List<WeighingTab> l in suppliers.values) {
+        tabs.addAll(l);
+      }
+      return tabs;
+    }
+
     return MaterialTreeItem(
       material,
       suppliers: suppliers,
@@ -58,10 +67,11 @@ class MaterialTreeItem extends TreeViewItem {
         children: [
           Container(
               decoration: BoxDecoration(
-                  color: Colors.orange,
+                  color: Colors.orange.withOpacity(0.2),
                   borderRadius: BorderRadius.all(Radius.circular(12))),
               child: Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 17, vertical: 7),
                 child: Text(material),
               ))
         ],
@@ -69,33 +79,23 @@ class MaterialTreeItem extends TreeViewItem {
       children: [
         if (clients.isNotEmpty)
           TreeViewItem(
-              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-                if (states.isDisabled) {
-                  return Colors.grey; // Disabled color
-                }
-                if (states.isPressed) {
-                  return Colors.blue.withOpacity(0.9); // When pressed
-                }
-                if (states.isHovered) {
-                  return Colors.blue.withOpacity(0.3); // When hovered
-                }
-                return Colors.blue.withOpacity(0.6); // Default
-              }),
               content: Row(
                 children: [
-                  Text('الزبائن'),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.2),
+                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+                        child: Text('الزبائن'),
+                      )),
                   Spacer(),
-                  Text.rich(TextSpan(text: 'مجموع وزن البضاعة', children: [
-                    TextSpan(text: ':'),
-                    TextSpan(text: totalWeightSale.toString())
-                  ])),
+                  buildTotalWeight(null, totalWeightSale.toString()),
                   SizedBox(
                     width: 20,
                   ),
-                  Text.rich(TextSpan(text: 'مجموع قيمة البضاعة', children: [
-                    TextSpan(text: ':'),
-                    TextSpan(text: totalValueSale.toStringAsFixed(2))
-                  ])),
+                  buildTotalWeight(
+                      'مجموع قيمة البضاعة', totalValueSale.toStringAsFixed(2)),
                   SizedBox(
                     width: 20,
                   ),
@@ -103,17 +103,12 @@ class MaterialTreeItem extends TreeViewItem {
                     title: Icon(FluentIcons.settings),
                     items: [
                       MenuFlyoutItem(
-                          text: const Text('export to excel'),
+                          text: const Text('تصدير للأكسل'),
                           onPressed: () {
                             ExcelService excel = ExcelService();
                             excel.createStyledExcel(
                                 tabs: allClientsList(), context: context);
                           }),
-                      MenuFlyoutSeparator(),
-                      MenuFlyoutItem(
-                          text: const Text('Reply'), onPressed: null),
-                      MenuFlyoutItem(
-                          text: const Text('Reply all'), onPressed: () {}),
                     ],
                   )
                 ],
@@ -121,33 +116,39 @@ class MaterialTreeItem extends TreeViewItem {
               children: _buildClientOrSupplier(clients, context)),
         if (suppliers.isNotEmpty)
           TreeViewItem(
-              backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-                if (states.isDisabled) {
-                  return Colors.grey; // Disabled color
-                }
-                if (states.isPressed) {
-                  return Colors.red.withOpacity(0.9); // When pressed
-                }
-                if (states.isHovered) {
-                  return Colors.red.withOpacity(0.3); // When hovered
-                }
-                return Colors.red.withOpacity(0.6); // Default
-              }),
               content: Row(
                 children: [
-                  Text('الموردين'),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.2),
+                        borderRadius: BorderRadius.all(Radius.circular(12))),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+                      child: Text('الموردين'),
+                    ),
+                  ),
                   Spacer(),
-                  Text.rich(TextSpan(text: 'مجموع وزن البضاعة', children: [
-                    TextSpan(text: ':'),
-                    TextSpan(text: totalWeightPurchase.toString())
-                  ])),
+                  buildTotalWeight(null, totalWeightPurchase.toString()),
                   SizedBox(
                     width: 20,
                   ),
-                  Text.rich(TextSpan(text: 'مجموع قيمة البضاعة', children: [
-                    TextSpan(text: ':'),
-                    TextSpan(text: totalValuePurchase.toStringAsFixed(2))
-                  ])),
+                  buildTotalWeight('مجموع قيمة البضاعة',
+                      totalValuePurchase.toStringAsFixed(2)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  DropDownButton(
+                    title: Icon(FluentIcons.settings),
+                    items: [
+                      MenuFlyoutItem(
+                          text: const Text('تصدير للأكسل'),
+                          onPressed: () {
+                            ExcelService excel = ExcelService();
+                            excel.createStyledExcel(
+                                tabs: allSuppliersList(), context: context);
+                          }),
+                    ],
+                  )
                 ],
               ),
               children: _buildClientOrSupplier(suppliers, context)),
@@ -174,7 +175,8 @@ List<TreeViewItem> _buildClientOrSupplier(
     }
     children = value
         .map((tab) => TreeViewItem(
-                content: Row(
+            expanded: false,
+            content: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SizedBox(
@@ -198,45 +200,60 @@ List<TreeViewItem> _buildClientOrSupplier(
     children.insert(
         0,
         TreeViewItem(
+            expanded: false,
             content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-                width: AppTheme.summaryBoxSized, child: Text(l10n.orderNumber)),
-            SizedBox(
-                width: AppTheme.summaryBoxSized, child: Text(l10n.driverName)),
-            SizedBox(
-                width: AppTheme.summaryBoxSized,
-                child: Text(l10n.netWeight.toString())),
-            SizedBox(
-                width: AppTheme.summaryBoxSized, child: Text(l10n.unitPrice)),
-            SizedBox(
-                width: AppTheme.summaryBoxSized, child: Text(l10n.totalAmount)),
-          ],
-        )));
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.orderNumber)),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.driverName)),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.netWeight.toString())),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.unitPrice)),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.totalAmount)),
+              ],
+            )));
     items.add(
       TreeViewItem(
+          expanded: false,
           content: Row(
             children: [
               Text(key),
               SizedBox(
                 width: 20,
               ),
-              Text.rich(TextSpan(text: 'مجموع وزن البضاعة', children: [
-                TextSpan(text: ':'),
-                TextSpan(text: totalWeight.toString())
-              ])),
+              buildTotalWeight(null, totalWeight.toString()),
               SizedBox(
                 width: 20,
               ),
-              Text.rich(TextSpan(text: 'مجموع قيمة البضاعة', children: [
-                TextSpan(text: ':'),
-                TextSpan(text: totalPrice.toStringAsFixed(2))
-              ])),
+              buildTotalWeight(
+                  'مجموع قيمة البضاعة', totalPrice.toStringAsFixed(2)),
             ],
           ),
           children: children),
     );
   });
   return items;
+}
+
+Widget buildTotalWeight(String? label, String total) {
+  return Container(
+    decoration: BoxDecoration(
+        color: Colors.green.withOpacity(0.2),
+        borderRadius: BorderRadius.all(Radius.circular(12))),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+      child: Text.rich(TextSpan(
+          text: label ?? 'مجموع وزن البضاعة',
+          children: [TextSpan(text: '  '), TextSpan(text: total)])),
+    ),
+  );
 }

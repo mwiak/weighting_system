@@ -1,0 +1,101 @@
+FlyoutTarget(
+                              controller: controller,
+                              child: Button(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.resolveWith<Color?>(
+                                    (states) {
+                                      if (states.isDisabled) {
+                                        return Colors.grey;
+                                      }
+                                      if (states.isPressed) {
+                                        return Colors.red.darkest
+                                            .withOpacity(0.44);
+                                      }
+                                      if (states.isHovered) {
+                                        return Colors.red.dark
+                                            .withOpacity(0.36);
+                                      }
+                                      return Colors.red.darker
+                                          .withOpacity(0.60); // default
+                                    },
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(FluentIcons.cancel,
+                                          size: kIconSize),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                        style: TextStyle(
+                                          fontSize: kButtonFontSize + 2,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                onPressed: () {
+                                  controller.showFlyout(
+                                    autoModeConfiguration:
+                                        FlyoutAutoConfiguration(
+                                      preferredMode:
+                                          FlyoutPlacementMode.topCenter,
+                                    ),
+                                    barrierDismissible: true,
+                                    dismissOnPointerMoveAway: false,
+                                    dismissWithEsc: true,
+                                    builder: (context) {
+                                      return FlyoutContent(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'سيتم إلغاء العملية و نقلها للسجل الملغى',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 12.0),
+                                            Button(
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    WidgetStateProperty
+                                                        .resolveWith<Color?>(
+                                                  (states) {
+                                                    if (states.isDisabled) {
+                                                      return Colors.grey;
+                                                    }
+                                                    if (states.isPressed) {
+                                                      return Colors.red.darkest
+                                                          .withOpacity(0.44);
+                                                    }
+                                                    if (states.isHovered) {
+                                                      return Colors.red.dark
+                                                          .withOpacity(0.36);
+                                                    }
+                                                    return Colors.red.darker
+                                                        .withOpacity(
+                                                            0.60); // default
+                                                  },
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Flyout.of(context).close();
+                                                _cancelTab();
+                                              },
+                                              child: const Text(
+                                                  'نعم قم بإلغاء العملية'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              )),

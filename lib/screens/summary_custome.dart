@@ -83,6 +83,7 @@ class _SummaryCustomState extends State<SummaryCustom> {
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
               ...[
                 Button(
                   child: Text('اليوم'),
@@ -91,7 +92,7 @@ class _SummaryCustomState extends State<SummaryCustom> {
                     endDate = getTodayEndDate();
                   }),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 Button(
                   child: Text('البارحة'),
                   onPressed: () => setState(() {
@@ -99,7 +100,23 @@ class _SummaryCustomState extends State<SummaryCustom> {
                     endDate = getYesterdayEndDate();
                   }),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
+                Button(
+                  child: Text('الموسم الحالي'),
+                  onPressed: () => setState(() {
+                    startDate = context
+                        .read<SeasonsProvider>()
+                        .availableSeasons
+                        .last
+                        .seasonStartDate;
+                    endDate = context
+                        .read<SeasonsProvider>()
+                        .availableSeasons
+                        .last
+                        .seasonEndDate;
+                  }),
+                ),
+                const SizedBox(width: 8),
                 Consumer<SeasonsProvider>(
                   builder: (BuildContext context, value, Widget? child) {
                     return DropDownButton(
@@ -108,7 +125,7 @@ class _SummaryCustomState extends State<SummaryCustom> {
                     );
                   },
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 DropDownButton(title: Text('مزيد'), items: [
                   MenuFlyoutItem(
                       text: Text('آخر 7 أيام'),

@@ -513,7 +513,7 @@
 
   "businessInformation": "معلومات العمل",
 
-  "truckPlateRequired": "رقم السيارة",
+  "truckPlateRequired": "رقم السيارة (مطلوب)",
 
   "enterTruckPlate": "أدخل الأرقام فقط...",
 
@@ -525,11 +525,11 @@
 
   "supplierUnloadingOperation": "المورد (عملية التفريغ)",
 
-  "materialRequired": "المادة *",
+  "materialRequired": "المادة",
 
   "paid": "مدفوع",
 
-  "complete": "مكتمل",
+  "complete": "حفظ نهائي (سيتم تثبيت القيد بشكل نهائي)",
 
   "incomplete": "غير مكتمل",
 

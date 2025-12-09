@@ -35,6 +35,7 @@ class ExcelService {
     //TODO dir Pickernzabh
     final excel = Excel.createExcel();
     final sheet = excel['Sheet1'];
+    sheet.setDefaultColumnWidth(24);
 
     List<CellValue> columnsCells = [
       if (columns['id'] ?? true) TextCellValue(ln10.orderNumber),
@@ -101,15 +102,20 @@ class ExcelService {
         if (columns['totalPrice'] ?? true)
           DoubleCellValue(tabs.totalPrice as double),
       ];
+
       return data;
     }
 
     final headerStyle = CellStyle(
       bold: true,
       fontColorHex: ExcelColor.black,
+      fontSize: 12,
+      backgroundColorHex: ExcelColor.blueAccent100,
     );
 
-    final oddRowStyle = CellStyle(backgroundColorHex: ExcelColor.blueAccent100);
+    final oddRowStyle = CellStyle(
+        backgroundColorHex: ExcelColor.blueGrey100,
+        numberFormat: NumFormat.defaultFloat);
 
     // Header (use TextCellValue)
     sheet.appendRow(columnsCells);

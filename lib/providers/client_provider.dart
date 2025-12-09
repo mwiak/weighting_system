@@ -5,10 +5,10 @@ import '../utils/arabic_normalize.dart';
 
 class ClientProvider extends ChangeNotifier {
   final DatabaseHelper _db = DatabaseHelper();
-  
+
   List<Client> _clients = [];
   Client? _selectedClient;
-  
+
   // Filter and search
   String _searchQuery = '';
   bool _showActiveOnly = true;
@@ -16,11 +16,12 @@ class ClientProvider extends ChangeNotifier {
   // Loading states
   bool _isLoading = false;
   String? _lastError;
-  
+
   // Getters
   List<Client> get clients => _clients;
   List<Client> get filteredClients => _applyFilters(_clients);
-  List<Client> get activeClients => _clients.where((client) => client.active).toList();
+  List<Client> get activeClients =>
+      _clients.where((client) => client.active).toList();
   Client? get selectedClient => _selectedClient;
   String get searchQuery => _searchQuery;
   bool get showActiveOnly => _showActiveOnly;
@@ -37,13 +38,13 @@ class ClientProvider extends ChangeNotifier {
   Future<void> loadClients() async {
     _setLoading(true);
     _clearError();
-    
+
     try {
       final clientMaps = await _db.query(
         'clients',
         orderBy: 'name ASC',
       );
-      
+
       _clients = clientMaps.map((map) => Client.fromDatabase(map)).toList();
       notifyListeners();
     } catch (e) {
@@ -92,14 +93,14 @@ class ClientProvider extends ChangeNotifier {
 
     try {
       final updatedData = client.toDatabase();
-      
+
       await _db.update(
         'clients',
         updatedData,
         where: 'id = ?',
         whereArgs: [client.id],
       );
-      
+
       final index = _clients.indexWhere((c) => c.id == client.id);
       if (index != -1) {
         _clients[index] = client;
@@ -108,7 +109,7 @@ class ClientProvider extends ChangeNotifier {
           _selectedClient = _clients[index];
         }
       }
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -146,7 +147,6 @@ class ClientProvider extends ChangeNotifier {
     return await updateClient(updatedClient);
   }
 
-
   void selectClient(Client? client) {
     _selectedClient = client;
     notifyListeners();
@@ -154,9 +154,9 @@ class ClientProvider extends ChangeNotifier {
 
   Client? findClientByName(String name) {
     final normalizedSearchName = normalizeArabic(name);
-    return _clients.where((client) =>
-      client.normalizedName == normalizedSearchName
-    ).firstOrNull;
+    return _clients
+        .where((client) => client.normalizedName == normalizedSearchName)
+        .firstOrNull;
   }
 
   List<Client> searchClients(String query) {
@@ -164,11 +164,12 @@ class ClientProvider extends ChangeNotifier {
 
     final normalizedQuery = normalizeArabic(query);
     final lowerQuery = query.toLowerCase();
-    return _clients.where((client) =>
-      (client.normalizedName?.contains(normalizedQuery) ?? false) ||
-      (client.phone?.contains(query) ?? false) ||
-      (client.city?.toLowerCase().contains(lowerQuery) ?? false)
-    ).toList();
+    return _clients
+        .where((client) =>
+            (client.normalizedName?.contains(normalizedQuery) ?? false) ||
+            (client.phone?.contains(query) ?? false) ||
+            (client.city?.toLowerCase().contains(lowerQuery) ?? false))
+        .toList();
   }
 
   void setSearchQuery(String query) {
@@ -192,7 +193,8 @@ class ClientProvider extends ChangeNotifier {
 
     // Active filter
     if (_showActiveOnly) {
-      filteredClients = filteredClients.where((client) => client.active).toList();
+      filteredClients =
+          filteredClients.where((client) => client.active).toList();
     }
 
     // Search filter
@@ -200,9 +202,9 @@ class ClientProvider extends ChangeNotifier {
       final normalizedQuery = normalizeArabic(_searchQuery);
       filteredClients = filteredClients.where((client) {
         return (client.normalizedName?.contains(normalizedQuery) ?? false) ||
-               (client.phone?.contains(_searchQuery) ?? false) ||
-               (client.mobile?.contains(_searchQuery) ?? false) ||
-               (client.city?.toLowerCase().contains(_searchQuery) ?? false);
+            (client.phone?.contains(_searchQuery) ?? false) ||
+            (client.mobile?.contains(_searchQuery) ?? false) ||
+            (client.city?.toLowerCase().contains(_searchQuery) ?? false);
       }).toList();
     }
 

@@ -24,12 +24,14 @@ import 'providers/driver_plate_provider.dart';
 import 'providers/tabs_provider.dart';
 import 'theme/app_theme.dart';
 import 'package:screen_retriever/screen_retriever.dart';
+import 'dart:io';
 
 void main() async {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
   WidgetsFlutterBinding.ensureInitialized();
+
   await windowManager.ensureInitialized();
 
   final display = await screenRetriever.getPrimaryDisplay();
@@ -55,7 +57,7 @@ void main() async {
     await windowManager.setResizable(false);
   });
   await dotenv.load(fileName: ".env");
-
+  SecurityContext.defaultContext.setTrustedCertificates('cacert.pem');
   runApp(WeighingSystemApp());
 }
 

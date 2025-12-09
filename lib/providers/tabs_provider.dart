@@ -107,6 +107,9 @@ class TabsProvider extends ChangeNotifier {
 
   /// Check if a new tab can be created
   bool canCreateNewTab() {
+    if (_tabs.isNotEmpty) {
+      return _tabs.length < maxTabs && _tabs.last.isLocked;
+    }
     return _tabs.length < maxTabs;
   }
 
@@ -321,6 +324,15 @@ class TabsProvider extends ChangeNotifier {
     }
   }
 
+  void lockTab(int index) {
+    if (index < 0 || index >= _tabs.length) return;
+    final tab = _tabs[index];
+
+    tab.isLocked = true;
+
+    notifyListeners();
+  }
+
   Future<void> updateManualTab(int tab, Map<String, dynamic> updates) async {
     final tab = manualActiveTab!;
     bool hasChanges = false;
@@ -341,8 +353,7 @@ class TabsProvider extends ChangeNotifier {
     }
 
     if (updates.containsKey('scaleEmptyWeight')) {
-      final value =
-          (updates['scaleEmptyWeight'] as DateTime?) ?? DateTime.now();
+      final value = (updates['scaleEmptyWeight'] as DateTime?) ?? null;
 
       tab.scaleEmptyWeightAt = value;
     }
@@ -355,8 +366,7 @@ class TabsProvider extends ChangeNotifier {
     }
 
     if (updates.containsKey('scaleGrossWeight')) {
-      final value =
-          (updates['scaleGrossWeight'] as DateTime?) ?? DateTime.now();
+      final value = (updates['scaleGrossWeight'] as DateTime?) ?? null;
 
       tab.scaleGrossWeightAt = value;
     }

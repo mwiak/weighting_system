@@ -111,7 +111,10 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
   @override
   void initState() {
     super.initState();
-    if (widget.tab != null) isEditing = true;
+    if (widget.tab != null) {
+      isEditing = true;
+      creationDate = widget.tab!.createdAt;
+    }
     printd(isEditing.toString());
     final tab = widget.tab ?? _tab;
 
@@ -243,6 +246,11 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
           context
               .read<TabsProvider>()
               .updateManualTab(0, {'emptyWeight': weight});
+          // remove authentic timestamp
+          context
+              .read<TabsProvider>()
+              .updateManualTab(0, {'scaleEmptyWeight': null});
+
           calculateTotalPrice();
         } catch (e) {
           debugPrint('WeighingTabContent: Error updating empty weight: $e');
@@ -260,6 +268,12 @@ class _AdminWeightingTabContentState extends State<AdminWeightingTabContent> {
           context
               .read<TabsProvider>()
               .updateManualTab(0, {'grossWeight': weight});
+
+          // remove authentic timestamp
+          context
+              .read<TabsProvider>()
+              .updateManualTab(0, {'scaleGrossWeight': null});
+
           calculateTotalPrice();
         } catch (e) {
           debugPrint('WeighingTabContent: Error updating gross weight: $e');

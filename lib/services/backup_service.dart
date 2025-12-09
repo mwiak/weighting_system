@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
 
@@ -73,6 +74,16 @@ class BackupService {
 
     final dio = Dio();
 
+    dio.httpClientAdapter = Http2Adapter(
+      ConnectionManager(
+          // Ignore bad certificate
+          onClientCreate: (_, config) => {
+                config.context?.setTrustedCertificatesBytes(
+                    File("cacert.pem").readAsBytesSync()),
+                config.onBadCertificate =
+                    (_) => true, // <-- ignored, should bypass check
+              }),
+    );
     try {
       final response = await dio.put(
         url,

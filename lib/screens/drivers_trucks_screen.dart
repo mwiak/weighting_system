@@ -34,7 +34,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return ScaffoldPage.scrollable(
+    return ScaffoldPage(
       header: PageHeader(
         title: Row(
           children: [
@@ -53,9 +53,8 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
           ],
         ),
       ),
-      children: [
-        SizedBox(height: 750, child: _buildDriversSection(context)),
-      ],
+      // children: [SizedBox(height: 750, child: _buildDriversSection(context))],
+      content: SizedBox(height: 750, child: _buildDriversSection(context)),
     );
   }
 
@@ -142,6 +141,7 @@ class _DriversTrucksScreenState extends State<DriversTrucksScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 10),
       itemCount: drivers.length,
       itemBuilder: (context, index) {
         final driver = drivers[index];

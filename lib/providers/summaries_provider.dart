@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:weighing_system/database/database_helper.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 
 import '../models/weighing_tab.dart';
 import '../widgets/multi_select.dart';
@@ -157,7 +158,10 @@ class SummariesProvider extends ChangeNotifier {
           grouped[material]!['clients']![client]!.add(tab);
         }
       }
-      print(grouped);
+      printd(grouped.toString());
+      //TODO offload to isolate
+      Map<String, Map<String, Map<String, List<WeighingTab>>>> sorted = {};
+
       return grouped;
     } catch (e) {
       debugPrint('TabsProvider: Error getting tabs history: $e');

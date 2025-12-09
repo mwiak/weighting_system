@@ -61,3 +61,16 @@ DateTime getLast30EndDate() {
     DateTime.now().day + 1,
   );
 }
+
+DateTime getCurrentSeasonStartDate() {
+  int currentYear = DateTime.now().year;
+  int currentMonth = DateTime.now().month;
+  int currentDay = DateTime.now().day;
+
+  final isAfterBreakPoint =
+      DateTime.now().isAfter(DateTime(currentYear, 10, 5));
+  if (isAfterBreakPoint) {
+    return DateTime(currentYear, 10, 5);
+  }
+  return DateTime.now();
+}

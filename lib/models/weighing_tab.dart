@@ -8,6 +8,32 @@ extension NetWeightSum on List<WeighingTab> {
   int get totalWeight => fold(0, (sum, tab) => sum + tab.netWeight);
 }
 
+extension SortWeightDesc on List<WeighingTab> {
+  void sortWeightList() {
+    sort((a, b) => b.grossWeight - a.grossWeight);
+  }
+}
+
+extension SortMapWeightDesc on Map<String, List<WeighingTab>> {
+  Map<String, List<WeighingTab>> sortWeightMap() {
+    Map<String, List<WeighingTab>> result = {};
+    List<Map<String, int>> sotred = [];
+    if (isEmpty) {
+      return {};
+    }
+    for (String key in keys) {
+      sotred.add({key: this[key]!.totalWeight});
+    }
+    sotred.sort((a, b) => b.values.first - a.values.first);
+    for (Map<String, int> x in sotred) {
+      result[x.keys.first] = this[x.keys.first]!;
+    }
+    return result;
+  }
+}
+
+//Map<String, List<WeighingTab>>
+
 class WeighingTab {
   int? id; // Database ID (null until persisted)
 
@@ -45,12 +71,32 @@ class WeighingTab {
   DateTime updatedAt = DateTime.now();
   String status = 'in-progress'; // 'in-progress', 'completed', 'cancelled'
 
+  // locking mechanism
+  bool isLocked = false;
+
+  void setIsLocked(bool v) {
+    isLocked = v;
+  }
+
+  bool get canLock {
+    bool hasAnyWeight =
+        scaleGrossWeightAt != null || scaleEmptyWeightAt != null;
+    bool hasDestination = supplier.isNotEmpty || client.isNotEmpty;
+    return hasAnyWeight && hasDestination;
+  }
+
   // Computed properties
   int get netWeight => (grossWeight != 0 && emptyWeight != 0)
       ? (grossWeight - emptyWeight).abs()
       : 0;
 
   String get tabTitle {
+    if (supplier.isNotEmpty) {
+      return supplier;
+    }
+    if (client.isNotEmpty) {
+      return client;
+    }
     if (driverName.isNotEmpty) {
       return driverName;
     } else if (truckPlate.isNotEmpty) {

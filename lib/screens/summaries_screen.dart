@@ -21,14 +21,14 @@ class _SummariesScreenState extends State<SummariesScreen> {
       PaneItem(
         icon: const SizedBox.shrink(),
         //TODO localize
-        title: Text('حسب المادة'),
-        body: SummaryCustom(),
+        title: Text('مخصص'),
+        body: SummaryByPerson(),
       ),
       PaneItem(
         icon: const SizedBox.shrink(),
         //TODO localize
-        title: Text('حسب الزبون/المورد'),
-        body: SummaryByPerson(),
+        title: Text('شامل'),
+        body: SummaryCustom(),
       ),
     ];
 

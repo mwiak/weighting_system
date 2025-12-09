@@ -29,7 +29,7 @@ class _KiloPriceBoxState extends State<KiloPriceBox> {
             ),
           ),
           SizedBox(
-            height: 5,
+            height: 4,
           ),
           TextBox(
             suffix: Text('\$'),
@@ -80,7 +80,7 @@ class _TotalPriceBoxState extends State<TotalPriceBox> {
             ),
           ),
           SizedBox(
-            height: 5,
+            height: 4,
           ),
           TextBox(
             suffix: Text('\$'),

@@ -1,9 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:weighing_system/animated_widgets/animated_icon.dart';
 import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/print_template.dart';
 import 'package:weighing_system/models/user.dart';
+import 'package:weighing_system/providers/client_provider.dart';
+import 'package:weighing_system/providers/driver_plate_provider.dart';
+import 'package:weighing_system/providers/material_provider.dart';
+import 'package:weighing_system/providers/supplier_provider.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
@@ -22,6 +27,7 @@ const double kWeightValueFontSize = 12.0;
 const double kWeightUnitFontSize = 10.0;
 const double kLabelFontSize = 13.0;
 const double kButtonFontSize = 12.5;
+const double kFinalButtonFontSize = 16;
 const double kIconSize = 12.0;
 
 class WeighingTabContent extends StatefulWidget {
@@ -114,6 +120,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   void initState() {
     super.initState();
     final tab = _tab;
+    // creation date load
+
+    //
     _emptyWeightController = TextEditingController(
       text: tab?.emptyWeight != null && tab!.emptyWeight > 0
           ? tab.emptyWeight.toString()
@@ -140,6 +149,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
     // Initialize last synced tab
     _lastSyncedTab = tab;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchAllNewValues();
+    });
   }
 
   /// Sync controllers with tab data efficiently
@@ -205,6 +217,14 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
         tab1.material == tab2.material &&
         tab1.kilo_price == tab2.kilo_price &&
         tab1.total_price == tab2.total_price;
+  }
+
+  // fetch all new values
+  void fetchAllNewValues() {
+    context.read<ClientProvider>().loadClients();
+    context.read<SupplierProvider>().loadSuppliers();
+    context.read<DriverPlateProvider>().loadDriverPlates();
+    context.read<MaterialProvider>().loadMaterials();
   }
 
   @override
@@ -346,10 +366,12 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           Text(dateToArabicDatetimeWeightTab(_tab!.createdAt)),
                           // Empty Weight
                           _buildWeightField(
+                            isEmptyWeight: false,
                             enabled: enabled,
                             label: AppLocalizations.of(context)!.grossWeightKg,
                             controller: _grossWeightController,
                             onChanged: _onGrossWeightChanged,
+                            //TODO MOCK MOCK MOCK
                             onScalePressed: () =>
                                 _captureWeightFromScale(false),
                             onFocusChanged: (focused) => setState(
@@ -378,107 +400,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           const SizedBox(height: 4),
 
                           const SizedBox(height: 30),
-                          FlyoutTarget(
-                              controller: controller,
-                              child: Button(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.resolveWith<Color?>(
-                                    (states) {
-                                      if (states.isDisabled) {
-                                        return Colors.grey;
-                                      }
-                                      if (states.isPressed) {
-                                        return Colors.red.darkest
-                                            .withOpacity(0.44);
-                                      }
-                                      if (states.isHovered) {
-                                        return Colors.red.dark
-                                            .withOpacity(0.36);
-                                      }
-                                      return Colors.red.darker
-                                          .withOpacity(0.60); // default
-                                    },
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(FluentIcons.cancel,
-                                          size: kIconSize),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        AppLocalizations.of(context)!.cancel,
-                                        style: TextStyle(
-                                          fontSize: kButtonFontSize + 2,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                onPressed: () {
-                                  controller.showFlyout(
-                                    autoModeConfiguration:
-                                        FlyoutAutoConfiguration(
-                                      preferredMode:
-                                          FlyoutPlacementMode.topCenter,
-                                    ),
-                                    barrierDismissible: true,
-                                    dismissOnPointerMoveAway: false,
-                                    dismissWithEsc: true,
-                                    builder: (context) {
-                                      return FlyoutContent(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'سيتم إلغاء العملية و نقلها للسجل الملغى',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 12.0),
-                                            Button(
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    WidgetStateProperty
-                                                        .resolveWith<Color?>(
-                                                  (states) {
-                                                    if (states.isDisabled) {
-                                                      return Colors.grey;
-                                                    }
-                                                    if (states.isPressed) {
-                                                      return Colors.red.darkest
-                                                          .withOpacity(0.44);
-                                                    }
-                                                    if (states.isHovered) {
-                                                      return Colors.red.dark
-                                                          .withOpacity(0.36);
-                                                    }
-                                                    return Colors.red.darker
-                                                        .withOpacity(
-                                                            0.60); // default
-                                                  },
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Flyout.of(context).close();
-                                                _cancelTab();
-                                              },
-                                              child: const Text(
-                                                  'نعم قم بإلغاء العملية'),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              )),
+                          _buildLockSection()
 
                           // Operation type removed from schema
                         ],
@@ -525,7 +447,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               Column(
                                 children: [
                                   _buildLabel(
-                                      AppLocalizations.of(context)!.driverName),
+                                      AppLocalizations.of(context)!.driverName +
+                                          ' ' +
+                                          '(مطلوب)'),
                                   const SizedBox(height: 4),
                                   AutoCompleteComboBox(
                                     placeholder: AppLocalizations.of(context)!
@@ -552,7 +476,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               Column(
                                 children: [
                                   _buildLabel(
-                                      AppLocalizations.of(context)!.client),
+                                      AppLocalizations.of(context)!.client +
+                                          ' ' +
+                                          '(مطلوب)'),
                                   const SizedBox(height: 4),
                                   AutoCompleteComboBox(
                                     placeholder: AppLocalizations.of(context)!
@@ -581,7 +507,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               Column(
                                 children: [
                                   _buildLabel(
-                                      AppLocalizations.of(context)!.supplier),
+                                      AppLocalizations.of(context)!.supplier +
+                                          ' ' +
+                                          '(مطلوب)'),
                                   const SizedBox(height: 4),
                                   AutoCompleteComboBox(
                                     placeholder: AppLocalizations.of(context)!
@@ -618,7 +546,9 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   _buildLabel(AppLocalizations.of(context)!
-                                      .materialRequired),
+                                          .materialRequired +
+                                      ' ' +
+                                      '(مطلوب)'),
                                   const SizedBox(height: 4),
                                   AutoCompleteComboBox(
                                     placeholder: AppLocalizations.of(context)!
@@ -639,17 +569,27 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               SizedBox(
                                 width: 5,
                               ),
-                              KiloPriceBox(
-                                  controller: _kiloPriceController,
-                                  onChange: (v) {
-                                    calculateTotalPrice();
-                                  }),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  KiloPriceBox(
+                                      controller: _kiloPriceController,
+                                      onChange: (v) {
+                                        calculateTotalPrice();
+                                      }),
+                                ],
+                              ),
                               SizedBox(
                                 width: 5,
                               ),
-                              TotalPriceBox(
-                                  controller: _totalPriceController,
-                                  onChange: (v) {})
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  TotalPriceBox(
+                                      controller: _totalPriceController,
+                                      onChange: (v) {}),
+                                ],
+                              )
                             ],
                           ), // Material
 
@@ -659,7 +599,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                             children: [
                               _buildLabel(AppLocalizations.of(context)!.notes),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.15,
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.30,
                                 child: TextBox(
                                     controller: _notesController,
                                     onChanged: (v) {
@@ -708,14 +651,36 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     );
   }
 
-  Widget _buildWeightField({
-    required String label,
-    required TextEditingController controller,
-    required ValueChanged<String> onChanged,
-    required VoidCallback onScalePressed,
-    required ValueChanged<bool> onFocusChanged,
-    bool enabled = true,
-  }) {
+  Widget _buildWeightField(
+      {required String label,
+      required TextEditingController controller,
+      required ValueChanged<String> onChanged,
+      required VoidCallback onScalePressed,
+      required ValueChanged<bool> onFocusChanged,
+      bool enabled = true,
+      bool isEmptyWeight = true}) {
+    bool canCaptureWeight() {
+      bool notLocked = !_tab!.isLocked;
+      if (notLocked) return true;
+      if (isEmptyWeight && !notLocked && _tab!.scaleEmptyWeightAt != null) {
+        if (_tab!.scaleGrossWeightAt != null) {
+          if (_tab!.scaleGrossWeightAt!.isBefore(_tab!.scaleEmptyWeightAt!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      if (!isEmptyWeight && !notLocked && _tab!.scaleGrossWeightAt != null) {
+        if (_tab!.scaleEmptyWeightAt != null) {
+          if (_tab!.scaleEmptyWeightAt!.isBefore(_tab!.scaleGrossWeightAt!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -760,7 +725,93 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                     color:
                         weightProvider.isConnected ? Colors.green : Colors.grey,
                   ),
-                  onPressed: weightProvider.isConnected ? onScalePressed : null,
+                  onPressed: weightProvider.isConnected && canCaptureWeight()
+                      ? onScalePressed
+                      : null,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _mockBuildWeightField(
+      {required String label,
+      required TextEditingController controller,
+      required ValueChanged<String> onChanged,
+      required VoidCallback onScalePressed,
+      required ValueChanged<bool> onFocusChanged,
+      bool enabled = true,
+      bool isEmptyWeight = true}) {
+    bool canCaptureWeight() {
+      bool notLocked = !_tab!.isLocked;
+      if (notLocked) return true;
+      if (isEmptyWeight && !notLocked && _tab!.scaleEmptyWeightAt != null) {
+        if (_tab!.scaleGrossWeightAt != null) {
+          if (_tab!.scaleGrossWeightAt!.isBefore(_tab!.scaleEmptyWeightAt!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      if (!isEmptyWeight && !notLocked && _tab!.scaleGrossWeightAt != null) {
+        if (_tab!.scaleEmptyWeightAt != null) {
+          if (_tab!.scaleEmptyWeightAt!.isBefore(_tab!.scaleGrossWeightAt!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(label),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: Focus(
+                onFocusChange: onFocusChanged,
+                child: TextFormBox(
+                  enabled: enabled,
+                  controller: controller,
+                  placeholder: '0.0',
+                  onChanged: onChanged,
+                  suffix: Text(AppLocalizations.of(context)!.kg),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      // Prevent negative values
+                      if (newValue.text.startsWith('-')) {
+                        return oldValue;
+                      }
+                      // Prevent multiple decimal points
+                      if (newValue.text.split('.').length > 2) {
+                        return oldValue;
+                      }
+                      return newValue;
+                    }),
+                  ],
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Consumer<WeightProvider>(
+              builder: (context, weightProvider, child) {
+                return IconButton(
+                  icon: Icon(
+                    FluentIcons.scale_volume,
+                    color:
+                        weightProvider.isConnected ? Colors.green : Colors.grey,
+                  ),
+                  onPressed: canCaptureWeight() ? onScalePressed : null,
                 );
               },
             ),
@@ -876,7 +927,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         tab.isComplete
                             ? AppLocalizations.of(context)!.complete
                             : AppLocalizations.of(context)!.incomplete,
-                        style: TextStyle(fontSize: kButtonFontSize)),
+                        style: TextStyle(fontSize: kFinalButtonFontSize)),
                   ],
                 ),
               ),
@@ -887,50 +938,43 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     );
   }
 
-  // Helper methods for status display
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'completed':
-        return Colors.green;
-      case 'in-progress':
-        return Colors.blue;
-      case 'cancelled':
-        return Colors.red;
-      case 'empty':
-        return Colors.grey;
-      default:
-        return Colors.orange;
-    }
-  }
+  Widget _buildLockSection() {
+    if (!_tab!.canLock)
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SimpleAnimatedIcon(),
+          Text(
+            'يا أبو صطيف اذا اجاك بيرين حط الوزن الإجمالي بالاول و بعدا اسم المورد و رح يطلعلك زر حفظ هون لازم تكبسو',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ],
+      );
 
-  IconData _getStatusIcon(String status) {
-    switch (status) {
-      case 'completed':
-        return FluentIcons.completed;
-      case 'in-progress':
-        return FluentIcons.warning;
-      case 'cancelled':
-        return FluentIcons.cancel;
-      case 'empty':
-        return FluentIcons.clear;
-      default:
-        return FluentIcons.warning;
+    if (!_tab!.isLocked) {
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: double.infinity),
+        child: FilledButton(
+            child: Text(
+              'حفظ',
+              style: TextStyle(fontSize: 20),
+            ),
+            onPressed: () {
+              context.read<TabsProvider>().lockTab(widget.tabIndex);
+            }),
+      );
     }
-  }
 
-  String _getStatusText(BuildContext context, String status) {
-    switch (status) {
-      case 'completed':
-        return AppLocalizations.of(context)!.completed;
-      case 'in-progress':
-        return AppLocalizations.of(context)!.inProgress;
-      case 'cancelled':
-        return AppLocalizations.of(context)!.cancelled;
-      case 'empty':
-        return AppLocalizations.of(context)!.empty;
-      default:
-        return AppLocalizations.of(context)!.unknown;
-    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SimpleAnimatedIcon(),
+        Text(
+          'بس تخلص تعباية كبوس على حفظ نهائي ',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
   }
 
   void _captureWeightFromScale(bool isEmptyWeight) {
@@ -962,6 +1006,27 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     }
   }
 
+  void _mockCaptureWeightFromScale(bool isEmptyWeight) {
+    final tabsProvider = context.read<TabsProvider>();
+
+    if (isEmptyWeight && !_emptyWeightFieldFocused) {
+      _emptyWeightController.text = 4000.toString();
+      tabsProvider.updateTab(widget.tabIndex, {'emptyWeight': 4000});
+      tabsProvider
+          .updateTab(widget.tabIndex, {'scaleEmptyWeight': DateTime.now()});
+    } else if (!isEmptyWeight && !_grossWeightFieldFocused) {
+      _grossWeightController.text = 5000.toString();
+      tabsProvider.updateTab(widget.tabIndex, {'grossWeight': 5000});
+      tabsProvider
+          .updateTab(widget.tabIndex, {'scaleGrossWeight': DateTime.now()});
+      calculateTotalPrice();
+    } else {
+      _showInfoBar(AppLocalizations.of(context)!.cannotCaptureWhileEditing,
+          InfoBarSeverity.warning);
+      return;
+    }
+  }
+
   void _cancelTab() {
     final tabsProvider = context.read<TabsProvider>();
     tabsProvider.cancelTab(widget.tabIndex);
@@ -975,6 +1040,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
     if (success) {
       _showInfoBar(AppLocalizations.of(context)!.tabCompletedAndMoved,
           InfoBarSeverity.success);
+      fetchAllNewValues();
     } else {
       _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
           InfoBarSeverity.error);

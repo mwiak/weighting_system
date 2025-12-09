@@ -1,16 +1,14 @@
-import 'dart:math';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/models/weighing_tab.dart';
 import 'package:weighing_system/providers/summaries_provider.dart';
 import 'package:weighing_system/utils/date_range_formatter.dart';
-import 'package:weighing_system/utils/debugging_methods.dart';
 import 'package:weighing_system/widgets/multi_select.dart';
 import '../l10n/app_localizations.dart';
 import '../models/season.dart';
 import '../providers/seasons_provider.dart';
 import '../widgets/material_tree_item.dart';
+import 'dart:isolate';
 
 class SummaryByPerson extends StatefulWidget {
   const SummaryByPerson({super.key});
@@ -132,6 +130,7 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
                   ],
                 ),
               ),
+              const SizedBox(width: 8),
               ...[
                 Button(
                   child: Text('اليوم'),
@@ -140,7 +139,7 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
                     endDate = getTodayEndDate();
                   }),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 Button(
                   child: Text('البارحة'),
                   onPressed: () => setState(() {
@@ -148,7 +147,23 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
                     endDate = getYesterdayEndDate();
                   }),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
+                Button(
+                  child: Text('الموسم الحالي'),
+                  onPressed: () => setState(() {
+                    startDate = context
+                        .read<SeasonsProvider>()
+                        .availableSeasons
+                        .last
+                        .seasonStartDate;
+                    endDate = context
+                        .read<SeasonsProvider>()
+                        .availableSeasons
+                        .last
+                        .seasonEndDate;
+                  }),
+                ),
+                const SizedBox(width: 8),
                 Consumer<SeasonsProvider>(
                   builder: (BuildContext context, value, Widget? child) {
                     return DropDownButton(
@@ -157,7 +172,7 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
                     );
                   },
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 DropDownButton(title: Text('مزيد'), items: [
                   MenuFlyoutItem(
                       text: Text('آخر 7 أيام'),
@@ -208,15 +223,15 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
 
   Widget _buildTree() {
     if (data.isEmpty) return SizedBox.shrink();
-
+    late Map<String, List<WeighingTab>> suppliers;
+    late Map<String, List<WeighingTab>> clients;
     List<String> materials = data.keys.toList();
 
     List<TreeViewItem> items = [];
 
     for (String material in materials) {
-      Map<String, List<WeighingTab>> suppliers =
-          data[material]!['suppliers'] ?? {};
-      Map<String, List<WeighingTab>> clients = data[material]!['clients'] ?? {};
+      suppliers = data[material]!['suppliers']?.sortWeightMap() ?? {};
+      clients = data[material]!['clients']?.sortWeightMap() ?? {};
 
       items.add(MaterialTreeItem.from(
           material: material,
@@ -253,8 +268,8 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
         return l10n.driverName;
       case AutoCompleteType.truckPlate:
         return l10n.truckPlate;
-      default:
-        return '';
+      case AutoCompleteType.material:
+        return l10n.material;
     }
   }
 
@@ -272,9 +287,13 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
         ),
       ));
     }
-    return Wrap(
-      spacing: 3.0,
-      children: items,
+    return SizedBox(
+      width: 600,
+      child: Wrap(
+        runSpacing: 4,
+        spacing: 3.0,
+        children: items,
+      ),
     );
   }
 }
