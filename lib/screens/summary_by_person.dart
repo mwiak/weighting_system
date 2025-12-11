@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:weighing_system/models/weighing_tab.dart';
 import 'package:weighing_system/providers/summaries_provider.dart';
 import 'package:weighing_system/utils/date_range_formatter.dart';
+import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'package:weighing_system/widgets/multi_select.dart';
 import '../l10n/app_localizations.dart';
 import '../models/season.dart';
@@ -23,16 +24,27 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
   DateTime endDate = getTodayEndDate();
   AutoCompleteType summaryType = AutoCompleteType.supplier;
   List<String> searchingTerms = [];
+  TextEditingController unifiedPriceController = TextEditingController();
 
   Map<String, Map<String, Map<String, List<WeighingTab>>>> data = {};
   late SummariesProvider provider;
+
+  num? parserAttempt() {
+    return num.tryParse(unifiedPriceController.text.trim());
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      startDate =
+          context.read<SeasonsProvider>().availableSeasons.last.seasonStartDate;
+      endDate =
+          context.read<SeasonsProvider>().availableSeasons.last.seasonEndDate;
       provider = context.read<SummariesProvider>();
+
+      setState(() {});
     });
   }
 
@@ -64,6 +76,11 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
                             value: v,
                             child: Text(_buildSuggestionType(v, l10n))))
                   ]),
+              SizedBox(
+                width: 20,
+              ),
+              UnifiedPriceBox(
+                  controller: unifiedPriceController, onChange: (v) {}),
               SizedBox(
                 width: 20,
               ),
@@ -213,7 +230,8 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
           Consumer<SummariesProvider>(
             builder: (BuildContext context, value, Widget? child) {
               return Flexible(
-                  child: SingleChildScrollView(child: _buildTree()));
+                  child: SingleChildScrollView(
+                      child: _buildTree(unifiedPrice: parserAttempt())));
             },
           )
         ],
@@ -221,7 +239,7 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
     );
   }
 
-  Widget _buildTree() {
+  Widget _buildTree({num? unifiedPrice}) {
     if (data.isEmpty) return SizedBox.shrink();
     late Map<String, List<WeighingTab>> suppliers;
     late Map<String, List<WeighingTab>> clients;
@@ -232,7 +250,21 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
     for (String material in materials) {
       suppliers = data[material]!['suppliers']?.sortWeightMap() ?? {};
       clients = data[material]!['clients']?.sortWeightMap() ?? {};
+      if (unifiedPrice != null) {
+        for (List item in suppliers.values) {
+          for (WeighingTab tab in item) {
+            tab.kilo_price = unifiedPrice;
+            tab.total_price = unifiedPrice * tab.netWeight;
+          }
+        }
 
+        for (List item in clients.values) {
+          for (WeighingTab tab in item) {
+            tab.kilo_price = unifiedPrice;
+            tab.total_price = unifiedPrice * tab.netWeight;
+          }
+        }
+      }
       items.add(MaterialTreeItem.from(
           material: material,
           suppliers: suppliers,
@@ -288,7 +320,7 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
       ));
     }
     return SizedBox(
-      width: 600,
+      width: 300,
       child: Wrap(
         runSpacing: 4,
         spacing: 3.0,

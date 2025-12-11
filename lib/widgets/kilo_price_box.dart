@@ -103,3 +103,54 @@ class _TotalPriceBoxState extends State<TotalPriceBox> {
     );
   }
 }
+
+class UnifiedPriceBox extends StatefulWidget {
+  final TextEditingController controller;
+  final Function onChange;
+
+  const UnifiedPriceBox(
+      {super.key, required this.controller, required this.onChange});
+
+  @override
+  State<UnifiedPriceBox> createState() => _UnifiedPriceBoxState();
+}
+
+class _UnifiedPriceBoxState extends State<UnifiedPriceBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'تحديد سعر موحد',
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: kLabelFontSize,
+          ),
+        ),
+        SizedBox(
+          width: 4,
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.07,
+          child: TextBox(
+            suffix: Text('\$'),
+            inputFormatters: [
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                final regExp = RegExp(r'^\d*\.?\d{0,3}$');
+                if (regExp.hasMatch(newValue.text)) {
+                  return newValue;
+                }
+                return oldValue;
+              }),
+            ],
+            controller: widget.controller,
+            onChanged: (v) {
+              widget.onChange(v);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}

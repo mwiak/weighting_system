@@ -1,7 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/database/database_helper.dart';
+import 'package:weighing_system/theme/app_theme.dart';
 import 'package:weighing_system/widgets/admin_weighting_tab_content.dart';
+import 'package:weighing_system/widgets/operation_widgets/operation_details_card.dart';
 import '../l10n/app_localizations.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
@@ -12,6 +14,7 @@ import '../providers/tabs_provider.dart';
 import '../services/custom_template_service.dart';
 import '../services/template_print_service.dart';
 import '../models/weighing_tab.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';
@@ -230,61 +233,53 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            OperationDetailsCard(
+                              label: l10n.status,
+                              value: _formatStatus(widget.operation.status),
+                              svgPath: 'assets/weightout.svg',
+                            ),
+                            OperationDetailsCard(
+                              label: l10n.notes,
+                              value: widget.operation.notes,
+                              svgPath: 'assets/weightout.svg',
+                            ),
+                            OperationDetailsCard(
+                                svgPath: 'assets/weightout.svg',
+                                label: l10n.createDate,
+                                value: _formatDateTime(
+                                    widget.operation.createdAt)),
+                            OperationDetailsCard(
+                              label: l10n.lastUpdated,
+                              value:
+                                  _formatDateTime(widget.operation.updatedAt),
+                              svgPath: 'assets/weightout.svg',
+                            ),
+                            OperationDetailsCard(
+                              label: l10n.paid,
+                              value:
+                                  widget.operation.isPaid ? l10n.yes : l10n.no,
+                              svgPath: 'assets/weightout.svg',
+                            ),
+                          ],
+                        ),
                         // Use a two-column layout to fit more information
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Left Column
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  // Basic Order Information
-                                  _buildSection(
-                                    l10n.additionalInfo,
-                                    [
-                                      _buildDetailRow(
-                                          l10n.status,
-                                          _formatStatus(
-                                              widget.operation.status)),
-                                      _buildDetailRow(
-                                          l10n.createDate,
-                                          _formatDateTime(
-                                              widget.operation.createdAt)),
-                                      _buildDetailRow(
-                                          l10n.lastUpdated,
-                                          _formatDateTime(
-                                              widget.operation.updatedAt)),
-                                      _buildDetailRow(
-                                          l10n.weighInTime,
-                                          _formatDateTime(widget
-                                              .operation.scaleEmptyWeightAt)),
-                                      _buildDetailRow(
-                                          l10n.weighOutTime,
-                                          _formatDateTime(widget
-                                              .operation.scaleGrossWeightAt)),
-                                      _buildDetailRow(
-                                          l10n.paid,
-                                          widget.operation.isPaid
-                                              ? l10n.yes
-                                              : l10n.no),
-                                      _buildDetailRow(
-                                          l10n.showPriceOnPrint,
-                                          widget.operation.showPriceOnPrint
-                                              ? l10n.yes
-                                              : l10n.no),
-                                      _buildDetailRow(
-                                          l10n.notes, widget.operation.notes),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  // Vehicle and Driver Information
-                                  const SizedBox(height: 16),
-                                  // Business Partners Information
-                                ],
-                              ),
+                            OperationDetailsCard(
+                              label: l10n.weighInTime,
+                              value: _formatDateTime(
+                                  widget.operation.scaleEmptyWeightAt),
+                              svgPath: 'assets/test.svg',
                             ),
-                            const SizedBox(width: 20),
-                            // Right Column
+                            OperationDetailsCard(
+                              label: l10n.weighOutTime,
+                              value: _formatDateTime(
+                                  widget.operation.scaleGrossWeightAt),
+                              svgPath: 'assets/weightin.svg',
+                            ),
                           ],
                         ),
 

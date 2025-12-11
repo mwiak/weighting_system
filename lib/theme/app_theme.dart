@@ -16,6 +16,12 @@ class AppTheme {
   static const double operationsHeaderItemWidthNormal = 90;
   static const TextStyle headerStyle =
       TextStyle(fontWeight: FontWeight.w600, fontSize: 11.8);
+
+  static const TextStyle headerStyleBig =
+      TextStyle(fontWeight: FontWeight.w600, fontSize: 16);
+
+  static const TextStyle valueStyleBig =
+      TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: primaryColor);
   // Background colors
   static const Color backgroundColor =
       Color(0xFFFAFAFA); // Light gray background

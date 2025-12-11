@@ -36,6 +36,12 @@ class _SummariesScreenState extends State<SummariesScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PageStorage(
       bucket: bucket,
