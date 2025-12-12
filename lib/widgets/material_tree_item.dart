@@ -169,6 +169,7 @@ List<TreeViewItem> _buildClientOrSupplier(
     children = [];
     totalWeight = 0;
     totalPrice = 0.0;
+    int count = value.length;
     for (WeighingTab tab in value) {
       totalWeight = totalWeight + tab.netWeight;
       totalPrice = totalPrice + tab.total_price;
@@ -236,6 +237,23 @@ List<TreeViewItem> _buildClientOrSupplier(
               ),
               buildTotalWeight(
                   'مجموع قيمة البضاعة', totalPrice.toStringAsFixed(2)),
+              Spacer(),
+              buildTotalWeight('عدد الشحنات', count.toString(),
+                  color: Colors.purple.withValues(alpha: 0.1)),
+              SizedBox(
+                width: 10,
+              ),
+              DropDownButton(
+                title: Icon(FluentIcons.settings),
+                items: [
+                  MenuFlyoutItem(
+                      text: const Text('تصدير للأكسل'),
+                      onPressed: () {
+                        ExcelService excel = ExcelService();
+                        excel.createStyledExcel(tabs: value, context: context);
+                      }),
+                ],
+              ),
             ],
           ),
           children: children),
@@ -244,11 +262,11 @@ List<TreeViewItem> _buildClientOrSupplier(
   return items;
 }
 
-Widget buildTotalWeight(String? label, String total) {
+Widget buildTotalWeight(String? label, String total, {Color? color}) {
+  color ??= Colors.green.withOpacity(0.2);
   return Container(
     decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.2),
-        borderRadius: BorderRadius.all(Radius.circular(12))),
+        color: color, borderRadius: BorderRadius.all(Radius.circular(12))),
     child: Padding(
       padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
       child: Text.rich(TextSpan(

@@ -135,10 +135,20 @@ class ExcelService {
       if (i % 2 == 1) {
         final rowIndex = i + 1; // 0 = header, so data starts at 1
         for (int c = 0; c < columnsCells.length; c++) {
-          sheet
+          final cellValue = sheet
               .cell(CellIndex.indexByColumnRow(
                   columnIndex: c, rowIndex: rowIndex))
-              .cellStyle = oddRowStyle;
+              .value;
+          bool isFloat = cellValue is DoubleCellValue;
+
+          sheet
+                  .cell(CellIndex.indexByColumnRow(
+                      columnIndex: c, rowIndex: rowIndex))
+                  .cellStyle =
+              oddRowStyle.copyWith(
+                  numberFormat: isFloat
+                      ? NumFormat.defaultFloat
+                      : NumFormat.defaultNumeric);
         }
       }
     }

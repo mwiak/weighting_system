@@ -235,18 +235,19 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                       children: [
                         Row(
                           children: [
-                            OperationDetailsCard(
+                            OperationDetailsStatusCard(
                               label: l10n.status,
                               value: _formatStatus(widget.operation.status),
-                              svgPath: 'assets/weightout.svg',
+                              svgPath: '',
                             ),
                             OperationDetailsCard(
                               label: l10n.notes,
                               value: widget.operation.notes,
-                              svgPath: 'assets/weightout.svg',
+                              svgPath:
+                                  FluentIcons.sticky_notes_outline_app_icon,
                             ),
                             OperationDetailsCard(
-                                svgPath: 'assets/weightout.svg',
+                                svgPath: FluentIcons.stopwatch,
                                 label: l10n.createDate,
                                 value: _formatDateTime(
                                     widget.operation.createdAt)),
@@ -254,13 +255,13 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
                               label: l10n.lastUpdated,
                               value:
                                   _formatDateTime(widget.operation.updatedAt),
-                              svgPath: 'assets/weightout.svg',
+                              svgPath: 'assets/editicon.svg',
                             ),
                             OperationDetailsCard(
                               label: l10n.paid,
                               value:
                                   widget.operation.isPaid ? l10n.yes : l10n.no,
-                              svgPath: 'assets/weightout.svg',
+                              svgPath: FluentIcons.money,
                             ),
                           ],
                         ),

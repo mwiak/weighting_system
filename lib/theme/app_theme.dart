@@ -15,10 +15,10 @@ class AppTheme {
   //headersOperations
   static const double operationsHeaderItemWidthNormal = 90;
   static const TextStyle headerStyle =
-      TextStyle(fontWeight: FontWeight.w600, fontSize: 11.8);
+      TextStyle(fontWeight: FontWeight.w900, fontSize: 11.8);
 
   static const TextStyle headerStyleBig =
-      TextStyle(fontWeight: FontWeight.w600, fontSize: 16);
+      TextStyle(fontWeight: FontWeight.w800, fontSize: 16);
 
   static const TextStyle valueStyleBig =
       TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: primaryColor);
