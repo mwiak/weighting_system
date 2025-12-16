@@ -272,7 +272,10 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
           context: context));
     }
 
-    return TreeView(items: items);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TreeView(items: items),
+    );
   }
 
   List<MenuFlyoutItem> _buildSeasonsOptions(List<Season> data) {

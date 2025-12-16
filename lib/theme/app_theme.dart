@@ -8,8 +8,10 @@ class AppTheme {
   static const Color accentColor = Color(0xFFE67E22); // Orange
   static const Color errorColor = Color(0xFFE74C3C); // Red
   static const Color warningColor = Color(0xFFF39C12); // Yellow
-  static const Color successColor = Color(0xFF27AE60); // Success Green
-
+  static const Color successColor = Color(0xFF27AE60);
+  static const Color grad1 = Color(0xFF2E86C1); // Success Green
+  static const Color grad2 = Color(0x202E86C1);
+  static const Color grad3 = Color(0x102E86C1);
   static const double summaryBoxSized = 60;
 
   //headersOperations

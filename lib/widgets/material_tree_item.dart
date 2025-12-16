@@ -90,6 +90,11 @@ class MaterialTreeItem extends TreeViewItem {
                         child: Text('الزبائن'),
                       )),
                   Spacer(),
+                  buildTotalWeight(
+                      'عدد الذمم', clients.entries.length.toString()),
+                  SizedBox(
+                    width: 20,
+                  ),
                   buildTotalWeight(null, totalWeightSale.toString()),
                   SizedBox(
                     width: 20,
@@ -128,6 +133,11 @@ class MaterialTreeItem extends TreeViewItem {
                     ),
                   ),
                   Spacer(),
+                  buildTotalWeight(
+                      'عدد الذمم', suppliers.entries.length.toString()),
+                  SizedBox(
+                    width: 20,
+                  ),
                   buildTotalWeight(null, totalWeightPurchase.toString()),
                   SizedBox(
                     width: 20,
@@ -185,6 +195,9 @@ List<TreeViewItem> _buildClientOrSupplier(
                     child: Text(tab.id.toString())),
                 SizedBox(
                     width: AppTheme.summaryBoxSized,
+                    child: Text(tab.createdAt.toString())),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
                     child: Text(tab.driverName)),
                 SizedBox(
                     width: AppTheme.summaryBoxSized,
@@ -208,6 +221,9 @@ List<TreeViewItem> _buildClientOrSupplier(
                 SizedBox(
                     width: AppTheme.summaryBoxSized,
                     child: Text(l10n.orderNumber)),
+                SizedBox(
+                    width: AppTheme.summaryBoxSized,
+                    child: Text(l10n.createdAt)),
                 SizedBox(
                     width: AppTheme.summaryBoxSized,
                     child: Text(l10n.driverName)),
