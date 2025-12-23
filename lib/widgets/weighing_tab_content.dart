@@ -400,7 +400,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           const SizedBox(height: 4),
 
                           const SizedBox(height: 30),
-                          _buildLockSection()
+                          RepaintBoundary(child: _buildLockSection())
 
                           // Operation type removed from schema
                         ],

@@ -8,12 +8,6 @@ extension NetWeightSum on List<WeighingTab> {
   int get totalWeight => fold(0, (sum, tab) => sum + tab.netWeight);
 }
 
-extension SortWeightDesc on List<WeighingTab> {
-  void sortWeightList() {
-    sort((a, b) => b.grossWeight - a.grossWeight);
-  }
-}
-
 extension SortMapWeightDesc on Map<String, List<WeighingTab>> {
   Map<String, List<WeighingTab>> sortWeightMap() {
     Map<String, List<WeighingTab>> result = {};

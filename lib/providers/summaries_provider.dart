@@ -1,9 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
 
 import '../models/weighing_tab.dart';
+import '../utils/heavy_computes_summary.dart';
 import '../widgets/multi_select.dart';
+import 'dart:isolate';
 
 class SummariesProvider extends ChangeNotifier {
   bool isLoading = true;
@@ -53,8 +56,8 @@ class SummariesProvider extends ChangeNotifier {
           grouped[material]!['clients']![client]!.add(tab);
         }
       }
-      print(grouped);
-      return grouped;
+      final sorted = compute(sortWeightMaterialsIsolate, grouped);
+      return sorted;
     } catch (e) {
       debugPrint('TabsProvider: Error getting tabs history: $e');
       return {};
@@ -101,8 +104,9 @@ class SummariesProvider extends ChangeNotifier {
           grouped[material]!['clients']![client]!.add(tab);
         }
       }
-      print(grouped);
-      return grouped;
+      final sorted = compute(sortWeightMaterialsIsolate, grouped);
+
+      return sorted;
     } catch (e) {
       debugPrint('TabsProvider: Error getting tabs history: $e');
       return {};
@@ -131,8 +135,6 @@ class SummariesProvider extends ChangeNotifier {
       String column = parseType(type);
       whereClause =
           buildSearchQueryTerms(column, whereClause, terms, whereArgs);
-      print(whereArgs);
-      print(terms);
 
       final data = await _db.query(
         'weighing_tabs',

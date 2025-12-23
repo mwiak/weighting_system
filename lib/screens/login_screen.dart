@@ -132,12 +132,12 @@ class _LoginScreenState extends State<LoginScreen>
                 ],
               ),
             ),
-            child: Center(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: RepaintBoundary(
+            child: RepaintBoundary(
+              child: Center(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
                     child: Card(
                       backgroundColor: const Color(0x30E6E0E0),
                       borderRadius: const BorderRadius.all(Radius.circular(25)),

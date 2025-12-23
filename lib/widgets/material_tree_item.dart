@@ -222,6 +222,7 @@ List<TreeViewItem> _buildClientOrSupplier(
                     width: AppTheme.summaryBoxSized,
                     child: Text(l10n.orderNumber)),
                 SizedBox(
+                    //TODO dateformat
                     width: AppTheme.summaryBoxSized,
                     child: Text(l10n.createdAt)),
                 SizedBox(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -58,6 +59,7 @@ void main() async {
   });
   await dotenv.load(fileName: ".env");
   SecurityContext.defaultContext.setTrustedCertificates('cacert.pem');
+  debugRepaintRainbowEnabled;
   runApp(WeighingSystemApp());
 }
 
@@ -83,13 +85,16 @@ class WeighingSystemApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => DriverPlateProvider()),
         ChangeNotifierProvider(create: (_) => TabsProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => SummariesProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SummariesProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => SeasonsProvider(),
           lazy: false,
         ),
       ],
       child: fluent.FluentApp(
+        showPerformanceOverlay: true,
         navigatorKey: rootNavigatorKey,
         title: 'Truck Weighing System',
         theme: AppTheme.lightTheme,

@@ -35,7 +35,6 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       startDate =
@@ -248,8 +247,8 @@ class _SummaryByPersonState extends State<SummaryByPerson> {
     List<TreeViewItem> items = [];
 
     for (String material in materials) {
-      suppliers = data[material]!['suppliers']?.sortWeightMap() ?? {};
-      clients = data[material]!['clients']?.sortWeightMap() ?? {};
+      suppliers = data[material]!['suppliers'] ?? {};
+      clients = data[material]!['clients'] ?? {};
       if (unifiedPrice != null) {
         for (List item in suppliers.values) {
           for (WeighingTab tab in item) {
