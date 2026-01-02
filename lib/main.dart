@@ -94,7 +94,7 @@ class WeighingSystemApp extends StatelessWidget {
         ),
       ],
       child: fluent.FluentApp(
-        showPerformanceOverlay: true,
+        // showPerformanceOverlay: true,
         navigatorKey: rootNavigatorKey,
         title: 'Truck Weighing System',
         theme: AppTheme.lightTheme,

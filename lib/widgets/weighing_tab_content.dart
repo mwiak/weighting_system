@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
@@ -23,9 +25,9 @@ import 'auto_complete_combo_box.dart';
 
 // Text size constants for easy adjustment
 const double kStatusFontSize = 7.0;
-const double kWeightValueFontSize = 12.0;
-const double kWeightUnitFontSize = 10.0;
-const double kLabelFontSize = 13.0;
+const double kWeightValueFontSize = 20.0;
+const double kWeightUnitFontSize = 14.0;
+const double kLabelFontSize = 16.0;
 const double kButtonFontSize = 12.5;
 const double kFinalButtonFontSize = 16;
 const double kIconSize = 12.0;
@@ -363,7 +365,21 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(dateToArabicDatetimeWeightTab(_tab!.createdAt)),
+                          Row(
+                            children: [
+                              Text(AppLocalizations.of(context)!.orderNumber),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(_tab?.id?.toString() ?? ''),
+                              const Spacer(),
+                              Text(dateToArabicDatetimeWeightTab(
+                                  _tab!.createdAt)),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
                           // Empty Weight
                           _buildWeightField(
                             isEmptyWeight: false,
@@ -692,6 +708,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               child: Focus(
                 onFocusChange: onFocusChanged,
                 child: TextFormBox(
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   enabled: enabled,
                   controller: controller,
                   placeholder: '0.0',

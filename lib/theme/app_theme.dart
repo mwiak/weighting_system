@@ -14,6 +14,12 @@ class AppTheme {
   static const Color grad3 = Color(0x102E86C1);
   static const double summaryBoxSized = 60;
 
+  static const double kFontSizeValue = 16.0;
+  static final TextStyle kValuesStyleWT = TextStyle(
+      fontSize: kFontSizeValue,
+      fontWeight: FontWeight.w500,
+      color: Colors.grey.withOpacity(0.85));
+
   //headersOperations
   static const double operationsHeaderItemWidthNormal = 90;
   static const TextStyle headerStyle =

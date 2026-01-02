@@ -11,6 +11,7 @@ import '../providers/driver_plate_provider.dart';
 import '../models/supplier.dart';
 import '../models/material.dart' as m;
 import '../database/database_helper.dart';
+import '../theme/app_theme.dart';
 import '../utils/arabic_normalize.dart';
 
 enum AutoCompleteType {
@@ -568,6 +569,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
       width: MediaQuery.of(context).size.width * 0.15,
       key: _textFieldKey,
       child: TextFormBox(
+        style: AppTheme.kValuesStyleWT,
         controller: _controller,
         focusNode: _focusNode,
         placeholder: widget.placeholder,

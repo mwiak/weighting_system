@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/widgets.dart';
 
 class SimpleAnimatedIcon extends StatefulWidget {
-  const SimpleAnimatedIcon({Key? key}) : super(key: key);
+  const SimpleAnimatedIcon({super.key});
 
   @override
   State<SimpleAnimatedIcon> createState() => _SimpleAnimatedIconState();
@@ -20,18 +20,18 @@ class _SimpleAnimatedIconState extends State<SimpleAnimatedIcon>
     // 1. Initialize the AnimationController
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300), // 1 second for a slow pulse
+      duration: const Duration(milliseconds: 1000), // 1 second for a slow pulse
     );
 
     // 2. Create a Tween to define the scale range
     // We want it to go from 1.0 (normal size) to 1.2 (120% size)
-    final Tween<double> scaleTween = Tween<double>(begin: 1.0, end: 1.10);
+    final Tween<double> scaleTween = Tween<double>(begin: 1.0, end: 1.30);
 
     // 3. Create the animation, using a Curve for a smooth effect
     _scaleAnimation = scaleTween.animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.linear, // This makes the pulse look natural
+        curve: Curves.easeInOut, // This makes the pulse look natural
       ),
     );
 
@@ -50,7 +50,7 @@ class _SimpleAnimatedIconState extends State<SimpleAnimatedIcon>
   Widget build(BuildContext context) {
     // 6. Use ScaleTransition instead of AnimatedIcon
     return SizedBox(
-      height: 30,
+      height: 40,
       width: 40,
       child: ScaleTransition(
         scale: _scaleAnimation, // Pass in our custom scale animation

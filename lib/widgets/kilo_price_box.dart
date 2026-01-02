@@ -2,6 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:weighing_system/widgets/weighing_tab_content.dart';
 
+import '../theme/app_theme.dart';
+
 class KiloPriceBox extends StatefulWidget {
   final TextEditingController controller;
   final Function onChange;
@@ -32,6 +34,7 @@ class _KiloPriceBoxState extends State<KiloPriceBox> {
             height: 4,
           ),
           TextBox(
+            style: AppTheme.kValuesStyleWT,
             suffix: Text('\$'),
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
@@ -83,6 +86,7 @@ class _TotalPriceBoxState extends State<TotalPriceBox> {
             height: 4,
           ),
           TextBox(
+            style: const TextStyle(fontSize: AppTheme.kFontSizeValue),
             suffix: Text('\$'),
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
@@ -134,6 +138,7 @@ class _UnifiedPriceBoxState extends State<UnifiedPriceBox> {
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.07,
           child: TextBox(
+            style: const TextStyle(fontSize: AppTheme.kFontSizeValue),
             suffix: Text('\$'),
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
