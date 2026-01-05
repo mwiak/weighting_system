@@ -16,8 +16,8 @@ class AppTheme {
   static const double summaryBoxSized = 60;
   // #404040
   //
-  static Color kValueC = Color(0xFF171717);
-  static Color kLabelC = Color(0xFF737373);
+  static Color kValueC = const Color(0xFF171717);
+  static Color kLabelC = const Color(0xFF737373);
 
   static const double kFontSizeValue = 16.0;
   static TextStyle kValuesStyleWT = TextStyle(

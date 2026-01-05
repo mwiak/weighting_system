@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
@@ -23,7 +21,6 @@ import '../providers/tabs_provider.dart';
 import '../services/template_print_service.dart';
 import '../utils/date_format.dart';
 import 'auto_complete_combo_box.dart';
-import 'bar/overlay_ui.dart';
 
 // Text size constants for easy adjustment
 const double kStatusFontSize = 7.0;
@@ -88,8 +85,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       await _printService.printTemplateStandardPDFNewSilently(
           defaultTemplate, _tab!, null, null, null);
     } else {
-      _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
-          InfoBarSeverity.error);
+      if (mounted) {
+        _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
+            InfoBarSeverity.error);
+      }
     }
   }
 
@@ -100,8 +99,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       await _printService.saveTemplateStandardPDFNewSilently(
           defaultTemplate, _tab!, null, null, null);
     } else {
-      _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
-          InfoBarSeverity.error);
+      if (mounted) {
+        _showInfoBar(AppLocalizations.of(context)!.couldNotFindTemplate,
+            InfoBarSeverity.error);
+      }
     }
   }
 
@@ -378,22 +379,22 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                       source: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         'الرقم',
                                         style: TextStyle(fontSize: 12),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 2,
                                       ),
                                       Text(
                                         _tab?.id?.toString() ?? '',
-                                        style: TextStyle(fontSize: 14),
+                                        style: const TextStyle(fontSize: 14),
                                       ),
                                     ],
                                   )),
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Expanded(
@@ -409,7 +410,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                         Text(
                                           dateToArabicDatetimeWeightTab(
                                               _tab!.createdAt),
-                                          style: TextStyle(fontSize: 13.5),
+                                          style:
+                                              const TextStyle(fontSize: 13.5),
                                         ),
                                       ],
                                     ),
@@ -623,7 +625,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               KiloPriceBox(
@@ -637,7 +639,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               //
                               //   ],
                               // ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Column(
@@ -656,7 +658,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           Row(
                             children: [
                               _buildLabel(AppLocalizations.of(context)!.notes),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               SizedBox(
@@ -750,10 +752,11 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
               child: Focus(
                 onFocusChange: onFocusChanged,
                 child: TextFormBox(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                   enabled: enabled,
                   controller: controller,
-                  placeholder: '0.0',
+                  placeholder: '0',
                   onChanged: onChanged,
                   suffix: Text(AppLocalizations.of(context)!.kg),
                   inputFormatters: [
@@ -839,7 +842,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 child: TextFormBox(
                   enabled: enabled,
                   controller: controller,
-                  placeholder: '0.0',
+                  placeholder: '0',
                   onChanged: onChanged,
                   suffix: Text(AppLocalizations.of(context)!.kg),
                   inputFormatters: [
@@ -893,14 +896,14 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           width: double.infinity,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.grey.withOpacity(0.3)),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
               Text(
-                value.toStringAsFixed(1),
+                value.toString(),
                 style: TextStyle(
                   fontSize: kWeightValueFontSize,
                   fontWeight: FontWeight.w600,
@@ -936,10 +939,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(FluentIcons.print, size: kIconSize),
-                    SizedBox(width: 6),
+                    const Icon(FluentIcons.print, size: kIconSize),
+                    const SizedBox(width: 6),
                     Text(AppLocalizations.of(context)!.print,
-                        style: TextStyle(fontSize: kButtonFontSize)),
+                        style: const TextStyle(fontSize: kButtonFontSize)),
                   ],
                 ),
               ),
@@ -951,10 +954,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(FluentIcons.print, size: kIconSize),
-                    SizedBox(width: 6),
+                    const Icon(FluentIcons.print, size: kIconSize),
+                    const SizedBox(width: 6),
                     Text(AppLocalizations.of(context)!.savePDF,
-                        style: TextStyle(fontSize: kButtonFontSize)),
+                        style: const TextStyle(fontSize: kButtonFontSize)),
                   ],
                 ),
               ),
@@ -980,7 +983,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         tab.isComplete
                             ? AppLocalizations.of(context)!.complete
                             : AppLocalizations.of(context)!.incomplete,
-                        style: TextStyle(fontSize: kFinalButtonFontSize)),
+                        style: const TextStyle(fontSize: kFinalButtonFontSize)),
                   ],
                 ),
               ),
@@ -992,8 +995,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   }
 
   Widget _buildLockSection() {
-    if (!_tab!.canLock)
-      return Column(
+    if (!_tab!.canLock) {
+      return const Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SimpleAnimatedIcon(),
@@ -1003,12 +1006,13 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           ),
         ],
       );
+    }
 
     if (!_tab!.isLocked) {
       return ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: double.infinity),
+        constraints: const BoxConstraints(maxWidth: double.infinity),
         child: FilledButton(
-            child: Text(
+            child: const Text(
               'حفظ',
               style: TextStyle(fontSize: 20),
             ),
@@ -1018,7 +1022,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       );
     }
 
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SimpleAnimatedIcon(),
@@ -1095,8 +1099,10 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
           InfoBarSeverity.success);
       fetchAllNewValues();
     } else {
-      _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
-          InfoBarSeverity.error);
+      if (mounted) {
+        _showInfoBar(AppLocalizations.of(context)!.unableToCompleteTab,
+            InfoBarSeverity.error);
+      }
     }
   }
 
