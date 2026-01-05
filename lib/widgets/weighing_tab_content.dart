@@ -20,6 +20,7 @@ import '../providers/weight_provider.dart';
 import '../providers/tabs_provider.dart';
 import '../services/template_print_service.dart';
 import '../utils/date_format.dart';
+import '../utils/debugging_methods.dart';
 import 'auto_complete_combo_box.dart';
 
 // Text size constants for easy adjustment
@@ -995,6 +996,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   }
 
   Widget _buildLockSection() {
+    printd(_tab!.canLock.toString());
+    printd(_tab!.isLocked.toString());
     if (!_tab!.canLock) {
       return const Column(
         crossAxisAlignment: CrossAxisAlignment.center,

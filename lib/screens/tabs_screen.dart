@@ -90,9 +90,9 @@ class _TabsScreenState extends State<TabsScreen> {
               // Custom Tab Bar using Fluent UI
               if (provider.hasActiveTabs)
                 Container(
-                  height: 48,
+                  height: 38,
                   decoration: BoxDecoration(
-                    color: Colors.grey[20],
+                    // color: Colors.grey[20],
                     border: Border(
                         bottom:
                             BorderSide(color: Colors.grey[60] ?? Colors.grey)),
@@ -111,9 +111,9 @@ class _TabsScreenState extends State<TabsScreen> {
                               onTap: () => provider.switchToTab(index),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
+                                    horizontal: 10, vertical: 1),
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 2, vertical: 4),
+                                    horizontal: 0, vertical: 0),
                                 decoration: BoxDecoration(
                                   color: isActive
                                       ? Colors.white
@@ -128,7 +128,6 @@ class _TabsScreenState extends State<TabsScreen> {
                                   children: [
                                     // Status indicator
 
-                                    const SizedBox(width: 8),
                                     Text(
                                       tab.tabTitle,
                                       style: TextStyle(
@@ -137,7 +136,6 @@ class _TabsScreenState extends State<TabsScreen> {
                                             : FontWeight.normal,
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
                                   ],
                                 ),
                               ),
