@@ -12,13 +12,19 @@ class AppTheme {
   static const Color grad1 = Color(0xFF2E86C1); // Success Green
   static const Color grad2 = Color(0x202E86C1);
   static const Color grad3 = Color(0x102E86C1);
+
   static const double summaryBoxSized = 60;
+  // #404040
+  //
+  static Color kValueC = Color(0xFF171717);
+  static Color kLabelC = Color(0xFF737373);
 
   static const double kFontSizeValue = 16.0;
-  static final TextStyle kValuesStyleWT = TextStyle(
-      fontSize: kFontSizeValue,
-      fontWeight: FontWeight.w500,
-      color: Colors.grey.withOpacity(0.85));
+  static TextStyle kValuesStyleWT = TextStyle(
+      fontSize: kFontSizeValue, fontWeight: FontWeight.w500, color: kValueC);
+
+  static TextStyle kLabelsStyleWT = TextStyle(
+      fontSize: kFontSizeValue, fontWeight: FontWeight.w700, color: kLabelC);
 
   //headersOperations
   static const double operationsHeaderItemWidthNormal = 90;

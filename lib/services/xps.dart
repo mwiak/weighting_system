@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:weighing_system/utils/debugging_methods.dart';
+
 /// Converts a PDF file to XPS using SumatraPDF + Microsoft XPS Document Writer.
 /// Returns 0 for success, 1 for failure.
 ///
@@ -30,11 +32,11 @@ Future<String> convertPdfToXPS(String pdfPath, String xpsPath) async {
     if (result.exitCode == 0 && File(xpsPath).existsSync()) {
       return 'xpsPath';
     } else {
-      print("Error converting PDF: ${result.stderr}");
+      printd("Error converting PDF: ${result.stderr}");
       return '1';
     }
   } catch (e) {
-    print("Exception in convertPdfToXPS: $e");
+    printd("Exception in convertPdfToXPS: $e");
     return '1';
   }
 }
@@ -67,11 +69,11 @@ Future<int> convertPdfToXPS2(String pdfPath, String xpsPath) async {
     if (result.exitCode == 0 && File(xpsPath).existsSync()) {
       return 0;
     } else {
-      print("Error converting PDF: ${result.stderr}\n${result.stdout}");
+      printd("Error converting PDF: ${result.stderr}\n${result.stdout}");
       return 1;
     }
   } catch (e) {
-    print("Exception in convertPdfToXPS: $e");
+    printd("Exception in convertPdfToXPS: $e");
     return 1;
   }
 }
@@ -96,11 +98,11 @@ Future<int> convertPdfToXPS3(String pdfPath, String xpsPath) async {
     if (result.exitCode == 0 && File(xpsPath).existsSync()) {
       return 0;
     } else {
-      print("Error: ${result.stderr}\n${result.stdout}");
+      printd("Error: ${result.stderr}\n${result.stdout}");
       return 1;
     }
   } catch (e) {
-    print("Exception in convertPdfToXPS: $e");
+    printd("Exception in convertPdfToXPS: $e");
     return 1;
   }
 }
@@ -146,17 +148,17 @@ Future<int> convertPdfToXPS4(String pdfPath, String xpsPath) async {
       ],
     );
     if (cleanupResult.exitCode != 0) {
-      print(
+      printd(
           "Error cleaning up: ${cleanupResult.stderr}\n${cleanupResult.stdout}");
     }
     if (printResult.exitCode == 0 && File(xpsPath).existsSync()) {
       return 0;
     } else {
-      print("Error printing: ${printResult.stderr}\n${printResult.stdout}");
+      printd("Error printing: ${printResult.stderr}\n${printResult.stdout}");
       return 1;
     }
   } catch (e) {
-    print("Exception in convertPdfToXPS: $e");
+    printd("Exception in convertPdfToXPS: $e");
     return 1;
   }
 }
@@ -182,11 +184,11 @@ Future<int> convertPdfToXPS5(String pdfPath, String xpsPath) async {
     if (result.exitCode == 0 && File(xpsPath).existsSync()) {
       return 0;
     } else {
-      print("Error: ${result.stderr}\n${result.stdout}");
+      printd("Error: ${result.stderr}\n${result.stdout}");
       return 1;
     }
   } catch (e) {
-    print("Exception in convertPdfToXPS: $e");
+    printd("Exception in convertPdfToXPS: $e");
     return 1;
   }
 }
@@ -213,17 +215,17 @@ Future<int> printXpsFile(String xpsPath) async {
     if (result.exitCode == 0) {
       return 0;
     } else {
-      print("Error printing XPS: ${result.stderr}");
+      printd("Error printing XPS: ${result.stderr}");
       return 1;
     }
   } catch (e) {
-    print("Exception in printXpsFile: $e");
+    printd("Exception in printXpsFile: $e");
     return 1;
   }
 }
 
 Future<int> printPdfToDefaultPrinter(String pdfPath) async {
-  print('printing pdfs');
+  printd('printing pdfs');
   try {
     if (!File(pdfPath).existsSync()) return 1;
 
@@ -242,11 +244,11 @@ Future<int> printPdfToDefaultPrinter(String pdfPath) async {
     if (result.exitCode == 0) {
       return 0;
     } else {
-      print("Error: ${result.stderr}\n${result.stdout}");
+      printd("Error: ${result.stderr}\n${result.stdout}");
       return 1;
     }
   } catch (e) {
-    print("Exception in printPdfToDefaultPrinter: $e");
+    printd("Exception in printPdfToDefaultPrinter: $e");
     return 1;
   }
 }

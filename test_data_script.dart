@@ -111,15 +111,15 @@ void main() async {
       whereArgs: ['completed'],
     );
 
-    print('\nCompleted tabs in database: ${completedTabs.length}');
+    printd('\nCompleted tabs in database: ${completedTabs.length}');
     for (final tab in completedTabs) {
       print(
           '  Tab ${tab['tab_id']}: ${tab['truck_plate']} - ${tab['driver_name']} - ${tab['status']}');
     }
 
     await db.close();
-    print('\nTest data added successfully!');
+    printd('\nTest data added successfully!');
   } catch (e) {
-    print('Error: $e');
+    printd('Error: $e');
   }
 }

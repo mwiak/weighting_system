@@ -308,7 +308,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
                     if (index == 0) {
                       return Column(
                         children: [
-                          Text('عناصر مرتبطة'),
+                          const Text('عناصر مرتبطة'),
                           HoverButton(
                             onPressed: () {
                               printd('clicked');
@@ -565,7 +565,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.15,
       key: _textFieldKey,
       child: TextFormBox(
@@ -629,7 +629,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     if (widget.suggestionType == AutoCompleteType.truckPlate) {
       // When truck plate is entered, suggest related drivers
       final value = widget.driverController?.text;
-      printd('the plate is printing this1!!!!11      ' + (value ?? 'no value'));
+      printd('the plate is printing this1!!!!11      ${value ?? 'no value'}');
       crossSuggestions = [];
       if (value != null && value.isNotEmpty) {
         final veichles = await _getRelatedVehicles(value);
@@ -642,7 +642,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
     } else if (widget.suggestionType == AutoCompleteType.driver) {
       // When driver is entered, suggest related vehicles
       final value = widget.plateController?.text;
-      printd('the driver is printing this1!!!!11   ' + (value ?? 'no value'));
+      printd('the driver is printing this1!!!!11   ${value ?? 'no value'}');
       crossSuggestions = [];
       if (value != null && value.isNotEmpty) {
         final drivers = await _getRelatedDrivers(value);
@@ -660,7 +660,7 @@ class _AutoCompleteComboBoxState extends State<AutoCompleteComboBox> {
 
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
-    print('i am searching for values');
+    printd('i am searching for values');
     final data = await db.rawQuery('SELECT * FROM drivers');
     final data3 = await db.rawQuery('SELECT * FROM driver_plates');
 

@@ -18,6 +18,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../providers/client_provider.dart';
 import '../providers/supplier_provider.dart';
 import '../providers/material_provider.dart';
+import 'bar/overlay_ui.dart';
 
 class OrderDetailsDialog extends StatefulWidget {
   final WeighingTab operation;
@@ -49,6 +50,7 @@ class _OrderDetailsDialogState extends State<OrderDetailsDialog> {
       if (defaultTemplate != null) {
         await _printService.printTemplateStandardPDFNewSilently(
             defaultTemplate, weighingTab, null, null, null);
+
         _showInfoBar(
           AppLocalizations.of(context)!.printSuccessful,
           InfoBarSeverity.success,

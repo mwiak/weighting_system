@@ -13,6 +13,7 @@ import 'package:weighing_system/providers/material_provider.dart';
 import 'package:weighing_system/providers/supplier_provider.dart';
 import 'package:weighing_system/providers/user_provider.dart';
 import 'package:weighing_system/services/custom_template_service.dart';
+import 'package:weighing_system/theme/app_theme.dart';
 import 'package:weighing_system/widgets/kilo_price_box.dart';
 import 'dart:async';
 import '../l10n/app_localizations.dart';
@@ -22,6 +23,7 @@ import '../providers/tabs_provider.dart';
 import '../services/template_print_service.dart';
 import '../utils/date_format.dart';
 import 'auto_complete_combo_box.dart';
+import 'bar/overlay_ui.dart';
 
 // Text size constants for easy adjustment
 const double kStatusFontSize = 7.0;
@@ -367,14 +369,53 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                         children: [
                           Row(
                             children: [
-                              Text(AppLocalizations.of(context)!.orderNumber),
-                              SizedBox(
-                                width: 2,
+                              Expanded(
+                                flex: 4,
+                                child: SizedBox(
+                                  width: 150,
+                                  height: 30,
+                                  child: InfoBadge(
+                                      source: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'الرقم',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Text(
+                                        _tab?.id?.toString() ?? '',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  )),
+                                ),
                               ),
-                              Text(_tab?.id?.toString() ?? ''),
-                              const Spacer(),
-                              Text(dateToArabicDatetimeWeightTab(
-                                  _tab!.createdAt)),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                flex: 6,
+                                child: SizedBox(
+                                  height: 30,
+                                  child: InfoBadge(
+                                    color: Colors.green.withValues(alpha: 0.5),
+                                    source: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          dateToArabicDatetimeWeightTab(
+                                              _tab!.createdAt),
+                                          style: TextStyle(fontSize: 13.5),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(
@@ -556,7 +597,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                           const SizedBox(height: 8),
 
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -585,16 +626,17 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  KiloPriceBox(
-                                      controller: _kiloPriceController,
-                                      onChange: (v) {
-                                        calculateTotalPrice();
-                                      }),
-                                ],
-                              ),
+                              KiloPriceBox(
+                                  controller: _kiloPriceController,
+                                  onChange: (v) {
+                                    calculateTotalPrice();
+                                  }),
+                              // Column(
+                              //   mainAxisAlignment: MainAxisAlignment.start,
+                              //   children: [
+                              //
+                              //   ],
+                              // ),
                               SizedBox(
                                 width: 5,
                               ),
@@ -879,13 +921,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   }
 
   Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.w500,
-        fontSize: kLabelFontSize,
-      ),
-    );
+    return Text(text, style: AppTheme.kLabelsStyleWT);
   }
 
   Widget _buildActionButtons(WeighingTab tab) {
@@ -1054,7 +1090,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
   void _completeTab() async {
     final tabsProvider = context.read<TabsProvider>();
     final success = await tabsProvider.completeTab(widget.tabIndex);
-    if (success) {
+    if (success && mounted) {
       _showInfoBar(AppLocalizations.of(context)!.tabCompletedAndMoved,
           InfoBarSeverity.success);
       fetchAllNewValues();

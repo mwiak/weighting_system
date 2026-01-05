@@ -19,17 +19,10 @@ class _KiloPriceBoxState extends State<KiloPriceBox> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
       width: MediaQuery.of(context).size.width * 0.15,
       child: Column(
         children: [
-          const Text(
-            'سعر الكيلو',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: kLabelFontSize,
-            ),
-          ),
+          Text('سعر الكيلو', style: AppTheme.kLabelsStyleWT),
           SizedBox(
             height: 4,
           ),
@@ -71,22 +64,15 @@ class _TotalPriceBoxState extends State<TotalPriceBox> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
       width: MediaQuery.of(context).size.width * 0.15,
       child: Column(
         children: [
-          const Text(
-            'السعر الإجمالي',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: kLabelFontSize,
-            ),
-          ),
+          Text('السعر الإجمالي', style: AppTheme.kLabelsStyleWT),
           SizedBox(
             height: 4,
           ),
           TextBox(
-            style: const TextStyle(fontSize: AppTheme.kFontSizeValue),
+            style: AppTheme.kValuesStyleWT,
             suffix: Text('\$'),
             inputFormatters: [
               TextInputFormatter.withFunction((oldValue, newValue) {
