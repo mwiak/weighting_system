@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 void printd(String text) {
-  if (kDebugMode) {
+  if (true) {
     print(text);
   }
 }

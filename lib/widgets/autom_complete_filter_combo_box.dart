@@ -54,6 +54,7 @@ class _AutoCompleteFilterComboBoxState
   Timer? _debounceTimer;
 
   bool isPointerInside = false;
+  bool _suggestionsLoaded = false; // Track if suggestions were loaded
 
   @override
   void initState() {
@@ -70,12 +71,8 @@ class _AutoCompleteFilterComboBoxState
     // Listen to controller changes for immediate UI updates
     _controller.addListener(_onControllerChanged);
 
-    // Load suggestions after the build to avoid setState during build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _loadAllSuggestions();
-      }
-    });
+    // Suggestions are now loaded on-demand when focused, not here
+    // This eliminates database queries on navigation
   }
 
   @override
@@ -130,6 +127,10 @@ class _AutoCompleteFilterComboBoxState
 
   void _handleFocusChange() {
     if (_focusNode.hasFocus && !_showSuggestions) {
+      // Load suggestions on first focus (deferred loading)
+      if (!_suggestionsLoaded && !_isLoading) {
+        _loadAllSuggestions();
+      }
       _showOverlay();
     } else if (!_focusNode.hasFocus && _showSuggestions) {
       // Fixed: Hide overlay when focus is lost AND overlay is showing
@@ -314,7 +315,10 @@ class _AutoCompleteFilterComboBoxState
     }
 
     if (mounted) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _suggestionsLoaded = true; // Mark as loaded to prevent re-loading
+      });
     }
   }
 

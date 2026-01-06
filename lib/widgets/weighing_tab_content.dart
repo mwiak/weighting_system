@@ -44,7 +44,8 @@ class WeighingTabContent extends StatefulWidget {
   State<WeighingTabContent> createState() => _WeighingTabContentState();
 }
 
-class _WeighingTabContentState extends State<WeighingTabContent> {
+class _WeighingTabContentState extends State<WeighingTabContent>
+    with AutomaticKeepAliveClientMixin {
   late TextEditingController _emptyWeightController;
   late TextEditingController _grossWeightController;
   late TextEditingController _truckPlateController;
@@ -333,6 +334,7 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // final l10n = AppLocalizations.of(context)!;
 
     return Consumer<TabsProvider>(
@@ -1122,4 +1124,8 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

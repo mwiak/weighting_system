@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 import '../l10n/app_localizations.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
@@ -15,7 +16,8 @@ class TabsScreen extends StatefulWidget {
   State<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends State<TabsScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
@@ -48,6 +50,8 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    printd('TabsScreen: rebuilt');
     final l10n = AppLocalizations.of(context)!;
 
     return Consumer<TabsProvider>(
@@ -275,4 +279,8 @@ class _TabsScreenState extends State<TabsScreen> {
           return AdminWeightingTabContent();
         });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

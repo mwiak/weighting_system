@@ -24,7 +24,7 @@ import 'providers/driver_provider.dart';
 import 'providers/driver_plate_provider.dart';
 import 'providers/tabs_provider.dart';
 import 'theme/app_theme.dart';
-import 'package:screen_retriever/screen_retriever.dart';
+// import 'package:screen_retriever/screen_retriever.dart';
 import 'dart:io';
 
 void main() async {
@@ -35,8 +35,8 @@ void main() async {
 
   await windowManager.ensureInitialized();
 
-  final display = await screenRetriever.getPrimaryDisplay();
-  final screenSize = display.size;
+  // final display = await screenRetriever.getPrimaryDisplay();
+  // final screenSize = display.size;
   final hdSize = Size(1366, 768);
   final windowWidth = hdSize.width * 0.88;
   final windowHeight = hdSize.height * 0.8;
@@ -94,13 +94,13 @@ class WeighingSystemApp extends StatelessWidget {
         ),
       ],
       child: fluent.FluentApp(
-        // showPerformanceOverlay: true,
+        showPerformanceOverlay: true,
         navigatorKey: rootNavigatorKey,
         title: 'Truck Weighing System',
         theme: AppTheme.lightTheme,
         home: const LoginScreen(),
         debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
+        localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

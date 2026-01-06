@@ -209,23 +209,24 @@ class _LoginScreenState extends State<LoginScreen>
         duration: Duration(milliseconds: 300 + (index * 100)),
         tween: Tween(begin: 0.0, end: 1.0),
         curve: Curves.easeOutBack,
+        // Use child parameter - this widget won't rebuild during animation
+        child: UserLoginAvatar(
+          onPressed: (v) {
+            setState(() {
+              usernameToLog = v;
+              isShowingPasswordPanel = true;
+              errorMessage = null;
+            });
+          },
+          user: user,
+        ),
         builder: (context, value, child) {
-          // Clamp value to ensure it's between 0.0 and 1.0
           final clampedValue = value.clamp(0.0, 1.0);
           return Transform.scale(
             scale: clampedValue,
             child: Opacity(
               opacity: clampedValue,
-              child: UserLoginAvatar(
-                onPressed: (v) {
-                  setState(() {
-                    usernameToLog = v;
-                    isShowingPasswordPanel = true;
-                    errorMessage = null;
-                  });
-                },
-                user: user,
-              ),
+              child: child, // Reuses the pre-built child
             ),
           );
         },
@@ -234,111 +235,119 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget showPasswordPanel() {
-    passwordNode.hasFocus ? null : passwordNode.requestFocus();
+    // Only request focus when panel is actually showing
+    if (isShowingPasswordPanel && !passwordNode.hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && isShowingPasswordPanel && !passwordNode.hasFocus) {
+          passwordNode.requestFocus();
+        }
+      });
+    }
     final l10n = AppLocalizations.of(context)!;
+
+    // Always build the panel content (pre-warming) but control visibility with animation
+    // This eliminates first-show widget construction cost
+    final panelContent = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Selected user indicator
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          decoration: BoxDecoration(
+            color: FluentTheme.of(context).accentColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            l10n.loggingInAs(usernameToLog.isEmpty ? ' ' : usernameToLog),
+            style: FluentTheme.of(context).typography.bodyStrong?.copyWith(
+                  color: FluentTheme.of(context).accentColor,
+                ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Password field - always built
+        SizedBox(
+          width: 300,
+          child: InfoLabel(
+            label: l10n.password,
+            child: TextBox(
+              focusNode: passwordNode,
+              textDirection: TextDirection.ltr,
+              placeholder: l10n.enterYourPassword,
+              suffix: IconButton(
+                icon: Icon(
+                  hidePassword ? FluentIcons.red_eye : FluentIcons.hide,
+                ),
+                onPressed: () {
+                  setState(() {
+                    hidePassword = !hidePassword;
+                  });
+                },
+              ),
+              obscureText: hidePassword,
+              controller: passWordController,
+              enabled: !isLoading,
+              onSubmitted: (value) => _handleLogin(),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Login button
+        SizedBox(
+          width: 300,
+          child: FilledButton(
+            onPressed: isLoading ? null : _handleLogin,
+            child: isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: ProgressRing(strokeWidth: 2),
+                  )
+                : Text(l10n.continue_),
+          ),
+        ),
+
+        // Back button
+        const SizedBox(height: 12),
+        Button(
+          onPressed: isLoading
+              ? null
+              : () {
+                  setState(() {
+                    isShowingPasswordPanel = false;
+                    passWordController.clear();
+                    errorMessage = null;
+                  });
+                },
+          child: Text(l10n.back),
+        ),
+      ],
+    );
+
+    // Simple slide without Opacity (Opacity uses saveLayer which is raster-expensive)
+    // Just use transform for animation - no compositing layer needed
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       child: isShowingPasswordPanel
           ? TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 400),
+              duration: const Duration(milliseconds: 300),
               tween: Tween(begin: 0.0, end: 1.0),
               curve: Curves.easeOutCubic,
+              child: panelContent,
               builder: (context, value, child) {
+                // Only use Transform (GPU-accelerated), avoid Opacity
                 return Transform.translate(
                   offset: Offset(0, 20 * (1 - value)),
-                  child: Opacity(
-                    opacity: value,
-                    child: Column(
-                      children: [
-                        // Selected user indicator
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: FluentTheme.of(context)
-                                .accentColor
-                                .withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            l10n.loggingInAs(usernameToLog),
-                            style: FluentTheme.of(context)
-                                .typography
-                                .bodyStrong
-                                ?.copyWith(
-                                  color: FluentTheme.of(context).accentColor,
-                                ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Password field
-                        SizedBox(
-                          width: 300,
-                          child: InfoLabel(
-                            label: l10n.password,
-                            child: TextBox(
-                              focusNode: passwordNode,
-                              textDirection: TextDirection.ltr,
-                              placeholder: l10n.enterYourPassword,
-                              suffix: IconButton(
-                                icon: Icon(
-                                  hidePassword
-                                      ? FluentIcons.red_eye
-                                      : FluentIcons.hide,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    hidePassword = !hidePassword;
-                                  });
-                                },
-                              ),
-                              obscureText: hidePassword,
-                              controller: passWordController,
-                              enabled: !isLoading,
-                              onSubmitted: (value) => _handleLogin(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Login button with animation
-                        SizedBox(
-                          width: 300,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            child: FilledButton(
-                              onPressed: isLoading ? null : _handleLogin,
-                              child: isLoading
-                                  ? const SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: ProgressRing(strokeWidth: 2),
-                                    )
-                                  : Text(l10n.continue_),
-                            ),
-                          ),
-                        ),
-
-                        // Back button
-                        const SizedBox(height: 12),
-                        Button(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  setState(() {
-                                    isShowingPasswordPanel = false;
-                                    passWordController.clear();
-                                    errorMessage = null;
-                                  });
-                                },
-                          child: Text(l10n.back),
-                        ),
-                      ],
-                    ),
+                  child: Transform.scale(
+                    scale: 0.95 +
+                        (0.05 * value), // Subtle scale instead of opacity
+                    child: child,
                   ),
                 );
               },

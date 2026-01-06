@@ -1,10 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import 'package:weighing_system/models/user.dart';
 import 'package:weighing_system/providers/user_provider.dart';
-import 'package:weighing_system/screens/reports_view.dart';
 import 'package:weighing_system/screens/settings_main.dart';
 import 'package:weighing_system/screens/summaries_screen.dart';
 import 'package:weighing_system/screens/template_management_screen.dart';
@@ -27,7 +25,12 @@ class MainDashboard extends StatefulWidget {
 class _MainDashboardState extends State<MainDashboard> {
   int selectedIndex = 0;
 
+  // Cached navigation items to prevent rebuilds on navigation
+  List<PaneItem>? _cachedNavigationItems;
+  List<PaneItem>? _cachedFooterItems;
+
   List<PaneItem> navigationItems(BuildContext context) {
+    if (_cachedNavigationItems != null) return _cachedNavigationItems!;
     final l10n = AppLocalizations.of(context)!;
     UserRanks type =
         Provider.of<UserProvider>(context, listen: true).activeUser!.type;
@@ -47,7 +50,7 @@ class _MainDashboardState extends State<MainDashboard> {
       ),
     ];
 
-    return [
+    final items = [
       PaneItem(
         key: const ValueKey('/weighing'),
         icon: const Icon(FluentIcons.scale_volume),
@@ -80,11 +83,14 @@ class _MainDashboardState extends State<MainDashboard> {
       ),
       if (type == UserRanks.admin) ...adminPanes
     ];
+    _cachedNavigationItems = items;
+    return items;
   }
 
   List<PaneItem> footerItems(BuildContext context) {
+    if (_cachedFooterItems != null) return _cachedFooterItems!;
     final l10n = AppLocalizations.of(context)!;
-    return [
+    final items = [
       PaneItem(
         key: const ValueKey('/settings'),
         icon: const Icon(FluentIcons.settings),
@@ -92,6 +98,8 @@ class _MainDashboardState extends State<MainDashboard> {
         body: const SettingsView(),
       ),
     ];
+    _cachedFooterItems = items;
+    return items;
   }
 
   @override

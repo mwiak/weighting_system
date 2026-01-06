@@ -416,18 +416,18 @@ class WeighingTabReportService {
     try {
       final database = await _db.database;
 
-      debugPrint('WeighingTabReportService: Executing query:');
-      debugPrint('  Query: $query');
-      debugPrint('  Params: $params');
+      // debugPrint('WeighingTabReportService: Executing query:');
+      // debugPrint('  Query: $query');
+      // debugPrint('  Params: $params');
 
       final results = await database.rawQuery(query, params);
 
       debugPrint('WeighingTabReportService: Found ${results.length} results');
       if (results.isNotEmpty) {
-        debugPrint('  Sample result: ${results}');
+        // debugPrint('  Sample result: ${results}');
         // Show available statuses in database
         final statuses = results.map((r) => r['status']).toSet();
-        debugPrint('  Available statuses: $statuses');
+        // debugPrint('  Available statuses: $statuses');
       }
 
       return results;

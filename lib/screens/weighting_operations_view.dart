@@ -1,9 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/date_range_formatter.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
 import '../l10n/app_localizations.dart';
-import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/season.dart';
 import 'package:weighing_system/providers/seasons_provider.dart';
 import 'package:weighing_system/widgets/autom_complete_filter_combo_box.dart';
@@ -22,7 +21,10 @@ class WeightingOperationsView extends StatefulWidget {
       _WeightingOperationsViewState();
 }
 
-class _WeightingOperationsViewState extends State<WeightingOperationsView> {
+class _WeightingOperationsViewState extends State<WeightingOperationsView>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   String _statusFilter = 'all'; // Show all operations by default
   String _driverFilter = '';
   String _truckFilter = '';
@@ -43,6 +45,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     _endDate = getLast30EndDate();
     _startDate = getLast30StartDate();
     _loadOperations();
+    debugPrint(
+        'INIT STATE WAS CALLED ************ \n *********************\n================================');
   }
 
   void _loadOperations() async {
@@ -50,10 +54,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     try {
       final provider = context.read<ReportProvider>();
 
-      debugPrint('Loading operations with filters:');
-      debugPrint('  Status: $_statusFilter');
+      // debugPrint('Loading operations with filters:');
+      // debugPrint('  Status: $_statusFilter');
 
-      debugPrint('  Date Range: $_startDate to $_endDate');
+      // debugPrint('  Date Range: $_startDate to $_endDate');
 
       final operations = await provider.getOrdersHistory(
           startDate: _startDate,
@@ -68,10 +72,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
 
       debugPrint('Found ${operations.length} operations');
       if (operations.isNotEmpty) {
-        debugPrint('Sample operation data: ${operations.first}');
+        // debugPrint('Sample operation data: ${operations.first}');
         // Show all available statuses for debugging
         final statuses = operations.map((op) => op['status']).toSet();
-        debugPrint('Available statuses in results: $statuses');
+        // debugPrint('Available statuses in results: $statuses');
       } else {
         debugPrint('No operations found - this might indicate the issue');
       }
@@ -105,12 +109,12 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
 
     debugPrint('Found ${operations.length} operations');
     if (operations.isNotEmpty) {
-      debugPrint('Sample operation data: ${operations.first}');
+      // debugPrint('Sample operation data: ${operations.first}');
       // Show all available statuses for debugging
       final statuses = operations.map((op) => op['status']).toSet();
-      debugPrint('Available statuses in results: $statuses');
+      // debugPrint('Available statuses in results: $statuses');
     } else {
-      debugPrint('No operations found - this might indicate the issue');
+      // debugPrint('No operations found - this might indicate the issue');
     }
   }
 
@@ -122,7 +126,9 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     final l10n = AppLocalizations.of(context)!;
+    printd('OperationViewScreen: rebuilt');
 
     return ScaffoldPage.scrollable(
       header: PageHeader(
@@ -145,7 +151,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       children: [
         Expander(
           contentPadding: EdgeInsets.zero,
-          leading: Icon(FluentIcons.search),
+          leading: const Icon(FluentIcons.search),
           header: const Text('بحث'),
           content: Card(
             child: Padding(
