@@ -43,8 +43,8 @@ class WeightProvider extends ChangeNotifier {
   }
 
   void _onWeightServiceChanged() {
-    print('service is changed now');
-    print(status);
+    printd('service is changed now');
+    printd(status.toString());
     notifyListeners();
   }
 

@@ -49,6 +49,7 @@ void _readLoop(Map<String, dynamic> args) {
               final weight = int.tryParse(weightStr);
               if (weight != null && weight >= -999999 && weight <= 999999) {
                 // Send the valid weight back to the main thread
+                // print('new number detected:   $weight');
                 sendPort.send(weight);
                 break; // Found the last valid weight in this batch
               }
@@ -56,7 +57,7 @@ void _readLoop(Map<String, dynamic> args) {
           }
         }
       } catch (e) {
-        // sendPort.send({'error': e.toString()});
+        sendPort.send({'error': e.toString()});
       }
     } else {
       // ReadFile failed, connection might be lost.
@@ -137,8 +138,10 @@ class WeightServiceIsolate extends ChangeNotifier {
   // Connection state
   ConnectionStatus status = ConnectionStatus.initial;
   void updateStatus(ConnectionStatus newState) {
-    status = newState;
-    notifyListeners();
+    if (status != newState) {
+      status = newState;
+      notifyListeners();
+    }
   }
 
   bool _isConnected = false;
@@ -345,6 +348,7 @@ class WeightServiceIsolate extends ChangeNotifier {
         // We received a valid weight
         if (_currentWeight != message) {
           _currentWeight = message;
+          printd(_currentWeight.toString());
           notifyListeners();
         }
       } else if (message is Map && message.containsKey('error')) {

@@ -1053,11 +1053,14 @@ class _WeighingTabContentState extends State<WeighingTabContent> {
       tabsProvider.updateTab(widget.tabIndex, {'emptyWeight': currentWeight});
       tabsProvider
           .updateTab(widget.tabIndex, {'scaleEmptyWeight': DateTime.now()});
+      printd(currentWeight.toString());
+      calculateTotalPrice();
     } else if (!isEmptyWeight && !_grossWeightFieldFocused) {
       _grossWeightController.text = currentWeight.toString();
       tabsProvider.updateTab(widget.tabIndex, {'grossWeight': currentWeight});
       tabsProvider
           .updateTab(widget.tabIndex, {'scaleGrossWeight': DateTime.now()});
+      printd(currentWeight.toString());
       calculateTotalPrice();
     } else {
       _showInfoBar(AppLocalizations.of(context)!.cannotCaptureWhileEditing,
