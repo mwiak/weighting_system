@@ -20,11 +20,16 @@ class AppTheme {
   static Color kLabelC = const Color(0xFF737373);
 
   static const double kFontSizeValue = 16.0;
+  static const double kFontSizeNumericValue = 16.0;
+
   static TextStyle kValuesStyleWT = TextStyle(
       fontSize: kFontSizeValue, fontWeight: FontWeight.w500, color: kValueC);
 
   static TextStyle kLabelsStyleWT = TextStyle(
       fontSize: kFontSizeValue, fontWeight: FontWeight.w700, color: kLabelC);
+
+  static TextStyle kSummaryTotalStyleWT =
+      const TextStyle(fontSize: kFontSizeNumericValue);
 
   //headersOperations
   static const double operationsHeaderItemWidthNormal = 90;

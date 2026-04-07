@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:weighing_system/services/excel_service.dart';
 import 'package:weighing_system/utils/debugging_methods.dart';
+import 'package:weighing_system/utils/number_foramt.dart';
 
 import '../models/weighing_tab.dart';
 import '../l10n/app_localizations.dart';
@@ -114,6 +115,19 @@ class MaterialTreeItem extends TreeViewItem {
                             excel.createStyledExcel(
                                 tabs: allClientsList(), context: context);
                           }),
+                      MenuFlyoutItem(
+                          text: const Text('تصدير ملخص الذمم'),
+                          onPressed: () {
+                            ExcelService excel = ExcelService();
+                            excel.createSummaryExcel(
+                                tabs: generateHighLevelSummaryItemsForExcel(
+                                    clients, context),
+                                context: context,
+                                totals: {
+                                  'tWeight': totalWeightSale,
+                                  'tPrice': totalValueSale as double
+                                });
+                          }),
                     ],
                   )
                 ],
@@ -156,6 +170,19 @@ class MaterialTreeItem extends TreeViewItem {
                             ExcelService excel = ExcelService();
                             excel.createStyledExcel(
                                 tabs: allSuppliersList(), context: context);
+                          }),
+                      MenuFlyoutItem(
+                          text: const Text('تصدير ملخص الذمم'),
+                          onPressed: () {
+                            ExcelService excel = ExcelService();
+                            excel.createSummaryExcel(
+                                tabs: generateHighLevelSummaryItemsForExcel(
+                                    suppliers, context),
+                                context: context,
+                                totals: {
+                                  'tWeight': totalWeightPurchase,
+                                  'tPrice': totalValuePurchase as double
+                                });
                           }),
                     ],
                   )
@@ -279,16 +306,70 @@ List<TreeViewItem> _buildClientOrSupplier(
   return items;
 }
 
-Widget buildTotalWeight(String? label, String total, {Color? color}) {
+Widget buildTotalWeight1(String? label, String total, {Color? color}) {
   color ??= Colors.green.withOpacity(0.2);
   return Container(
     decoration: BoxDecoration(
-        color: color, borderRadius: BorderRadius.all(Radius.circular(12))),
+        color: color,
+        borderRadius: const BorderRadius.all(Radius.circular(12))),
     child: Padding(
       padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
-      child: Text.rich(TextSpan(
-          text: label ?? 'مجموع وزن البضاعة',
-          children: [TextSpan(text: '  '), TextSpan(text: total)])),
+      child: Text.rich(TextSpan(text: label ?? 'مجموع وزن البضاعة', children: [
+        const TextSpan(text: '  '),
+        TextSpan(
+          text: total,
+        )
+      ])),
     ),
   );
+}
+
+Widget buildTotalWeight(String? label, String total, {Color? color}) {
+  color ??= Colors.green.withOpacity(0.2);
+
+  return Container(
+    decoration: BoxDecoration(
+        color: color,
+        borderRadius: const BorderRadius.all(Radius.circular(12))),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+      child: Row(
+        children: [
+          Text(label ?? 'مجموع وزن البضاعة'),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            formatLargeNumber3(total),
+            textDirection: TextDirection.ltr,
+            style: AppTheme.kSummaryTotalStyleWT,
+          )
+        ],
+      ),
+    ),
+  );
+}
+
+List<Map> generateHighLevelSummaryItemsForExcel(
+    Map<String, List<WeighingTab>> input, BuildContext context) {
+  List<Map> items = [];
+
+  int totalWeight = 0;
+  num totalPrice = 0.0;
+
+  input.forEach((key, value) {
+    totalWeight = 0;
+    totalPrice = 0.0;
+    for (WeighingTab tab in value) {
+      totalWeight = totalWeight + tab.netWeight;
+      totalPrice = totalPrice + tab.total_price;
+    }
+    items.add({
+      'key': key,
+      'total_weight': totalWeight,
+      'total_price': totalPrice,
+    });
+  });
+
+  return items;
 }

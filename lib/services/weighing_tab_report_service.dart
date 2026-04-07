@@ -151,7 +151,7 @@ class WeighingTabReportService {
            WHERE DATE(created_at) BETWEEN DATE(?) AND DATE(?) AND material != ''
            GROUP BY material
            ORDER BY count DESC
-           LIMIT 10''',
+           ''',
         [
           startDate.toIso8601String().split('T')[0],
           endDate.toIso8601String().split('T')[0]
@@ -170,7 +170,7 @@ class WeighingTabReportService {
            WHERE DATE(created_at) BETWEEN DATE(?) AND DATE(?) AND driver_name != '' AND net_weight > 0
            GROUP BY driver_name
            ORDER BY total_weight DESC
-           LIMIT 10''',
+           ''',
         [
           startDate.toIso8601String().split('T')[0],
           endDate.toIso8601String().split('T')[0]
@@ -262,7 +262,7 @@ class WeighingTabReportService {
       FROM weighing_tabs
       $whereClause
       ORDER BY created_at DESC
-      LIMIT 1000
+     
     ''';
 
     try {
@@ -410,7 +410,7 @@ class WeighingTabReportService {
       FROM weighing_tabs
       $whereClause
       ORDER BY created_at DESC
-      LIMIT 1000
+      
     ''';
 
     try {
@@ -434,6 +434,109 @@ class WeighingTabReportService {
     } catch (e) {
       debugPrint('Error getting tabs history: $e');
       return [];
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> getTabsHistoryStream({
+    DateTime? startDate,
+    DateTime? endDate,
+    String? status,
+    String? driverFilter,
+    String? truckFilter,
+    String? clientFilter,
+    String? supplierFilter,
+    String? materialFilter,
+    int? idFilter,
+    int batchSize = 50,
+  }) async* {
+    startDate ??= DateTime.now().subtract(const Duration(days: 30));
+    endDate ??= DateTime.now();
+
+    final baseWhereConditions = <String>[];
+    final baseParams = <dynamic>[];
+
+    // Base date range filter
+    baseWhereConditions.add('created_at >= ? AND created_at < ?');
+    baseParams.add(startDate.toIso8601String().split('T')[0]);
+    baseParams.add(endDate.toIso8601String().split('T')[0]);
+
+    if (status != null && status.isNotEmpty && status != 'all') {
+      baseWhereConditions.add('status = ?');
+      baseParams.add(status);
+    }
+
+    if (idFilter != null && idFilter != 0) {
+      baseWhereConditions.add('id = ?');
+      baseParams.add(idFilter);
+    }
+
+    if (driverFilter != null && driverFilter.isNotEmpty) {
+      baseWhereConditions.add('driver_name LIKE ?');
+      baseParams.add('%$driverFilter%');
+    }
+
+    if (truckFilter != null && truckFilter.isNotEmpty) {
+      baseWhereConditions.add('truck_plate LIKE ?');
+      baseParams.add('%$truckFilter%');
+    }
+
+    if (clientFilter != null && clientFilter.isNotEmpty) {
+      baseWhereConditions.add('client LIKE ?');
+      baseParams.add('%$clientFilter%');
+    }
+
+    if (supplierFilter != null && supplierFilter.isNotEmpty) {
+      baseWhereConditions.add('supplier LIKE ?');
+      baseParams.add('%$supplierFilter%');
+    }
+
+    if (materialFilter != null && materialFilter.isNotEmpty) {
+      baseWhereConditions.add('material LIKE ?');
+      baseParams.add('%$materialFilter%');
+    }
+
+    final database = await _db.database;
+
+    String? lastCreatedAt; // cursor
+
+    try {
+      while (true) {
+        final whereConditions = List<String>.from(baseWhereConditions);
+        final params = List<dynamic>.from(baseParams);
+
+        // Apply cursor condition AFTER first batch
+        if (lastCreatedAt != null) {
+          whereConditions.add('created_at < ?');
+          params.add(lastCreatedAt);
+        }
+
+        final whereClause = whereConditions.isNotEmpty
+            ? 'WHERE ${whereConditions.join(' AND ')}'
+            : '';
+
+        final query = '''
+        SELECT *
+        FROM weighing_tabs
+        $whereClause
+        ORDER BY created_at DESC
+        LIMIT ?
+      ''';
+
+        params.add(batchSize);
+
+        final results = await database.rawQuery(query, params);
+
+        if (results.isEmpty) break;
+
+        yield results;
+
+        // Update cursor to last row in this batch
+        final lastRow = results.last;
+        lastCreatedAt = lastRow['created_at'] as String;
+      }
+    } catch (e) {
+      debugPrint('Error streaming tabs history: $e');
+      yield [];
     }
   }
 

@@ -2,6 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:weighing_system/utils/date_range_formatter.dart';
+import 'package:weighing_system/utils/debugging_methods.dart';
+import 'package:weighing_system/widgets/buttons/loading_button.dart';
 import '../l10n/app_localizations.dart';
 import 'package:weighing_system/database/database_helper.dart';
 import 'package:weighing_system/models/season.dart';
@@ -35,6 +37,9 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
   List<Map<String, dynamic>> _operations = [];
   bool _isLoading = false;
   bool checked = true;
+  bool isMiniLoaded = true;
+  bool isLoadingAll = false;
+  late ScrollController scrollController;
 
   @override
   void initState() {
@@ -42,6 +47,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     // Set default date range to last 30 days
     _endDate = getLast30EndDate();
     _startDate = getLast30StartDate();
+    scrollController = ScrollController(keepScrollOffset: false);
+
     _loadOperations();
   }
 
@@ -125,12 +132,13 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
     final l10n = AppLocalizations.of(context)!;
 
     return ScaffoldPage.scrollable(
+      scrollController: scrollController,
       header: PageHeader(
         title: CommandBar(
           primaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.time_sheet),
-              label: Text('تصدير excel'),
+              label: const Text('تصدير excel'),
               onPressed: () {
                 final excel = ExcelService();
                 excel.createOperationsExcel(
@@ -144,8 +152,8 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
       ),
       children: [
         Expander(
-          contentPadding: EdgeInsets.zero,
-          leading: Icon(FluentIcons.search),
+          // contentPadding: EdgeInsets.zero,
+          leading: const Icon(FluentIcons.search),
           header: const Text('بحث'),
           content: Card(
             child: Padding(
@@ -452,7 +460,7 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       topRight: Radius.circular(8),
                     ),
                   ),
-                  child: OperationHeader(),
+                  child: const OperationHeader(),
                 ),
 
                 // Real data from database
@@ -476,8 +484,10 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
                       child: Text(l10n.noOperationsFound),
                     ),
                   )
+                else if (isMiniLoaded)
+                  ...loadMinimizedEntries()
                 else
-                  ..._operations.take(50).map((operation) => OperationEntry(
+                  ..._operations.map((operation) => OperationEntry(
                       operation: operation,
                       onPressed: (v) {
                         _showOrderDetails(v as Map<String, dynamic>);
@@ -488,6 +498,32 @@ class _WeightingOperationsViewState extends State<WeightingOperationsView> {
         ),
       ],
     );
+  }
+
+  List<Widget> loadMinimizedEntries() {
+    List<Widget> data = [];
+
+    List<Widget> op = _operations
+        .take(50)
+        .map((operation) => OperationEntry(
+            operation: operation,
+            onPressed: (v) {
+              _showOrderDetails(v as Map<String, dynamic>);
+            }))
+        .toList();
+    data.addAll(op);
+    data.add(Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LoadingButton(
+          onPressed: () {
+            setState(() {
+              isMiniLoaded = false;
+            });
+          },
+          label: 'عرض المزيد',
+        )));
+
+    return data;
   }
 
   void _clearFilters() {
